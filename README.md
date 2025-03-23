@@ -1,5 +1,5 @@
 # bevy_card
-### A card crate for the Bevy game engine
+### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
 ## How to Use
 ### Registering the Plugin
