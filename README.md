@@ -1,6 +1,10 @@
 # bevy_card
 ### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
+
+https://github.com/user-attachments/assets/46059ea1-d988-44ce-9559-a76f1b7afe42
+
+
 ## How to Use
 ### Registering the Plugin
 First, you should add `BevyCardPlugin`, it has a `::default()` implementation but can be reconfigured, for example:
