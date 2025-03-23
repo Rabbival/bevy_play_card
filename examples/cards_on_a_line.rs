@@ -14,11 +14,10 @@ fn spawn_cards_on_a_line(
 ) {
     let cards_count = 12;
     let line = commands
-        .spawn(CardLineBundle::from_card_line(CardLine {
-            max_cards: cards_count,
-            card_origin_gap: 100.0,
-            ..default()
-        }))
+        .spawn(CardLineBundle::from_card_line(
+            CardLine::default()
+              .with_max_cards(cards_count)
+              .with_card_origin_gap(100.0)))
         .id();
     for _ in 0..cards_count {
         let card_entity = commands
