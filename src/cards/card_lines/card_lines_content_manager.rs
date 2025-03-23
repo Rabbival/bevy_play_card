@@ -103,7 +103,7 @@ fn sort_on_dragged_card_movement(
     );
     let mut maybe_new_dragged_card_index = None;
     let mut maybe_dragged_card_index = None;
-    for (card_index, card_entity) in owner_card_line.cards_in_order.iter().enumerate() {
+    for (card_index, card_entity) in owner_card_line.cards_in_order().iter().enumerate() {
         if let Ok(card) = card_components_only_query.get(*card_entity) {
             if (card.origin.translation.x - distance_from_origin_signed).abs()
                 < owner_card_line.card_origin_gap * (2.0 / 5.0)
@@ -122,16 +122,11 @@ fn sort_on_dragged_card_movement(
                 if distance_from_origin_signed < 0.0 {
                     0
                 } else {
-                    owner_card_line.cards_in_order.len() - 1
+                    owner_card_line.cards_in_order().len() - 1
                 }
             }
         };
-        if dragged_card_index != dragged_card_new_index {
-            owner_card_line.cards_in_order.remove(dragged_card_index);
-            owner_card_line
-                .cards_in_order
-                .insert(dragged_card_new_index, dragged_card_entity);
-        }
+        owner_card_line.heavy_swap(dragged_card_index, dragged_card_new_index);
     }
 }
 
@@ -141,7 +136,7 @@ fn set_card_origins_on_line_change(
 ) {
     for card_line in &changed_card_lines {
         let first_card_x = calculate_first_card_distance_from_center(card_line);
-        for (index, card_entity) in card_line.cards_in_order.iter().enumerate() {
+        for (index, card_entity) in card_line.cards_in_order().iter().enumerate() {
             if let Ok(mut card) = cards.get_mut(*card_entity) {
                 let resulting_translation = card
                     .origin
@@ -154,7 +149,7 @@ fn set_card_origins_on_line_change(
 }
 
 fn calculate_first_card_distance_from_center(card_line: &CardLine) -> f32 {
-    let location_count = card_line.cards_in_order.len();
+    let location_count = card_line.cards_in_order().len();
     let card_origin_gap = card_line.card_origin_gap;
     if location_count % 2 == 1 {
         -(((location_count - 1) / 2) as f32 * card_origin_gap)

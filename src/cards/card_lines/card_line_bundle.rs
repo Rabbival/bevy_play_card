@@ -7,12 +7,9 @@ pub struct CardLineBundle {
 }
 
 impl CardLineBundle {
-    pub fn new(transform: Transform) -> Self {
+    pub fn from_transform(transform: Transform) -> Self {
         Self {
-            line: CardLine {
-                origin: transform,
-                ..default()
-            },
+            line: CardLine::default().with_origin(transform),
             transform,
         }
     }

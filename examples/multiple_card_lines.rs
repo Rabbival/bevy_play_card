@@ -48,13 +48,15 @@ fn spawn_card_lines(mut line_entities: ResMut<CardLineEntities>, mut commands: C
     ] {
         line_entities.0.push(
             commands
-                .spawn(CardLineBundle::from_card_line(CardLine {
-                    origin: Transform::from_translation(location.into())
-                        .with_rotation(Quat::from_rotation_z(rotation)),
-                    max_cards: MAX_CARDS,
-                    card_origin_gap: 60.0,
-                    ..default()
-                }))
+                .spawn(CardLineBundle::from_card_line(
+                    CardLine::default()
+                        .with_origin(
+                            Transform::from_translation(location.into())
+                                .with_rotation(Quat::from_rotation_z(rotation)),
+                        )
+                        .with_max_cards(MAX_CARDS)
+                        .with_card_origin_gap(60.0),
+                ))
                 .id(),
         );
     }
