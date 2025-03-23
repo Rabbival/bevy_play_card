@@ -40,7 +40,10 @@ fn listen_to_card_line_move_requests(
             let animation_target = card_line_entity.into_target();
             let mut transform_state = animation_target.transform_state(*card_line_transform);
             commands
-                .spawn((Name::new("Card line slide animation parent"),))
+                .spawn((
+                    Name::new("Card line slide animation parent"),
+                    TweenPriorityToOthersOfType(0),
+                ))
                 .animation()
                 .insert(named_tween(
                     Duration::from_secs_f32(card_line.slide_duration),
