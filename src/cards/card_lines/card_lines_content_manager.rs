@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use crate::utilities::calculation_helpers::projection_directed_distance;
 
 pub struct CardLinesContentManagerPlugin;
 
@@ -105,7 +106,7 @@ fn sort_on_dragged_card_movement(
     for (card_index, card_entity) in owner_card_line.cards_in_order.iter().enumerate() {
         if let Ok(card) = card_components_only_query.get(*card_entity) {
             if (card.origin.translation.x - distance_from_origin_signed).abs()
-                < CARD_ORIGIN_GAP / 3.0
+                < owner_card_line.card_origin_gap * (2.0 / 5.0)
             {
                 maybe_new_dragged_card_index = Some(card_index);
             }
@@ -139,24 +140,25 @@ fn set_card_origins_on_line_change(
     mut cards: Query<&mut Card>,
 ) {
     for card_line in &changed_card_lines {
-        let first_card_x =
-            calculate_first_card_distance_from_center(card_line.cards_in_order.len());
+        let first_card_x = calculate_first_card_distance_from_center(card_line);
         for (index, card_entity) in card_line.cards_in_order.iter().enumerate() {
             if let Ok(mut card) = cards.get_mut(*card_entity) {
                 let resulting_translation = card
                     .origin
                     .translation
-                    .with_x(first_card_x + index as f32 * CARD_ORIGIN_GAP);
+                    .with_x(first_card_x + index as f32 * card_line.card_origin_gap);
                 card.origin.translation = resulting_translation;
             }
         }
     }
 }
 
-fn calculate_first_card_distance_from_center(location_count: usize) -> f32 {
+fn calculate_first_card_distance_from_center(card_line: &CardLine) -> f32 {
+    let location_count = card_line.cards_in_order.len();
+    let card_origin_gap = card_line.card_origin_gap;
     if location_count % 2 == 1 {
-        -(((location_count - 1) / 2) as f32 * CARD_ORIGIN_GAP)
+        -(((location_count - 1) / 2) as f32 * card_origin_gap)
     } else {
-        -(((location_count / 2) as f32 * CARD_ORIGIN_GAP) - (CARD_ORIGIN_GAP / 2.0))
+        -(((location_count / 2) as f32 * card_origin_gap) - (card_origin_gap / 2.0))
     }
 }

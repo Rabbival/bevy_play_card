@@ -10,6 +10,10 @@ pub struct TweeningPlugin;
 
 impl Plugin for TweeningPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(TweenRequestPlugin);
+        app.add_plugins((
+            TweenRequestPlugin,
+            DefaultTweenPlugins,
+            AnimationParentDestroyerPlugin,
+        ));
     }
 }

@@ -1,3 +1,4 @@
+use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
@@ -15,14 +16,11 @@ impl Plugin for CardDraggingPlugin {
 
 fn on_drag_start(
     drag_start: Trigger<Pointer<DragStart>>,
-    mut time_scaler_event_writer: EventWriter<SetTimeScaler>,
     mut card_transforms: Query<(&mut Transform, &Card), (With<Card>, Without<CardLine>)>,
     card_line_transforms: Query<&Transform, (With<CardLine>, Without<Card>)>,
     mut commands: Commands,
 ) {
     if let Ok((mut card_transform, card)) = card_transforms.get_mut(drag_start.entity()) {
-        scale_game_time(TIME_SCALER_ON_CARD_DRAG, &mut time_scaler_event_writer);
-
         if let Some(mut entity_commands) = commands.get_entity(drag_start.entity()) {
             entity_commands.insert(Dragged::Actively);
         }
@@ -54,19 +52,18 @@ fn on_drag(
 
 fn back_to_origin_when_unused(
     drag_end: Trigger<Pointer<DragEnd>>,
-    mut time_scaler_event_writer: EventWriter<SetTimeScaler>,
     mut dragged_cards: Query<
         (&mut Transform, Entity, &Card, &mut Dragged, &Name),
         Without<CardLine>,
     >,
     card_lines_query: Query<&Transform, Without<Card>>,
+    card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
     if let Ok((mut card_transform, card_entity, card, mut card_dragged_component, card_name)) =
         dragged_cards.get_mut(drag_end.entity())
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
-        scale_game_time(DEFAULT_TIME_SCALER, &mut time_scaler_event_writer);
 
         if let Some(owner_card_line) = card.owner_line {
             if let (Ok(card_line_transform), Some(mut card_line_commands)) = (
@@ -87,6 +84,7 @@ fn back_to_origin_when_unused(
             card,
             &card_transform,
             card_name,
+            &card_consts,
             &mut commands,
         );
     }
@@ -97,6 +95,7 @@ fn play_card_going_back_to_place_animation(
     card: &Card,
     card_transform: &Transform,
     card_name: &Name,
+    card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
     let animation_target = card_entity.into_target();
@@ -113,7 +112,7 @@ fn play_card_going_back_to_place_animation(
         .insert(sequence((
             parallel((
                 named_tween(
-                    Duration::from_secs_f32(GO_BACK_TO_PLACE_TWEEN_DURATION),
+                    Duration::from_secs_f32(card_consts.go_back_to_place_tween_duration),
                     EaseKind::Linear,
                     transform_state.translation_to(card.origin.translation),
                     format!(
@@ -122,7 +121,7 @@ fn play_card_going_back_to_place_animation(
                     ),
                 ),
                 named_tween(
-                    Duration::from_secs_f32(GO_BACK_TO_PLACE_TWEEN_DURATION),
+                    Duration::from_secs_f32(card_consts.go_back_to_place_tween_duration),
                     EaseKind::Linear,
                     transform_state.rotation_to(card.origin.rotation),
                     format!(
@@ -131,7 +130,7 @@ fn play_card_going_back_to_place_animation(
                     ),
                 ),
                 named_tween(
-                    Duration::from_secs_f32(GO_BACK_TO_PLACE_TWEEN_DURATION),
+                    Duration::from_secs_f32(card_consts.go_back_to_place_tween_duration),
                     EaseKind::Linear,
                     transform_state.scale_to(card.origin.scale),
                     format!("{} go-back-to-origin-after-dragging scale tween", card_name),
@@ -155,13 +154,4 @@ fn listen_to_dragging_done_for_card(
             }
         }
     }
-}
-
-fn scale_game_time(new_scaler: f32, event_writer: &mut EventWriter<SetTimeScaler>) {
-    event_writer.send(SetTimeScaler {
-        scaler_id: TimeScalerId::GameTimeScaler,
-        new_scaler,
-        duration: SLOW_DOWN_AND_SPEED_UP_DURATION,
-        priority: 0,
-    });
 }

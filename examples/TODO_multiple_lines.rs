@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+fn main() {}
+
 pub struct CardsSpawnerPlugin;
 
 impl Plugin for CardsSpawnerPlugin {
@@ -9,7 +11,6 @@ impl Plugin for CardsSpawnerPlugin {
 }
 
 fn spawn_debug_cards_per_debug_request(
-    mut debug_event_listener: EventReader<DebugEvent>,
     mut card_line_request_writer: EventWriter<CardLineRequest>,
     card_line_entities: Res<CardLineEntities>,
     asset_server: Res<AssetServer>,
@@ -62,4 +63,33 @@ fn spawn_debug_card(
             ),
         ))
         .id()
+}
+
+use std::f32::consts::PI;
+
+fn spawn_card_line(mut commands: Commands, mut card_line_entities: ResMut<CardLineEntities>) {
+    let player_card_line = commands
+        .spawn(CardLineBundle::new(Transform::from_xyz(
+            0.0,
+            CARD_LINE_Y,
+            CARD_LINE_Z,
+        )))
+        .id();
+    if FeatureToggle::SpawnDebugCardLines.enabled() {
+        for (rotation, location) in [
+            (PI * 0.5, Vec3::new(400.0, 0.0, CARD_LINE_Z)),
+            (PI, Vec3::new(0.0, 400.0, CARD_LINE_Z)),
+            (PI * 1.5, Vec3::new(-400.0, 0.0, CARD_LINE_Z)),
+        ] {
+            card_line_entities.debug_card_lines.push(
+                commands
+                    .spawn(CardLineBundle::new(
+                        Transform::from_translation(location.into())
+                            .with_rotation(Quat::from_rotation_z(rotation)),
+                    ))
+                    .id(),
+            );
+        }
+    }
+    card_line_entities.player_card_line = Some(player_card_line);
 }

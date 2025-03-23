@@ -1,0 +1,19 @@
+[package]
+name = "bevy_card"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.15.3"
+bevy_tween = "0.7"
+serde = { version = "1.0.219", features = ["derive"] }
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+debug = 1     # less precise locations
+
+# Enable high optimizations for dependencies, but not for our code:
+[profile.dev.package."*"]
+debug = false # no debug symbols for deps
+opt-level = 2 # makes their code smaller too

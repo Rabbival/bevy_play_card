@@ -9,7 +9,18 @@ pub struct CardNamerPlugin;
 
 impl Plugin for CardNamerPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CardNamer>();
+        app.init_resource::<CardNamer>()
+            .add_observer(name_newborn_card);
+    }
+}
+
+fn name_newborn_card(
+    trigger: Trigger<OnAdd, Card>,
+    mut card_namer: ResMut<CardNamer>,
+    mut commands: Commands,
+) {
+    if let Some(mut card_entity_commands) = commands.get_entity(trigger.entity()) {
+        card_entity_commands.insert(card_namer.make_name());
     }
 }
 

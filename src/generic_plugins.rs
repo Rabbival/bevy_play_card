@@ -11,11 +11,7 @@ impl Plugin for GenericPlugins {
         app.add_plugins((
             SendableGenericPlugins::<Translation>::default(),
             SendableGenericPlugins::<Scale>::default(),
-            SendableGenericPlugins::<interpolate::Rotation>::default(),
-            SendableGenericPlugins::<SpriteColor>::default(),
-            SendableGenericPlugins::<DamageCauserInterpolator>::default(),
-            SendableGenericPlugins::<FrameAnimator>::default(),
-            SendableGenericPlugins::<TimeScalerInterpolator>::default(),
+            SendableGenericPlugins::<Rotation>::default(),
         ));
     }
 }

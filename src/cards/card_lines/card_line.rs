@@ -1,6 +1,9 @@
 use crate::prelude::*;
+use crate::utilities::action_performed::ActionPerformed;
+use crate::utilities::vector_utilities::remove_by_value;
 
 #[derive(Component, Debug)]
+#[require(Visibility)]
 pub struct CardLine {
     pub cards_in_order: Vec<Entity>,
     pub origin: Transform,
@@ -30,10 +33,10 @@ impl Default for CardLine {
         Self {
             cards_in_order: vec![],
             origin: Transform::default(),
-            max_cards: CARD_LINE_MAX_CARDS,
-            raised_card_line_delta: RAISED_CARD_LINE_DELTA,
-            slide_duration: CARD_LINE_SLIDE_DURATION,
-            card_origin_gap: CARD_ORIGIN_GAP,
+            max_cards: 6,
+            raised_card_line_delta: 100.0,
+            slide_duration: 0.3,
+            card_origin_gap: 140.0,
         }
     }
 }

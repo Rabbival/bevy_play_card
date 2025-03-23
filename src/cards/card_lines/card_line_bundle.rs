@@ -4,7 +4,6 @@ use crate::prelude::*;
 pub struct CardLineBundle {
     line: CardLine,
     transform: Transform,
-    visibility: Visibility,
 }
 
 impl CardLineBundle {
@@ -15,7 +14,11 @@ impl CardLineBundle {
                 ..default()
             },
             transform,
-            visibility: Visibility::default(),
         }
+    }
+
+    pub fn from_card_line(line: CardLine) -> Self {
+        let transform = line.origin.clone();
+        Self { line, transform }
     }
 }
