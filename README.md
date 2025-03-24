@@ -1,9 +1,7 @@
 # bevy_play_card
 ### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
-
-https://github.com/user-attachments/assets/46059ea1-d988-44ce-9559-a76f1b7afe42
-
+![bevy_card_showcase - Trim](https://github.com/user-attachments/assets/bf92b236-76ce-4beb-b929-eec4c85ce166)
 
 ## How to Use
 ### Registering the Plugin
