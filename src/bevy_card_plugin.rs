@@ -2,14 +2,23 @@ use crate::cards::card_consts::CardConsts;
 use crate::generic_plugins::GenericPlugins;
 use crate::prelude::*;
 
+///A plugin to add all bevy_play_card types and automations
 pub struct BevyCardPlugin {
+    /// How far up cards float when hovered in pixels
     pub card_hover_height: f32,
+    /// How big cards get when hovered compared to its origin scale
     pub on_hover_scale_factor: f32,
+    /// How many seconds it takes for cards to grow in size when hovered
     pub on_hover_scale_duration: f32,
+    /// How many seconds it takes for cards to shrink back to their origin size when no longer hovered
     pub on_hover_cancel_scale_duration: f32,
+    /// How many seconds it takes for cards to float up when hovered
     pub on_hover_position_tween_duration: f32,
+    /// How many seconds it takes for cards to float back to their origin position when no longer hovered
     pub on_hover_cancel_position_tween_duration: f32,
+    /// How many seconds it takes for dragged cards to get back into their origin position
     pub go_back_to_place_tween_duration: f32,
+    /// How many seconds it takes for cards to get to their new origin once set
     pub card_slide_on_origin_set_duration: f32,
 }
 
