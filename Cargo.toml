@@ -1,5 +1,5 @@
 [package]
-name = "bevy_card"
+name = "bevy_play_card"
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/Rabbival/bevy_card"

@@ -1,4 +1,4 @@
-use bevy_card::prelude::*;
+use bevy_play_card::prelude::*;
 use std::f32::consts::PI;
 
 #[derive(Resource, Default)]

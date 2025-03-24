@@ -1,4 +1,5 @@
-use bevy_card::prelude::*;
+use bevy_play_card::prelude::*;
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, BevyCardPlugin::default()))

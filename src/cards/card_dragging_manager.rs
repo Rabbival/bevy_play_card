@@ -42,7 +42,7 @@ fn on_drag_start(
 
 fn on_drag(
     drag: Trigger<Pointer<Drag>>,
-    mut card_transforms: Query<&mut Transform, Without<CardLine>>,
+    mut card_transforms: Query<&mut Transform, With<Card>>,
 ) {
     if let Ok(mut card_transform) = card_transforms.get_mut(drag.entity()) {
         card_transform.translation.x += drag.delta.x;
