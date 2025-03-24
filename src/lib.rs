@@ -1,8 +1,8 @@
 #![allow(clippy::type_complexity)]
 /*!
 ## How to Use
-### Registering the Plugin
-First, you should add `BevyCardPlugin`, it has a `::default()` implementation but can be reconfigured, for example:
+### Registering the [Plugin](src/bevy_card_plugin.rs)
+First, you should add [`BevyCardPlugin`](src/bevy_card_plugin.rs), it has a `::default()` implementation but can be reconfigured, for example:
   ```rust
   app.add_plugins(
     BevyCardPlugin {
@@ -12,9 +12,9 @@ First, you should add `BevyCardPlugin`, it has a `::default()` implementation bu
   );
   ```
 
-### Spawning Cards
+### Spawning [Cards](src/cards/card.rs)
 The basic functionality derived from Bevy Picking is added to Cards automatically.
-All you need to do to instantiate a card is:
+It's recommended to instantiate a card using [card bundle](src/cards/card_bundle.rs)s:
   ```rust
   commands.spawn((
     CardBundle::new(Transform::default()),
@@ -25,14 +25,14 @@ All you need to do to instantiate a card is:
   ));
   ```
 
-### Spawning Card Lines
+### Spawning [Card Lines](src/cards/card_lines/card_line.rs)
 Cards can live on a card line, that'll allow you to reorder them and keep them neatly organized.
 All you need to instantiate a card line is:
   ```rust
   commands
     .spawn(CardLineBundle::from_transform(Transform::default()));
 ```
-Or more specifically using `from_card_line`:
+Or more specifically using [`from_card_line`](src/cards/card_lines/card_line_bundle.rs):
   ```rust
   commands
     .spawn(CardLineBundle::from_card_line(
@@ -46,10 +46,10 @@ Or more specifically using `from_card_line`:
     ));
   ```
 
-### Using Card Line Requests
+### Using [Card Line Requests](src/cards/card_lines/event.rs)
 Although you could interact with the entities directly, you can spare yourself some boilerplate
 by firing events using `EventWriter<CardLineRequest>`, already listened to by the plugin.
-Each `CardLineRequest` contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
+Each [`CardLineRequest`](src/cards/card_lines/event.rs) contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
 The variants of `CardLineRequestType` are as follows:
 
 | Variant              | Role                                                  |
