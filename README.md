@@ -1,4 +1,4 @@
-# bevy_card
+# bevy_play_card
 ### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
 
