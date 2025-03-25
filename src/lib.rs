@@ -151,7 +151,7 @@ pub mod prelude {
         animation_parent_destoryer::*, custom_combinators::*, tween_destoryer::*,
         tween_priority::*, tween_request::*, TweeningPlugin,
     };
-    pub use bevy::{prelude::*, utils::HashMap};
+    pub use bevy::prelude::*;
     pub use bevy_tween::*;
     pub use std::marker::PhantomData;
     pub use tween_event::*;

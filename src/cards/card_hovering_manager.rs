@@ -17,7 +17,7 @@ fn on_hover(
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((transform, entity, card, name)) = cards.get(drag.entity()) {
+    if let Ok((transform, entity, card, name)) = cards.get(drag.target) {
         let animation_target = entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands
@@ -53,7 +53,7 @@ fn on_hover_cancel(
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((transform, entity, card, name)) = cards.get(drag.entity()) {
+    if let Ok((transform, entity, card, name)) = cards.get(drag.target) {
         let animation_target = entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands

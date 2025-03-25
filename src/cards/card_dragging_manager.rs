@@ -20,8 +20,8 @@ fn on_drag_start(
     card_line_transforms: Query<&Transform, (With<CardLine>, Without<Card>)>,
     mut commands: Commands,
 ) {
-    if let Ok((mut card_transform, card)) = card_transforms.get_mut(drag_start.entity()) {
-        if let Some(mut entity_commands) = commands.get_entity(drag_start.entity()) {
+    if let Ok((mut card_transform, card)) = card_transforms.get_mut(drag_start.target) {
+        if let Some(mut entity_commands) = commands.get_entity(drag_start.target) {
             entity_commands.insert(Dragged::Actively);
         }
 
@@ -30,7 +30,7 @@ fn on_drag_start(
                 card_line_transforms.get(card_line),
                 commands.get_entity(card_line),
             ) {
-                card_line_commands.remove_children(&[drag_start.entity()]);
+                card_line_commands.remove_children(&[drag_start.target]);
                 card_transform.translation =
                     card_line_transform.transform_point(card_transform.translation);
                 card_transform.rotation = card_line_transform.rotation * card_transform.rotation;
@@ -44,7 +44,7 @@ fn on_drag(
     drag: Trigger<Pointer<Drag>>,
     mut card_transforms: Query<&mut Transform, With<Card>>,
 ) {
-    if let Ok(mut card_transform) = card_transforms.get_mut(drag.entity()) {
+    if let Ok(mut card_transform) = card_transforms.get_mut(drag.target) {
         card_transform.translation.x += drag.delta.x;
         card_transform.translation.y -= drag.delta.y;
     }
@@ -61,7 +61,7 @@ fn back_to_origin_when_unused(
     mut commands: Commands,
 ) {
     if let Ok((mut card_transform, card_entity, card, mut card_dragged_component, card_name)) =
-        dragged_cards.get_mut(drag_end.entity())
+        dragged_cards.get_mut(drag_end.target)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
 

@@ -29,7 +29,7 @@ pub fn despawn_done_time_runners(
 ) {
     for event in time_runner_ended_reader.read() {
         if event.is_completed() {
-            commands.entity(event.time_runner).try_despawn_recursive();
+            commands.entity(event.time_runner).try_despawn();
         }
     }
 }

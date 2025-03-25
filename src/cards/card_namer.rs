@@ -19,7 +19,7 @@ fn name_newborn_card(
     mut card_namer: ResMut<CardNamer>,
     mut commands: Commands,
 ) {
-    if let Some(mut card_entity_commands) = commands.get_entity(trigger.entity()) {
+    if let Some(mut card_entity_commands) = commands.get_entity(trigger.target) {
         card_entity_commands.insert(card_namer.make_name());
     }
 }

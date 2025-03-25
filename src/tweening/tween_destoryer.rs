@@ -43,7 +43,7 @@ fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
 ) {
     for (mut tween, tween_entity) in &mut query {
         remove_target_and_destroy_if_has_none(
-            &vec![trigger.entity()],
+            &vec![trigger.target],
             tween_entity,
             &mut tween,
             &mut commands,
@@ -56,14 +56,14 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
     tween_priorities_query: Query<&TweenPriorityToOthersOfType>,
     all_tweens_of_type: Query<(
         &ComponentTween<T>,
-        &Parent,
+        &ChildOf,
         Option<&TweenPriorityToOthersOfType>,
         Entity,
     )>,
     newborn_tweens_query: Query<
         (
             &ComponentTween<T>,
-            &Parent,
+            &ChildOf,
             Entity,
             Option<&TweenPriorityToOthersOfType>,
         ),
@@ -101,7 +101,7 @@ fn handle_tween_priority_to_others_of_type<T: Sendable>(
     newborn_tween_entity: Entity,
     all_tweens_of_type: &Query<(
         &ComponentTween<T>,
-        &Parent,
+        &ChildOf,
         Option<&TweenPriorityToOthersOfType>,
         Entity,
     )>,
@@ -198,13 +198,13 @@ fn remove_target_and_destroy_if_has_none<T: Sendable>(
     match &mut tween.target {
         TargetComponent::Entity(tween_target) => {
             if targets_to_match.contains(tween_target) {
-                commands.entity(tween_entity).try_despawn_recursive();
+                commands.entity(tween_entity).try_despawn();
             }
         }
         TargetComponent::Entities(tween_targets) => {
             tween_targets.retain(|target| !targets_to_match.contains(target));
             if tween_targets.is_empty() {
-                commands.entity(tween_entity).try_despawn_recursive();
+                commands.entity(tween_entity).try_despawn();
             }
         }
         _ => {}
