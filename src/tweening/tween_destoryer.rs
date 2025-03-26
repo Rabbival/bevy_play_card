@@ -43,7 +43,7 @@ fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
 ) {
     for (mut tween, tween_entity) in &mut query {
         remove_target_and_destroy_if_has_none(
-            &vec![trigger.entity()],
+            &[trigger.entity()],
             tween_entity,
             &mut tween,
             &mut commands,
