@@ -31,7 +31,7 @@ fn listen_to_card_removal_requests(
                 if card_removed.done() {
                     commands
                         .entity(request.line)
-                        .remove_children(&vec![card_entity]);
+                        .remove_children(&[card_entity]);
                     if let Ok(mut card) = cards.get_mut(card_entity) {
                         card.owner_line = None;
                     }
@@ -78,7 +78,7 @@ fn listen_to_dragged_card_movements(
         if let Some(card_line_entity) = dragged_card.owner_line {
             if let Ok((mut card_line, card_line_transform)) = card_lines.get_mut(card_line_entity) {
                 sort_on_dragged_card_movement(
-                    &dragged_card_transform,
+                    dragged_card_transform,
                     dragged_card_entity,
                     &cards,
                     &mut card_line,

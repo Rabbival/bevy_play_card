@@ -27,6 +27,7 @@ It's recommended to instantiate a card using [card bundle](src/cards/card_bundle
     },
   ));
   ```
+Cards are named automatically by the [card_namer](src/cards/card_namer.rs).
 
 ### Spawning [Card Lines](src/cards/card_lines/card_line.rs)
 Cards can live on a card line, that'll allow you to reorder them and keep them neatly organized. 
@@ -61,6 +62,14 @@ The variants of `CardLineRequestType` are as follows:
 | `LowerCardLine`      | Lowers the card line back to place after being raised |
 | `AddToCardLine`      | Inserts the card to the line if possible              |
 | `RemoveCardFromLine` | Removes the card from the line if it was there        |
+
+### Hovered And Dragged [Tags](src/cards/tags.rs)
+Cards are being tagged for easier queries when they're hovered and dragged (the tags are removed when the action is done).
+This way you can, for example, get all hovered card with queries like:
+`
+  Query<&Card, With<Hovered>>
+`
+For use examples, see [using_hovered_and_dragged_cards.rs](examples/using_hovered_and_dragged_cards.rs)
 
 ### Workflow Example
 Let's spawn a line and add a few cards to it, 

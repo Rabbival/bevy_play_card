@@ -20,7 +20,7 @@ impl CardLineBundle {
 
     /// Initiates from a given card-line, assigning the provided origin value to the Transform component
     pub fn from_card_line(line: CardLine) -> Self {
-        let transform = line.origin.clone();
+        let transform = line.origin;
         Self { line, transform }
     }
 }
