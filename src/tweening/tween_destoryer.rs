@@ -190,7 +190,7 @@ fn listen_to_remove_entity_from_tween_targets_requests<T: Sendable>(
 }
 
 fn remove_target_and_destroy_if_has_none<T: Sendable>(
-    targets_to_match: &Vec<Entity>,
+    targets_to_match: &[Entity],
     tween_entity: Entity,
     tween: &mut ComponentTween<T>,
     commands: &mut Commands,

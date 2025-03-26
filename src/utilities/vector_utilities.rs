@@ -6,6 +6,6 @@ pub fn remove_by_value<T: PartialEq>(
     optional_index_to_remove.map(|index_to_remove| vec_to_remove_from.remove(index_to_remove))
 }
 
-pub fn item_to_index<T: PartialEq>(item_to_find: &T, vec_to_find_in: &Vec<T>) -> Option<usize> {
+pub fn item_to_index<T: PartialEq>(item_to_find: &T, vec_to_find_in: &[T]) -> Option<usize> {
     vec_to_find_in.iter().position(|x| *x == *item_to_find)
 }
