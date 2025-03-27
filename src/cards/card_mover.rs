@@ -24,7 +24,10 @@ fn slide_all_cards_to_their_origins(
 ) {
     for (card_entity, card, card_transform, maybe_dragged, card_name) in &cards {
         if let Some(Dragged::Actively) = maybe_dragged {
-            return;
+            continue;
+        }
+        if card_transform.translation == card.origin.translation {
+            continue;
         }
         let animation_target = card_entity.into_target();
         let mut transform_state = animation_target.transform_state(*card_transform);
