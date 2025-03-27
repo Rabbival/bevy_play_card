@@ -2,13 +2,7 @@ use bevy_play_card::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins((
-            DefaultPlugins,
-            BevyCardPlugin {
-                enable_tweening_debug_logs: true,
-                ..Default::default()
-            },
-        ))
+        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
         .add_systems(Startup, (setup, spawn_cards_on_a_line).chain())
         .run();
 }
