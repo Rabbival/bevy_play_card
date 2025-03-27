@@ -21,15 +21,18 @@ impl<T: Sendable> Plugin for TweenDestroyerPlugin<T> {
 
 fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
     trigger: Trigger<TweenRequest>,
-    mut tweens_of_type: Query<(&mut ComponentTween<T>, Entity)>,
+    mut tweens_of_type: Query<(&mut ComponentTween<T>, Entity, Option<&Name>)>,
+    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
     mut commands: Commands,
 ) {
     if let TweenRequest::RemoveTargetsFromAllTweensTargetingThem(entities) = trigger.event() {
-        for (mut tween, tween_entity) in &mut tweens_of_type {
+        for (mut tween, tween_entity, maybe_tween_name) in &mut tweens_of_type {
             remove_target_and_destroy_if_has_none(
                 entities,
                 tween_entity,
                 &mut tween,
+                maybe_tween_name,
+                debug_logs_enabled.0,
                 &mut commands,
             );
         }
@@ -38,14 +41,17 @@ fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
 
 fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
     trigger: Trigger<OnRemove, AnimationTarget>,
-    mut query: Query<(&mut ComponentTween<T>, Entity)>,
+    mut query: Query<(&mut ComponentTween<T>, Option<&Name>, Entity)>,
+    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
     mut commands: Commands,
 ) {
-    for (mut tween, tween_entity) in &mut query {
+    for (mut tween, maybe_tween_name, tween_entity) in &mut query {
         remove_target_and_destroy_if_has_none(
             &[trigger.target],
             tween_entity,
             &mut tween,
+            maybe_tween_name,
+            debug_logs_enabled.0,
             &mut commands,
         );
     }
@@ -66,12 +72,21 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
             &ChildOf,
             Entity,
             Option<&TweenPriorityToOthersOfType>,
+            Option<&Name>,
         ),
         Added<ComponentTween<T>>,
     >,
+    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
 ) {
-    for (newborn_tween, parent, newborn_tween_entity, maybe_tween_priority) in &newborn_tweens_query
+    for (newborn_tween, parent, newborn_tween_entity, maybe_tween_priority, maybe_tween_name) in
+        &newborn_tweens_query
     {
+        if debug_logs_enabled.0 {
+            info!(
+                "{} spawned, looking for tweens to destroy by priority",
+                maybe_tween_name.unwrap_or(&Name::new("A nameless tween with priority"))
+            );
+        }
         if let Some(priority) = maybe_tween_priority {
             handle_tween_priority_to_others_of_type(
                 &mut tween_request_writer,
@@ -172,17 +187,20 @@ fn remove_intersecting_targets_for_weaker_tween<T: Sendable>(
 
 fn listen_to_remove_entity_from_tween_targets_requests<T: Sendable>(
     mut tween_request_reader: EventReader<TweenRequest>,
-    mut tweens_of_type: Query<&mut ComponentTween<T>>,
+    mut tweens_of_type: Query<(&mut ComponentTween<T>, Option<&Name>)>,
+    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
     mut commands: Commands,
 ) {
     for remove_request in
         read_single_field_variant!(tween_request_reader, TweenRequest::RemoveEntity)
     {
-        if let Ok(mut tween) = tweens_of_type.get_mut(remove_request.tween_entity) {
+        if let Ok((mut tween, maybe_name)) = tweens_of_type.get_mut(remove_request.tween_entity) {
             remove_target_and_destroy_if_has_none(
                 &remove_request.targets_to_remove,
                 remove_request.tween_entity,
                 &mut tween,
+                maybe_name,
+                debug_logs_enabled.0,
                 &mut commands,
             );
         }
@@ -190,19 +208,34 @@ fn listen_to_remove_entity_from_tween_targets_requests<T: Sendable>(
 }
 
 fn remove_target_and_destroy_if_has_none<T: Sendable>(
-    targets_to_match: &[Entity],
+    targets_to_match: &Vec<Entity>,
     tween_entity: Entity,
     tween: &mut ComponentTween<T>,
+    maybe_tween_name: Option<&Name>,
+    debug_logs_enabled: bool,
     commands: &mut Commands,
 ) {
     match &mut tween.target {
         TargetComponent::Entity(tween_target) => {
             if targets_to_match.contains(tween_target) {
                 commands.entity(tween_entity).try_despawn();
+                if debug_logs_enabled {
+                    info!(
+                        "destroying tween: {}",
+                        maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
+                    );
+                }
             }
         }
         TargetComponent::Entities(tween_targets) => {
             tween_targets.retain(|target| !targets_to_match.contains(target));
+            if debug_logs_enabled {
+                info!(
+                    "removing targets {:?} from tween: {}",
+                    targets_to_match,
+                    maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
+                );
+            }
             if tween_targets.is_empty() {
                 commands.entity(tween_entity).try_despawn();
             }

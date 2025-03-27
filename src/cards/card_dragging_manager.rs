@@ -106,7 +106,7 @@ fn play_card_going_back_to_place_animation(
                 "Go-back-to-origin-after-dragging animation parent for {}",
                 card_name
             )),
-            TweenPriorityToOthersOfType(1),
+            TweenPriorityToOthersOfType(2),
         ))
         .animation()
         .insert(sequence((
