@@ -42,7 +42,7 @@ fn listen_to_card_line_move_requests(
             commands
                 .spawn((
                     Name::new("Card line slide animation parent"),
-                    TweenPriorityToOthersOfType(0),
+                    TweenPriorityToOthersOfType(1),
                 ))
                 .animation()
                 .insert(named_tween(

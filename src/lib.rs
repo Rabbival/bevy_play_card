@@ -152,13 +152,14 @@ pub mod prelude {
         card_namer::*,
         event::*,
         tags::*,
-        CardsPlugin,
+        CardsPlugin, CardsPluginShouldPrintLogs,
     };
     pub use crate::trait_unions::*;
     pub use crate::tweening::{
         animation_parent_destoryer::*, custom_combinators::*, tween_destoryer::*,
-        tween_priority::*, tween_request::*, TweeningPlugin,
+        tween_priority::*, tween_request::*, TweeningPlugin, TweeningPluginShouldPrintLogs,
     };
+    pub use crate::utilities::system_sets::*;
     pub use bevy::{prelude::*, utils::HashMap};
     pub use bevy_tween::*;
     pub use std::marker::PhantomData;

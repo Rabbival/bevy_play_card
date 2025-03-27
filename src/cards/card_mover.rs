@@ -9,7 +9,11 @@ pub struct CardMoverPlugin;
 
 impl Plugin for CardMoverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, slide_all_cards_to_their_origins);
+        app.add_systems(
+            Update,
+            slide_all_cards_to_their_origins
+                .in_set(CardsOrderingSystemSet::SlideToNewOriginTweenFIring),
+        );
     }
 }
 
@@ -18,6 +22,12 @@ fn slide_all_cards_to_their_origins(
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
+    //DEBUG
+    if cards.iter().count() == 0 {
+        return;
+    }
+    info!("hm");
+
     for (card_entity, card, card_transform, maybe_dragged, card_name) in &cards {
         if let Some(Dragged::Actively) = maybe_dragged {
             return;

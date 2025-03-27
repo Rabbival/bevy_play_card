@@ -2,7 +2,13 @@ use bevy_play_card::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
+        .add_plugins((
+            DefaultPlugins,
+            BevyCardPlugin {
+                enable_tweening_debug_logs: true,
+                ..Default::default()
+            },
+        ))
         .add_systems(Startup, (setup, spawn_cards_on_a_line).chain())
         .run();
 }
@@ -16,8 +22,9 @@ fn spawn_cards_on_a_line(
     let line = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
-              .with_max_cards(cards_count)
-              .with_card_origin_gap(100.0)))
+                .with_max_cards(cards_count)
+                .with_card_origin_gap(100.0),
+        ))
         .id();
     for _ in 0..cards_count {
         let card_entity = commands
