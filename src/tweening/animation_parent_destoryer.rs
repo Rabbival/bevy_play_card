@@ -32,13 +32,14 @@ pub fn despawn_done_time_runners(
 }
 
 pub fn despawn_time_runners_with_no_children<T: Sendable>(
-    destoryed_tween: Trigger<OnRemove, ComponentTween<T>>,
+    mut trigger: Trigger<OnRemove, ComponentTween<T>>,
     time_runners: Query<(&Children, Entity), With<TimeRunner>>,
     mut commands: Commands,
 ) {
+    trigger.propagate(false);
     'time_runners_for: for (time_runner_children, time_runner_entity) in &time_runners {
         for child in time_runner_children.iter() {
-            if child != destoryed_tween.target() {
+            if child != trigger.target() {
                 continue 'time_runners_for;
             }
         }

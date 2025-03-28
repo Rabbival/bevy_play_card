@@ -133,6 +133,7 @@ Ending up with:
 ## Bevy Version Support
 | `bevy` | `bevy_tween` |
 |--------|--------------|
+| 0.16   | 0.2          |
 | 0.15   | 0.1          |
 
 ## Credits

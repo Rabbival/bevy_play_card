@@ -12,11 +12,12 @@ impl Plugin for CardHoveringPlugin {
 }
 
 fn on_hover(
-    trigger: Trigger<Pointer<Over>>,
+    mut trigger: Trigger<Pointer<Over>>,
     cards: Query<(&Transform, Entity, &Card, &Name)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
+    trigger.propagate(false);
     if let Ok((transform, entity, card, name)) = cards.get(trigger.target) {
         commands.entity(entity).insert(Hovered);
         let animation_target = entity.into_target();
@@ -49,11 +50,12 @@ fn on_hover(
 }
 
 fn on_hover_cancel(
-    trigger: Trigger<Pointer<Out>>,
+    mut trigger: Trigger<Pointer<Out>>,
     cards: Query<(&Transform, Entity, &Card, &Name), Without<Dragged>>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
+    trigger.propagate(false);
     if let Ok((transform, entity, card, name)) = cards.get(trigger.target) {
         commands.entity(entity).remove::<Hovered>();
         let animation_target = entity.into_target();

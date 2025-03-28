@@ -1,7 +1,7 @@
 [package]
 name = "bevy_play_card"
-version = "0.1.4"
-edition = "2021"
+version = "0.2.0"
+edition = "2024"
 repository = "https://github.com/Rabbival/bevy_play_card"
 homepage = "https://github.com/Rabbival/bevy_play_card"
 license = "MIT OR Apache-2.0"
