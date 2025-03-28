@@ -28,15 +28,20 @@ fn listen_to_card_removal_requests(
     mut commands: Commands,
 ) {
     for request in card_line_request_reader.read() {
-        if let CardLineRequestType::RemoveCardFromLine { card_entity } = request.request_type {
+        if let CardLineRequestType::RemoveCardFromLine {
+            card_entity: card_entity_to_remove,
+        } = request.request_type
+        {
             if let Ok(mut card_line) = card_lines.get_mut(request.line) {
                 let mut card_name_if_removed = None;
-                let card_removed = card_line.remove_card_if_found(card_entity);
+                let card_removed = card_line.remove_card_if_found(card_entity_to_remove);
                 if card_removed.done() {
-                    commands
-                        .entity(request.line)
-                        .remove_children(&[card_entity]);
-                    if let Ok((mut card, card_name)) = cards.get_mut(card_entity) {
+                    if let Ok(mut card_entity_to_remove_commands) =
+                        commands.get_entity(card_entity_to_remove)
+                    {
+                        card_entity_to_remove_commands.remove_parent_in_place();
+                    }
+                    if let Ok((mut card, card_name)) = cards.get_mut(card_entity_to_remove) {
                         card.owner_line = None;
                         card_name_if_removed = Some(card_name.clone());
                     }

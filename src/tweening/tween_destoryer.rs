@@ -47,7 +47,7 @@ fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
 ) {
     for (mut tween, maybe_tween_name, tween_entity) in &mut query {
         remove_target_and_destroy_if_has_none(
-            &[trigger.target],
+            &vec![trigger.target()],
             tween_entity,
             &mut tween,
             maybe_tween_name,
@@ -78,7 +78,7 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
     >,
     debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
 ) {
-    for (newborn_tween, parent, newborn_tween_entity, maybe_tween_priority, maybe_tween_name) in
+    for (newborn_tween, child_of, newborn_tween_entity, maybe_tween_priority, maybe_tween_name) in
         &newborn_tweens_query
     {
         if debug_logs_enabled.0 {
@@ -96,7 +96,7 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
                 &all_tweens_of_type,
                 &tween_priorities_query,
             );
-        } else if let Ok(parent_priority) = tween_priorities_query.get(parent.get()) {
+        } else if let Ok(parent_priority) = tween_priorities_query.get(child_of.parent) {
             handle_tween_priority_to_others_of_type(
                 &mut tween_request_writer,
                 parent_priority,
@@ -122,11 +122,11 @@ fn handle_tween_priority_to_others_of_type<T: Sendable>(
     )>,
     tween_priorities_query: &Query<&TweenPriorityToOthersOfType>,
 ) {
-    for (other_tween, parent, maybe_other_priority, other_tween_entity) in all_tweens_of_type {
+    for (other_tween, child_of, maybe_other_priority, other_tween_entity) in all_tweens_of_type {
         if other_tween_entity != newborn_tween_entity {
             if let Some(other_priority_level) = try_get_other_tween_priority(
                 maybe_other_priority,
-                parent.get(),
+                child_of.parent,
                 tween_priorities_query,
             ) {
                 if other_priority_level <= tween_priority.0 {
@@ -170,13 +170,13 @@ fn remove_intersecting_targets_for_weaker_tween<T: Sendable>(
 ) {
     match &dominant_tween.target {
         TargetComponent::Entity(dominant_target) => {
-            tween_request_writer.send(TweenRequest::RemoveEntity(RemoveTweenTargets {
+            tween_request_writer.write(TweenRequest::RemoveEntity(RemoveTweenTargets {
                 tween_entity: weaker_tween_entity,
                 targets_to_remove: vec![*dominant_target],
             }));
         }
         TargetComponent::Entities(dominant_targets) => {
-            tween_request_writer.send(TweenRequest::RemoveEntity(RemoveTweenTargets {
+            tween_request_writer.write(TweenRequest::RemoveEntity(RemoveTweenTargets {
                 tween_entity: weaker_tween_entity,
                 targets_to_remove: dominant_targets.clone(),
             }));

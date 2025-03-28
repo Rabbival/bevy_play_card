@@ -63,7 +63,7 @@ fn spawn_card_lines(mut line_entities: ResMut<CardLineEntities>, mut commands: C
 }
 
 fn request_initial_card_spawn(mut spawn_request_writer: EventWriter<SpawnCardPlease>) {
-    spawn_request_writer.send(SpawnCardPlease);
+    spawn_request_writer.write(SpawnCardPlease);
 }
 
 fn listen_to_card_addition_requests(
@@ -74,6 +74,7 @@ fn listen_to_card_addition_requests(
     mut commands: Commands,
 ) {
     for _ in spawn_request_reader.read() {
+        let mut card_addition_requests = vec![];
         for line_entity in &line_entities.0 {
             let card_entity = commands
                 .spawn((
@@ -84,11 +85,12 @@ fn listen_to_card_addition_requests(
                     CardBundle::new(Transform::from_scale(Vec3::splat(0.25))),
                 ))
                 .id();
-            card_line_request_writer.send(CardLineRequest {
+            card_addition_requests.push(CardLineRequest {
                 line: *line_entity,
                 request_type: CardLineRequestType::AddToCardLine { card_entity },
             });
         }
+        card_line_request_writer.write_batch(card_addition_requests);
     }
 }
 
@@ -101,7 +103,7 @@ fn listen_to_keyboard_input(
 ) {
     if keys.just_pressed(KeyCode::Space) {
         for line_entity in &line_entities.0 {
-            card_line_request_writer.send(CardLineRequest {
+            card_line_request_writer.write(CardLineRequest {
                 line: *line_entity,
                 request_type: CardLineRequestType::RaiseCardLine,
             });
@@ -109,7 +111,7 @@ fn listen_to_keyboard_input(
     }
     if keys.just_released(KeyCode::Space) {
         for line_entity in &line_entities.0 {
-            card_line_request_writer.send(CardLineRequest {
+            card_line_request_writer.write(CardLineRequest {
                 line: *line_entity,
                 request_type: CardLineRequestType::LowerCardLine,
             });
@@ -117,7 +119,7 @@ fn listen_to_keyboard_input(
     }
     if keys.just_pressed(KeyCode::KeyS) {
         if cards.iter().count() < MAX_CARDS * line_entities.0.len() {
-            spawn_request_writer.send(SpawnCardPlease);
+            spawn_request_writer.write(SpawnCardPlease);
         }
     }
 }

@@ -20,10 +20,10 @@ fn name_newborn_card(
     named_cards: Query<(), (With<Card>, With<Name>)>,
     mut commands: Commands,
 ) {
-    if named_cards.get(trigger.target).is_ok(){
+    if named_cards.get(trigger.target()).is_ok() {
         return;
     }
-    if let Some(mut card_entity_commands) = commands.get_entity(trigger.target) {
+    if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target()) {
         card_entity_commands.insert(card_namer.make_name());
     }
 }

@@ -83,7 +83,7 @@ The shape of the loop is as follows:
   ```rust
   for _ in 0..3 {
     let card_entity = commands.spawn(( ... )).id();
-    card_line_request_writer.send(CardLineRequest { ... });
+    card_line_request_writer.write(CardLineRequest { ... });
   }
   ```
 
@@ -100,7 +100,7 @@ An example for card spawning would be:
 ```
 With the appropriate addition request:
 ```rust
-  card_line_request_writer.send(CardLineRequest {
+  card_line_request_writer.write(CardLineRequest {
     line: line_entity,
     request_type: CardLineRequestType::AddToCardLine { card_entity },
   });
@@ -119,7 +119,7 @@ Ending up with:
           },
           CardBundle::new(Transform::default()),
         )).id();
-    card_line_request_writer.send(CardLineRequest {
+    card_line_request_writer.write(CardLineRequest {
       line: line_entity,
       request_type: CardLineRequestType::AddToCardLine { card_entity },
     });
@@ -160,7 +160,7 @@ pub mod prelude {
         tween_priority::*, tween_request::*, TweeningPlugin, TweeningPluginShouldPrintLogs,
     };
     pub use crate::utilities::system_sets::*;
-    pub use bevy::{prelude::*, utils::HashMap};
+    pub use bevy::{platform_support::collections::HashMap, prelude::*};
     pub use bevy_tween::*;
     pub use std::marker::PhantomData;
     pub use tween_event::*;

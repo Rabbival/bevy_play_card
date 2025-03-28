@@ -8,10 +8,7 @@ pub struct AnimationParentDestroyerPlugin;
 
 impl Plugin for AnimationParentDestroyerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-                despawn_done_time_runners,
-        );
+        app.add_systems(Update, despawn_done_time_runners);
     }
 }
 
@@ -37,16 +34,16 @@ pub fn despawn_done_time_runners(
 pub fn despawn_time_runners_with_no_children<T: Sendable>(
     destoryed_tween: Trigger<OnRemove, ComponentTween<T>>,
     time_runners: Query<(&Children, Entity), With<TimeRunner>>,
-    mut commands: Commands
+    mut commands: Commands,
 ) {
     'time_runners_for: for (time_runner_children, time_runner_entity) in &time_runners {
         for child in time_runner_children.iter() {
-            if *child != destoryed_tween.entity(){
+            if child != destoryed_tween.target() {
                 continue 'time_runners_for;
             }
         }
-        if let Some(entity_commands) = commands.get_entity(time_runner_entity){
-            entity_commands.try_despawn_recursive();
+        if let Ok(mut entity_commands) = commands.get_entity(time_runner_entity) {
+            entity_commands.try_despawn();
         }
     }
 }

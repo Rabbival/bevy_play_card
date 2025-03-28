@@ -20,6 +20,7 @@ fn spawn_cards_on_a_line(
                 .with_card_origin_gap(100.0),
         ))
         .id();
+    let mut card_addition_requests = vec![];
     for _ in 0..cards_count {
         let card_entity = commands
             .spawn((
@@ -30,11 +31,12 @@ fn spawn_cards_on_a_line(
                 CardBundle::new(Transform::from_scale(Vec3::splat(0.4))),
             ))
             .id();
-        card_line_request_writer.send(CardLineRequest {
+        card_addition_requests.push(CardLineRequest {
             line,
             request_type: CardLineRequestType::AddToCardLine { card_entity },
         });
     }
+    card_line_request_writer.write_batch(card_addition_requests);
 }
 
 fn setup(mut commands: Commands) {

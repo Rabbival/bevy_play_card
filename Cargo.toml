@@ -12,8 +12,8 @@ keywords = ["bevy", "card", "cards"]
 categories = ["game-development"]
 
 [dependencies]
-bevy = "0.16.0-rc.1"
-bevy_tween = "0.7"
+bevy = "0.16.0-rc.2"
+bevy_tween = { git = "https://github.com/Multirious/bevy_tween", branch = "bevy-v0.16.0" }
 serde = { version = "1.0.219", features = ["derive"] }
 
 # Enable a small amount of optimization in debug mode

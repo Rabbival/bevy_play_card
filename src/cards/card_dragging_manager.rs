@@ -16,34 +16,20 @@ impl Plugin for CardDraggingPlugin {
 
 fn on_drag_start(
     drag_start: Trigger<Pointer<DragStart>>,
-    mut card_transforms: Query<(&mut Transform, &Card), (With<Card>, Without<CardLine>)>,
-    card_line_transforms: Query<&Transform, (With<CardLine>, Without<Card>)>,
+    mut card_transforms: Query<&Card>,
     mut commands: Commands,
 ) {
-    if let Ok((mut card_transform, card)) = card_transforms.get_mut(drag_start.target) {
-        if let Some(mut entity_commands) = commands.get_entity(drag_start.target) {
+    if let Ok(card) = card_transforms.get_mut(drag_start.target) {
+        if let Ok(mut entity_commands) = commands.get_entity(drag_start.target) {
             entity_commands.insert(Dragged::Actively);
-        }
-
-        if let Some(card_line) = card.owner_line {
-            if let (Ok(card_line_transform), Some(mut card_line_commands)) = (
-                card_line_transforms.get(card_line),
-                commands.get_entity(card_line),
-            ) {
-                card_line_commands.remove_children(&[drag_start.target]);
-                card_transform.translation =
-                    card_line_transform.transform_point(card_transform.translation);
-                card_transform.rotation = card_line_transform.rotation * card_transform.rotation;
-                card_transform.scale *= card_line_transform.scale;
+            if card.owner_line.is_some() {
+                entity_commands.remove_parent_in_place();
             }
         }
     }
 }
 
-fn on_drag(
-    drag: Trigger<Pointer<Drag>>,
-    mut card_transforms: Query<&mut Transform, With<Card>>,
-) {
+fn on_drag(drag: Trigger<Pointer<Drag>>, mut card_transforms: Query<&mut Transform, With<Card>>) {
     if let Ok(mut card_transform) = card_transforms.get_mut(drag.target) {
         card_transform.translation.x += drag.delta.x;
         card_transform.translation.y -= drag.delta.y;
@@ -66,7 +52,7 @@ fn back_to_origin_when_unused(
         *card_dragged_component = Dragged::GoingBackToPlace;
 
         if let Some(owner_card_line) = card.owner_line {
-            if let (Ok(card_line_transform), Some(mut card_line_commands)) = (
+            if let (Ok(card_line_transform), Ok(mut card_line_commands)) = (
                 card_lines_query.get(owner_card_line),
                 commands.get_entity(owner_card_line),
             ) {
@@ -149,7 +135,7 @@ fn listen_to_dragging_done_for_card(
 ) {
     if let Some(entity) = trigger.data.card_entity {
         if let Ok(_card) = cards.get(entity) {
-            if let Some(mut entity_commands) = commands.get_entity(entity) {
+            if let Ok(mut entity_commands) = commands.get_entity(entity) {
                 entity_commands.remove::<Dragged>();
             }
         }
