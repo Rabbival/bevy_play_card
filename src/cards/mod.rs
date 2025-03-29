@@ -6,12 +6,13 @@ pub mod card_consts;
 pub mod card_dragging_manager;
 pub mod card_hovering_manager;
 pub mod card_lines;
-pub mod card_mover;
 pub mod card_namer;
+pub mod card_origin_set_listener;
+pub mod card_picking_manager;
 pub mod event;
 pub mod tags;
 
-pub struct CardsPlugin{
+pub struct CardsPlugin {
     pub print_debug_logs: bool,
 }
 
@@ -22,12 +23,13 @@ impl Plugin for CardsPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(CardsPluginShouldPrintLogs(self.print_debug_logs))
             .add_plugins((
-            CardsEventsPlugin,
-            CardMoverPlugin,
-            CardDraggingPlugin,
-            CardHoveringPlugin,
-            CardLinesPlugin,
-            CardNamerPlugin,
-        ));
+                CardsEventsPlugin,
+                CardOriginSetListenerPlugin,
+                CardDraggingPlugin,
+                CardHoveringPlugin,
+                CardLinesPlugin,
+                CardNamerPlugin,
+                CardPickingPlugin,
+            ));
     }
 }

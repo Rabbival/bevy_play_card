@@ -3,7 +3,7 @@ use crate::prelude::*;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum CardsOrderingSystemSet {
     OriginSetting,
-    SlideToNewOriginTweenFIring,
+    NewOriginSetTweenFiring,
 }
 
 pub struct CardsSystemSetsPlugin;
@@ -14,7 +14,7 @@ impl Plugin for CardsSystemSetsPlugin {
             Update,
             ((
                 CardsOrderingSystemSet::OriginSetting,
-                CardsOrderingSystemSet::SlideToNewOriginTweenFIring,
+                CardsOrderingSystemSet::NewOriginSetTweenFiring,
             )
                 .chain(),),
         );

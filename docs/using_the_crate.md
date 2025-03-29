@@ -61,13 +61,21 @@ The variants of `CardLineRequestType` are as follows:
 | `AddToCardLine`      | Inserts the card to the line if possible              |
 | `RemoveCardFromLine` | Removes the card from the line if it was there        |
 
-### Hovered And Dragged [Tags](src/cards/tags.rs)
-Cards are being tagged for easier queries when they're hovered and dragged (the tags are removed when the action is done).
+### Card [Tags](src/cards/tags.rs)
+Cards are being tagged for easier queries when they're hovered, picked and dragged.
+`Hovered` and `Dragged` are removed once the status is done, `Picked` is toggled by clicking.
 This way you can, for example, get all hovered card with queries like:
 `
   Query<&Card, With<Hovered>>
 `
-For use examples, see [using_hovered_and_dragged_cards.rs](examples/using_hovered_and_dragged_cards.rs)
+
+| Tag       | Visually                                                                                      |
+|-----------|-----------------------------------------------------------------------------------------------|
+| `Hovered` | The card would hover up a bit                                                                 |
+| `Dragged` | The card would follow your cursor, ignoring line movements, going back to place once released |
+| `Picked`  | The card would stay on hover height, ignoring the cursor leaving its area                     |
+
+For use examples, see [using_card_tags.rs](../examples/using_card_tags.rs)
 
 ### Workflow Example
 Let's spawn a line and add a few cards to it,

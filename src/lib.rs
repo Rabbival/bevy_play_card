@@ -1,6 +1,9 @@
 #![allow(clippy::type_complexity)]
 /*!
-## How to Use
+## Using The Crate
+
+[(Click me to go back to the main readme)](../README.md)
+
 ### Registering the [Plugin](src/bevy_card_plugin.rs)
 First, you should add [`BevyCardPlugin`](src/bevy_card_plugin.rs), it has a `::default()` implementation but can be reconfigured, for example:
   ```rust
@@ -24,6 +27,7 @@ It's recommended to instantiate a card using [card bundle](src/cards/card_bundle
     },
   ));
   ```
+Cards are named automatically by the [card_namer](src/cards/card_namer.rs).
 
 ### Spawning [Card Lines](src/cards/card_lines/card_line.rs)
 Cards can live on a card line, that'll allow you to reorder them and keep them neatly organized.
@@ -59,13 +63,21 @@ The variants of `CardLineRequestType` are as follows:
 | `AddToCardLine`      | Inserts the card to the line if possible              |
 | `RemoveCardFromLine` | Removes the card from the line if it was there        |
 
-### Hovered And Dragged [Tags](src/cards/tags.rs)
-Cards are being tagged for easier queries when they're hovered and dragged (the tags are removed when the action is done).
+### Card [Tags](src/cards/tags.rs)
+Cards are being tagged for easier queries when they're hovered, picked and dragged.
+`Hovered` and `Dragged` are removed once the status is done, `Picked` is toggled by clicking.
 This way you can, for example, get all hovered card with queries like:
 `
   Query<&Card, With<Hovered>>
 `
-For use examples, see [using_hovered_and_dragged_cards.rs](examples/using_hovered_and_dragged_cards.rs)
+
+| Tag       | Visually                                                                                      |
+|-----------|-----------------------------------------------------------------------------------------------|
+| `Hovered` | The card would hover up a bit                                                                 |
+| `Dragged` | The card would follow your cursor, ignoring line movements, going back to place once released |
+| `Picked`  | The card would stay on hover height, ignoring the cursor leaving its area                     |
+
+For use examples, see [using_card_tags.rs](../examples/using_card_tags.rs)
 
 ### Workflow Example
 Let's spawn a line and add a few cards to it,
@@ -125,6 +137,8 @@ Ending up with:
     });
   }
   ```
+
+[(Click me to go back to the main readme)](../README.md)
 !*/
 
 pub mod cards;
@@ -140,24 +154,25 @@ pub mod utilities;
 pub mod prelude {
     pub use crate::bevy_card_plugin::*;
     pub use crate::cards::{
+        CardsPlugin, CardsPluginShouldPrintLogs,
         card::*,
         card_bundle::*,
         card_dragging_manager::*,
         card_hovering_manager::*,
         card_lines::{
-            card_line::*, card_line_bundle::*, card_lines_content_manager::*, card_lines_mover::*,
-            event::*, CardLinesPlugin,
+            CardLinesPlugin, card_line::*, card_line_bundle::*, card_lines_content_manager::*,
+            card_lines_mover::*, event::*,
         },
-        card_mover::*,
         card_namer::*,
+        card_origin_set_listener::*,
+        card_picking_manager::*,
         event::*,
         tags::*,
-        CardsPlugin, CardsPluginShouldPrintLogs,
     };
     pub use crate::trait_unions::*;
     pub use crate::tweening::{
-        animation_parent_destoryer::*, custom_combinators::*, tween_destoryer::*,
-        tween_priority::*, tween_request::*, TweeningPlugin, TweeningPluginShouldPrintLogs,
+        TweeningPlugin, TweeningPluginShouldPrintLogs, animation_parent_destoryer::*,
+        custom_combinators::*, tween_destoryer::*, tween_priority::*, tween_request::*,
     };
     pub use crate::utilities::system_sets::*;
     pub use bevy::{platform_support::collections::HashMap, prelude::*};

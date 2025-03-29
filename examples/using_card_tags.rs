@@ -5,6 +5,7 @@ fn main() {
         .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
         .add_systems(Startup, (setup, spawn_a_card).chain())
         .add_systems(Update, print_going_back_to_place_card_names)
+        .add_observer(notify_on_picked_cards)
         .run();
 }
 
@@ -33,6 +34,12 @@ fn print_going_back_to_place_card_names(
 fn notify_on_hover_start(trigger: Trigger<OnAdd, Hovered>, card_names: Query<&Name, With<Card>>) {
     if let Ok(card_name) = card_names.get(trigger.target()) {
         info!("Hovering {}", card_name);
+    }
+}
+
+fn notify_on_picked_cards(trigger: Trigger<OnAdd, Picked>, card_names: Query<&Name, With<Card>>) {
+    if let Ok(card_name) = card_names.get(trigger.target()) {
+        info!("Picked {}", card_name);
     }
 }
 

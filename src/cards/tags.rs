@@ -14,3 +14,7 @@ pub enum Dragged {
 /// A tag added to hovered cards, indicating that they're hovered over
 #[derive(Debug, Clone, Copy, Component, Default)]
 pub struct Hovered;
+
+/// A tag added to cards on click, removed on the next click
+#[derive(Debug, Clone, Copy, Component, Default)]
+pub struct Picked;

@@ -3,7 +3,8 @@
 [(Click me to go back to the main readme)](../README.md)
 
 ### `0.1 -> 0.2`
-* Merge `Hovered` and `Dragged` into one `CardPickingState`, and add `Clicked` to it.
+* Update from Bevy 0.15 to Bevy 0.16
+* Add `Picked` cards tag on click, remove them on the next one
 
 
 [(Click me to go back to the main readme)](../README.md)

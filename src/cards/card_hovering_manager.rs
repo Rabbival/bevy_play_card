@@ -51,7 +51,7 @@ fn on_hover(
 
 fn on_hover_cancel(
     mut trigger: Trigger<Pointer<Out>>,
-    cards: Query<(&Transform, Entity, &Card, &Name), Without<Dragged>>,
+    cards: Query<(&Transform, Entity, &Card, &Name), (Without<Dragged>, Without<Picked>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
