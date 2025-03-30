@@ -19,6 +19,8 @@ pub struct CardLine {
     pub slide_duration: f32,
     /// The gap between the cards in the line in pixels
     pub card_origin_gap: f32,
+    /// Optional picked cards capacity
+    pub picked_cards_capacity: Option<usize>,
 }
 
 impl CardLine {
@@ -81,6 +83,11 @@ impl CardLine {
         self.card_origin_gap = gap;
         self
     }
+
+    pub fn with_picked_cards_capacity(mut self, capacity: usize) -> Self {
+        self.picked_cards_capacity = Some(capacity);
+        self
+    }
 }
 
 impl Default for CardLine {
@@ -92,6 +99,7 @@ impl Default for CardLine {
             raised_card_line_delta: 100.0,
             slide_duration: 0.3,
             card_origin_gap: 140.0,
+            picked_cards_capacity: None,
         }
     }
 }

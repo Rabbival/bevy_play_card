@@ -3,12 +3,9 @@ use crate::prelude::*;
 pub mod card;
 pub mod card_bundle;
 pub mod card_consts;
-pub mod card_dragging_manager;
-pub mod card_hovering_manager;
 pub mod card_lines;
+pub mod card_managers;
 pub mod card_namer;
-pub mod card_origin_set_listener;
-pub mod card_picking_manager;
 pub mod event;
 pub mod tags;
 
@@ -24,12 +21,9 @@ impl Plugin for CardsPlugin {
         app.insert_resource(CardsPluginShouldPrintLogs(self.print_debug_logs))
             .add_plugins((
                 CardsEventsPlugin,
-                CardOriginSetListenerPlugin,
-                CardDraggingPlugin,
-                CardHoveringPlugin,
+                CardManagersPlugin,
                 CardLinesPlugin,
                 CardNamerPlugin,
-                CardPickingPlugin,
             ));
     }
 }

@@ -17,7 +17,8 @@ fn spawn_cards_on_a_line(
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
                 .with_max_cards(cards_count)
-                .with_card_origin_gap(100.0),
+                .with_card_origin_gap(100.0)
+                .with_picked_cards_capacity(3),
         ))
         .id();
     let mut card_addition_requests = vec![];

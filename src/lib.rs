@@ -157,15 +157,15 @@ pub mod prelude {
         CardsPlugin, CardsPluginShouldPrintLogs,
         card::*,
         card_bundle::*,
-        card_dragging_manager::*,
-        card_hovering_manager::*,
         card_lines::{
             CardLinesPlugin, card_line::*, card_line_bundle::*, card_lines_content_manager::*,
             card_lines_mover::*, event::*,
         },
+        card_managers::{
+            CardManagersPlugin, card_dragging_manager::*, card_hovering_manager::*,
+            card_origin_set_listener::*, card_picking_manager::*, card_tag_insertion_listener::*,
+        },
         card_namer::*,
-        card_origin_set_listener::*,
-        card_picking_manager::*,
         event::*,
         tags::*,
     };

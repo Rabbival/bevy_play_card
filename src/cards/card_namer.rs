@@ -15,12 +15,11 @@ impl Plugin for CardNamerPlugin {
 }
 
 fn name_newborn_card(
-    mut trigger: Trigger<OnAdd, Card>,
+    trigger: Trigger<OnAdd, Card>,
     mut card_namer: ResMut<CardNamer>,
     named_cards: Query<(), (With<Card>, With<Name>)>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if named_cards.get(trigger.target()).is_ok() {
         return;
     }
