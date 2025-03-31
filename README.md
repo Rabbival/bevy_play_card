@@ -15,4 +15,4 @@
 
 ## Credits
 - [`bevy_tween`](https://github.com/Multirious/bevy_tween)
-  The crate this one is built upon. Thanks to it I was able to set bevy_card up rather quickly and easily.
+  The crate this one is built upon. Thanks to it I was able to set this crate up rather quickly and easily.
