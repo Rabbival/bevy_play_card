@@ -13,11 +13,15 @@ impl Plugin for CardHoveringPlugin {
 
 fn on_hover(
     mut trigger: Trigger<Pointer<Over>>,
-    cards: Query<(), With<Card>>,
+    cards: Query<&Card>,
+    dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if cards.get(trigger.target).is_ok() {
+    if let Ok(card) = cards.get(trigger.target) {
+        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
+            return;
+        }
         commands.entity(trigger.target).insert(Hovered);
     }
 }
@@ -25,11 +29,15 @@ fn on_hover(
 fn on_hover_cancel(
     mut trigger: Trigger<Pointer<Out>>,
     cards: Query<(&Transform, Entity, &Card, &Name, Option<&Dragged>), Without<Picked>>,
+    dragged_cards: Query<(&Card, &Dragged)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
     if let Ok((transform, entity, card, name, maybe_dragged)) = cards.get(trigger.target) {
+        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
+            return;
+        }
         commands.entity(entity).remove::<Hovered>();
         if maybe_dragged.is_some() {
             return;

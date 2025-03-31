@@ -24,7 +24,7 @@ fn setup(mut commands: Commands) {
 
 fn spawn_card_line(mut commands: Commands) {
     commands.spawn(CardLineBundle::from_card_line(
-        CardLine::default().with_origin(Transform::from_translation(Vec3::new(0.0, -240.0, 0.0))),
+        CardLine::default().with_origin(Transform::from_translation(Vec3::new(0.0, -240.0, 1.0))),
     ));
 }
 

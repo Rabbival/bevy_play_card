@@ -171,6 +171,7 @@ pub mod prelude {
         card_managers::{
             CardManagersPlugin, card_dragging_manager::*, card_hovering_manager::*,
             card_origin_set_listener::*, card_picking_manager::*, card_tag_insertion_listener::*,
+            theres_an_actively_dragged_card_from_that_line,
         },
         card_namer::*,
         event::*,

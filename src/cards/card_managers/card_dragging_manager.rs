@@ -17,10 +17,14 @@ impl Plugin for CardDraggingPlugin {
 fn on_drag_start(
     mut trigger: Trigger<Pointer<DragStart>>,
     mut card_transforms: Query<&Card>,
+    dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
     if let Ok(card) = card_transforms.get_mut(trigger.target) {
+        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
+            return;
+        }
         if let Ok(mut entity_commands) = commands.get_entity(trigger.target) {
             entity_commands.insert(Dragged::Actively);
             if card.owner_line.is_some() {
