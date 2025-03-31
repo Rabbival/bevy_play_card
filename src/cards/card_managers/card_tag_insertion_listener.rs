@@ -9,8 +9,19 @@ pub struct CardTagInsertionListenerPlugin;
 
 impl Plugin for CardTagInsertionListenerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_observer(on_hovered_insertion)
+        app.add_observer(on_dragged_insertion)
+            .add_observer(on_hovered_insertion)
             .add_observer(on_picked_insertion);
+    }
+}
+
+fn on_dragged_insertion(
+    _trigger: Trigger<OnAdd, Dragged>,
+    picked_cards: Query<Entity, (With<Card>, With<Picked>)>,
+    mut commands: Commands,
+) {
+    for picked_card_entity in &picked_cards {
+        commands.entity(picked_card_entity).remove::<Picked>();
     }
 }
 
