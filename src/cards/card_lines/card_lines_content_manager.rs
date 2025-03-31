@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use crate::utilities::action_performed::ActionPerformed;
 use crate::utilities::calculation_helpers::projection_directed_distance;
 use crate::utilities::system_sets::CardsOrderingSystemSet;
 
@@ -17,11 +18,11 @@ impl Plugin for CardLinesContentManagerPlugin {
                 .chain()
                 .in_set(CardsOrderingSystemSet::OriginSetting),
         )
-        .add_observer(remove_cards_from_line_on_despawn);
+        .add_observer(remove_cards_from_line_on_card_despawn);
     }
 }
 
-fn remove_cards_from_line_on_despawn(
+fn remove_cards_from_line_on_card_despawn(
     trigger: Trigger<OnRemove, Card>,
     mut line_request_writer: EventWriter<CardLineRequest>,
     cards: Query<&Card>,
@@ -30,7 +31,7 @@ fn remove_cards_from_line_on_despawn(
         if let Some(owner_line_entity) = card.owner_line {
             line_request_writer.write(CardLineRequest {
                 line: owner_line_entity,
-                request_type: CardLineRequestType::RemoveCardFromLine {
+                request_type: CardLineRequestType::RemoveFromLine {
                     card_entity: trigger.target(),
                 },
             });
@@ -46,41 +47,92 @@ fn listen_to_card_removal_requests(
     mut commands: Commands,
 ) {
     for request in card_line_request_reader.read() {
-        if let CardLineRequestType::RemoveCardFromLine {
-            card_entity: card_entity_to_remove,
-        } = request.request_type
-        {
-            if let Ok(mut card_line) = card_lines.get_mut(request.line) {
-                let mut card_name_if_removed = None;
-                let card_removed = card_line.remove_card_if_found(card_entity_to_remove);
-                if card_removed.done() {
-                    if let Ok(mut card_entity_to_remove_commands) =
-                        commands.get_entity(card_entity_to_remove)
-                    {
-                        card_entity_to_remove_commands.remove_parent_in_place();
-                    }
-                    if let Ok((mut card, card_name)) = cards.get_mut(card_entity_to_remove) {
-                        card.owner_line = None;
-                        card_name_if_removed = Some(card_name.clone());
-                    }
+        match &request.request_type {
+            CardLineRequestType::RemoveFromLine { card_entity } => {
+                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                    remove_card_from_line_if_found(
+                        *card_entity,
+                        &mut card_line,
+                        &mut cards,
+                        debug_logs_enabled.0,
+                        &mut commands,
+                    );
                 }
-                if let Some(card_name) = card_name_if_removed {
-                    if debug_logs_enabled.0 {
-                        let mut names_in_order = vec![];
-                        for card_entity in card_line.cards_in_order() {
-                            if let Ok((_, name)) = cards.get(*card_entity) {
-                                names_in_order.push(name);
-                            }
-                        }
-                        info!(
-                            "{} was removed from a card line, so it's now: {:?}",
-                            card_name, names_in_order
+            }
+            CardLineRequestType::BatchRemoveFromLine { card_entities } => {
+                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                    for card_entity in card_entities.iter() {
+                        remove_card_from_line_if_found(
+                            *card_entity,
+                            &mut card_line,
+                            &mut cards,
+                            debug_logs_enabled.0,
+                            &mut commands,
                         );
                     }
                 }
             }
+            CardLineRequestType::RemoveAllCardsFromLine => {
+                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                    let removed_cards = card_line.remove_all_cards();
+                    let mut removed_cards_names = vec![];
+                    for &card_entity in removed_cards.iter() {
+                        if let Ok(mut card_entity_to_remove_commands) =
+                            commands.get_entity(card_entity)
+                        {
+                            card_entity_to_remove_commands.remove_parent_in_place();
+                        }
+                        if let Ok((mut card, card_name)) = cards.get_mut(card_entity) {
+                            card.owner_line = None;
+                            removed_cards_names.push(card_name.clone());
+                        }
+                    }
+                    if debug_logs_enabled.0 {
+                        info!(
+                            "Removed all cards from a line. Cards removed: {:?}",
+                            removed_cards_names
+                        );
+                    }
+                }
+            }
+            _ => {}
         }
     }
+}
+
+fn remove_card_from_line_if_found(
+    card_entity_to_remove: Entity,
+    card_line: &mut CardLine,
+    cards: &mut Query<(&mut Card, &Name)>,
+    should_log: bool,
+    commands: &mut Commands,
+) -> ActionPerformed {
+    let mut card_name_if_removed = None;
+    let card_removed = card_line.remove_card_if_found(card_entity_to_remove);
+    if card_removed.done() {
+        if let Ok(mut card_entity_to_remove_commands) = commands.get_entity(card_entity_to_remove) {
+            card_entity_to_remove_commands.remove_parent_in_place();
+        }
+        if let Ok((mut card, card_name)) = cards.get_mut(card_entity_to_remove) {
+            card.owner_line = None;
+            card_name_if_removed = Some(card_name.clone());
+        }
+    }
+    if should_log {
+        if let Some(card_name) = card_name_if_removed {
+            let mut names_in_order = vec![];
+            for card_entity in card_line.cards_in_order() {
+                if let Ok((_, name)) = cards.get(*card_entity) {
+                    names_in_order.push(name);
+                }
+            }
+            info!(
+                "{} was removed from a card line, so it's now: {:?}",
+                card_name, names_in_order
+            );
+        }
+    }
+    card_removed
 }
 
 fn listen_to_card_addition_requests(
@@ -91,36 +143,76 @@ fn listen_to_card_addition_requests(
     mut commands: Commands,
 ) {
     for request in card_line_request_reader.read() {
-        if let CardLineRequestType::AddToCardLine { card_entity } = request.request_type {
-            if let Ok(mut card_line) = card_lines.get_mut(request.line) {
-                let mut card_name_if_added = None;
-                let card_inserted = card_line.insert_if_theres_space(card_entity);
-                if card_inserted.done() {
-                    commands.entity(request.line).add_child(card_entity);
-                    if let Ok((mut card, name)) = cards.get_mut(card_entity) {
-                        card.owner_line = Some(request.line);
-                        card_name_if_added = Some(name.clone());
+        match &request.request_type {
+            CardLineRequestType::AddToLine { card_entity } => {
+                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                    let card_inserted = add_card_to_line_if_in_capacity(
+                        *card_entity,
+                        request.line,
+                        &mut card_line,
+                        &mut cards,
+                        debug_logs_enabled.0,
+                        &mut commands,
+                    );
+                    if !card_inserted {
+                        return;
                     }
-                    if let Some(card_name) = card_name_if_added {
-                        if debug_logs_enabled.0 {
-                            let mut names_in_order = vec![];
-                            for card_entity in card_line.cards_in_order() {
-                                if let Ok((_, name)) = cards.get(*card_entity) {
-                                    names_in_order.push(name);
-                                }
-                            }
-                            info!(
-                                "{} was added to a card line, so it's now: {:?}",
-                                card_name, names_in_order
-                            );
+                }
+            }
+            CardLineRequestType::BatchAddToLine { card_entities } => {
+                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                    for card_entity in card_entities {
+                        let card_inserted = add_card_to_line_if_in_capacity(
+                            *card_entity,
+                            request.line,
+                            &mut card_line,
+                            &mut cards,
+                            debug_logs_enabled.0,
+                            &mut commands,
+                        );
+                        if !card_inserted {
+                            return;
                         }
                     }
-                } else {
-                    return;
                 }
+            }
+            _ => {}
+        }
+    }
+}
+
+fn add_card_to_line_if_in_capacity(
+    card_entity: Entity,
+    card_line_entity: Entity,
+    card_line: &mut CardLine,
+    cards: &mut Query<(&mut Card, &Name)>,
+    should_log: bool,
+    commands: &mut Commands,
+) -> ActionPerformed {
+    let mut card_name_if_added = None;
+    let card_inserted = card_line.push_if_theres_space(card_entity);
+    if card_inserted.done() {
+        commands.entity(card_line_entity).add_child(card_entity);
+        if let Ok((mut card, name)) = cards.get_mut(card_entity) {
+            card.owner_line = Some(card_line_entity);
+            card_name_if_added = Some(name.clone());
+        }
+        if should_log {
+            if let Some(card_name) = card_name_if_added {
+                let mut names_in_order = vec![];
+                for card_entity in card_line.cards_in_order() {
+                    if let Ok((_, name)) = cards.get(*card_entity) {
+                        names_in_order.push(name);
+                    }
+                }
+                info!(
+                    "{} was added to a card line, so it's now: {:?}",
+                    card_name, names_in_order
+                );
             }
         }
     }
+    card_inserted
 }
 
 fn listen_to_dragged_card_movements(

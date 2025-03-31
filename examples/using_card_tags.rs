@@ -18,23 +18,24 @@ fn spawn_cards(
     let line = commands
         .spawn(CardLineBundle::from_card_line(CardLine::default()))
         .id();
-    let mut card_addition_requests = vec![];
+    let mut card_entities = vec![];
     for _ in 0..6 {
-        let card_entity = commands
-            .spawn((
-                Sprite {
-                    image: asset_server.load("PlaceholderCard.png"),
-                    ..default()
-                },
-                CardBundle::new(Transform::from_scale(Vec3::splat(0.4))),
-            ))
-            .id();
-        card_addition_requests.push(CardLineRequest {
-            line,
-            request_type: CardLineRequestType::AddToCardLine { card_entity },
-        });
+        card_entities.push(
+            commands
+                .spawn((
+                    Sprite {
+                        image: asset_server.load("PlaceholderCard.png"),
+                        ..default()
+                    },
+                    CardBundle::new(Transform::from_scale(Vec3::splat(0.4))),
+                ))
+                .id(),
+        );
     }
-    card_line_request_writer.write_batch(card_addition_requests);
+    card_line_request_writer.write(CardLineRequest {
+        line,
+        request_type: CardLineRequestType::BatchAddToLine { card_entities },
+    });
 }
 
 fn print_going_back_to_place_card_names(

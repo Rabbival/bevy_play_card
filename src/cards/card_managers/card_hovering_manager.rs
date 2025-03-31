@@ -24,13 +24,16 @@ fn on_hover(
 
 fn on_hover_cancel(
     mut trigger: Trigger<Pointer<Out>>,
-    cards: Query<(&Transform, Entity, &Card, &Name), (Without<Dragged>, Without<Picked>)>,
+    cards: Query<(&Transform, Entity, &Card, &Name, Option<&Dragged>), Without<Picked>>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if let Ok((transform, entity, card, name)) = cards.get(trigger.target) {
+    if let Ok((transform, entity, card, name, maybe_dragged)) = cards.get(trigger.target) {
         commands.entity(entity).remove::<Hovered>();
+        if maybe_dragged.is_some() {
+            return;
+        }
         let animation_target = entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands

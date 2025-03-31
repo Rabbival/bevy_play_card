@@ -55,12 +55,16 @@ by firing events using `EventWriter<CardLineRequest>`, already listened to by th
 Each [`CardLineRequest`](src/cards/card_lines/event.rs) contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
 The variants of `CardLineRequestType` are as follows:
 
-| Variant              | Role                                                  |
-|----------------------|-------------------------------------------------------|
-| `RaiseCardLine`      | Raises the card line to it's relative up              |
-| `LowerCardLine`      | Lowers the card line back to place after being raised |
-| `AddToCardLine`      | Inserts the card to the line if possible              |
-| `RemoveCardFromLine` | Removes the card from the line if it was there        |
+| Variant                  | Role                                                                      |
+|--------------------------|---------------------------------------------------------------------------|
+| `RaiseLine`              | Raises the card line to it's relative up                                  |
+| `LowerLine`              | Lowers the card line back to place after being raised                     |
+| `AddToLine`              | Inserts the card to the line if within capacity                           |
+| `RemoveFromLine`         | Removes the card from the line if it was there                            |
+| `BatchAddToLine`         | Inserts the cards to the line if within capacity, starting from the first |
+| `BatchRemoveFromLine`    | Removes the cards from the line if they were there                        |
+| `RemoveAllCardsFromLine` | Removes all the cards in the line                                         |
+
 
 ### Card [Tags](src/cards/tags.rs)
 Cards are being tagged for easier queries when they're hovered, picked and dragged.
@@ -113,7 +117,7 @@ With the appropriate addition request:
 ```rust
   card_line_request_writer.write(CardLineRequest {
     line: line_entity,
-    request_type: CardLineRequestType::AddToCardLine { card_entity },
+    request_type: CardLineRequestType::AddToLine { card_entity },
   });
   ```
 
@@ -132,7 +136,7 @@ Ending up with:
         )).id();
     card_line_request_writer.write(CardLineRequest {
       line: line_entity,
-      request_type: CardLineRequestType::AddToCardLine { card_entity },
+      request_type: CardLineRequestType::AddToLine { card_entity },
     });
   }
   ```

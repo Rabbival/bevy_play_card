@@ -6,3 +6,10 @@ impl ActionPerformed {
         self.0
     }
 }
+
+impl std::ops::Not for ActionPerformed {
+    type Output = bool;
+    fn not(self) -> Self::Output {
+        !self.0
+    }
+}

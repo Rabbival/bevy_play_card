@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use crate::prelude::*;
 use bevy_tween::combinator::AnimationBuilderExt;
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::*;
+use std::collections::HashMap;
 use std::time::Duration;
 
 pub struct CardLinesMoverPlugin;
@@ -26,11 +26,11 @@ fn listen_to_card_line_move_requests(
             card_lines.get(move_request.line)
         {
             let destination = match move_request.request_type {
-                CardLineRequestType::RaiseCardLine => {
+                CardLineRequestType::RaiseLine => {
                     card_line.origin.translation
                         + card_line_transform.up() * card_line.raised_card_line_delta
                 }
-                CardLineRequestType::LowerCardLine => card_line.origin.translation,
+                CardLineRequestType::LowerLine => card_line.origin.translation,
                 _ => continue,
             };
             destination_by_card_line.insert(card_line_entity, destination);

@@ -7,6 +7,8 @@
 
 ## [Change Logs (link)](docs/change_logs.md)
 
+## [Use Examples (link)](examples/use_examples.md)
+
 ## Bevy Version Support
 | `bevy` | `bevy_tween` |
 |--------|--------------|

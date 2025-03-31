@@ -10,16 +10,23 @@ pub struct CardLineRequest {
 }
 
 /// The type of request to be applied to the line, including additional data if there's any
+/// Requests that add or remove cards take care of hierarchy and transforms automatically
 #[derive(Debug)]
 pub enum CardLineRequestType {
     /// Raise the card-line's position, depending on the line Transform up direction
-    RaiseCardLine,
+    RaiseLine,
     /// Lower a raised card-line back to place
-    LowerCardLine,
-    /// Add a card to the card-line if possible. This will take care of transform and hierarchy changes as well.
-    AddToCardLine { card_entity: Entity },
-    /// Remove a card from the card-line if found. This will take care of transform and hierarchy changes as well.
-    RemoveCardFromLine { card_entity: Entity },
+    LowerLine,
+    /// Add a card to the card-line if possible.
+    AddToLine { card_entity: Entity },
+    /// Remove a card from the card-line if found.
+    RemoveFromLine { card_entity: Entity },
+    /// Add multiple cards to the card-line if possible (starting from the first).
+    BatchAddToLine { card_entities: Vec<Entity> },
+    /// Remove multiple cards from the card-line if found.
+    BatchRemoveFromLine { card_entities: Vec<Entity> },
+    /// Removes all the cards from the card-line
+    RemoveAllCardsFromLine,
 }
 
 pub struct CardLineEventsPlugin;
