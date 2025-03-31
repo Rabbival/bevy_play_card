@@ -26,6 +26,7 @@ It's recommended to instantiate a card using [card bundle](src/cards/card_bundle
   ));
   ```
 Cards are named automatically by the [card_namer](src/cards/card_namer.rs).
+When the `Card` component is removed from an entity, it's automatically removed from it's owner line if it had any.
 
 ### Spawning [Card Lines](src/cards/card_lines/card_line.rs)
 Cards can live on a card line, that'll allow you to reorder them and keep them neatly organized.

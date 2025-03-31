@@ -16,7 +16,25 @@ impl Plugin for CardLinesContentManagerPlugin {
             )
                 .chain()
                 .in_set(CardsOrderingSystemSet::OriginSetting),
-        );
+        )
+        .add_observer(remove_cards_from_line_on_despawn);
+    }
+}
+
+fn remove_cards_from_line_on_despawn(
+    trigger: Trigger<OnRemove, Card>,
+    mut line_request_writer: EventWriter<CardLineRequest>,
+    cards: Query<&Card>,
+) {
+    if let Ok(card) = cards.get(trigger.target()) {
+        if let Some(owner_line_entity) = card.owner_line {
+            line_request_writer.write(CardLineRequest {
+                line: owner_line_entity,
+                request_type: CardLineRequestType::RemoveCardFromLine {
+                    card_entity: trigger.target(),
+                },
+            });
+        }
     }
 }
 
