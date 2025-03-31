@@ -10,6 +10,7 @@ impl Plugin for CardPickingPlugin {
 fn on_card_click(
     mut trigger: Trigger<Pointer<Click>>,
     picked_cards: Query<&Card, With<Picked>>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     cards: Query<&Card>,
     card_lines: Query<&CardLine>,
     mut commands: Commands,
@@ -20,6 +21,8 @@ fn on_card_click(
         if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target) {
             if card_is_picked {
                 card_entity_commands.remove::<Picked>();
+            } else if dragged_cards.get(trigger.target).is_ok() {
+                return;
             } else if let Some(owner_line_entity) = card.owner_line {
                 if line_below_picked_cards_capacity(owner_line_entity, &picked_cards, &card_lines) {
                     card_entity_commands.insert(Picked);
