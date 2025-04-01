@@ -22,6 +22,7 @@ fn on_dragged_insertion(
 ) {
     for picked_card_entity in &picked_cards {
         commands.entity(picked_card_entity).remove::<Picked>();
+        commands.entity(picked_card_entity).remove::<Hovered>();
     }
 }
 
@@ -87,7 +88,8 @@ fn play_card_float_up_animation(
                     transform_state.translation_to(
                         card.origin
                             .translation
-                            .with_y(card_consts.card_hover_height),
+                            .with_y(card_consts.card_hover_height)
+                            + Vec3::Z,
                     ),
                     format!("{} {} translation tween", name, animation_name),
                 ),

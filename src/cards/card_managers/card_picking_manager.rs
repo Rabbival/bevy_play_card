@@ -17,9 +17,6 @@ fn on_card_click(
 ) {
     trigger.propagate(false);
     if let Ok(card) = cards.get(trigger.target) {
-        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
-            return;
-        }
         let card_is_picked = picked_cards.get(trigger.target).is_ok();
         if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target) {
             if card_is_picked {

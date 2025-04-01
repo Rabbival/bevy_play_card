@@ -35,10 +35,10 @@ fn on_hover_cancel(
 ) {
     trigger.propagate(false);
     if let Ok((transform, entity, card, name, maybe_dragged)) = cards.get(trigger.target) {
+        commands.entity(entity).remove::<Hovered>();
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
         }
-        commands.entity(entity).remove::<Hovered>();
         if maybe_dragged.is_some() {
             return;
         }
