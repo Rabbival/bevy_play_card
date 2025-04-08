@@ -34,7 +34,7 @@ fn on_hovered_insertion(
 ) {
     play_card_float_up_animation(
         trigger.target(),
-        0,
+        10,
         "on-hover",
         &cards,
         &card_consts,
@@ -50,7 +50,7 @@ fn on_picked_insertion(
 ) {
     play_card_float_up_animation(
         trigger.target(),
-        4,
+        50,
         "on-picked",
         &cards,
         &card_consts,
@@ -60,7 +60,7 @@ fn on_picked_insertion(
 
 fn play_card_float_up_animation(
     card_to_animate: Entity,
-    animation_priority: u8,
+    animation_priority: u32,
     animation_name: &str,
     cards: &Query<(&Transform, &Card, &Name)>,
     card_consts: &CardConsts,

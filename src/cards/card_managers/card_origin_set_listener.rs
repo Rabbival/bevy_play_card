@@ -35,7 +35,7 @@ fn listen_to_card_origin_changes(
                 "Card new origin set animation parent for {}",
                 card_name
             )),
-            TweenPriorityToOthersOfType(3),
+            TweenPriorityToOthersOfType(40),
         ));
         let translation_tween = named_tween(
             Duration::from_secs_f32(card_consts.card_slide_on_origin_set_duration),

@@ -47,7 +47,7 @@ fn on_hover_cancel(
         commands
             .spawn((
                 Name::new(format!("On-hover-cancel animation parent for {}", name)),
-                TweenPriorityToOthersOfType(1),
+                TweenPriorityToOthersOfType(20),
             ))
             .animation()
             .insert(parallel((

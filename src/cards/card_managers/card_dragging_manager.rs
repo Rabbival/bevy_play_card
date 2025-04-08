@@ -102,7 +102,7 @@ fn play_card_going_back_to_place_animation(
                 "Go-back-to-origin-after-dragging animation parent for {}",
                 card_name
             )),
-            TweenPriorityToOthersOfType(2),
+            TweenPriorityToOthersOfType(30),
         ))
         .animation()
         .insert(sequence((
@@ -113,15 +113,6 @@ fn play_card_going_back_to_place_animation(
                     transform_state.translation_to(card.origin.translation),
                     format!(
                         "{} go-back-to-origin-after-dragging translation tween",
-                        card_name
-                    ),
-                ),
-                named_tween(
-                    Duration::from_secs_f32(card_consts.go_back_to_place_tween_duration),
-                    EaseKind::Linear,
-                    transform_state.rotation_to(card.origin.rotation),
-                    format!(
-                        "{} go-back-to-origin-after-dragging rotation tween",
                         card_name
                     ),
                 ),

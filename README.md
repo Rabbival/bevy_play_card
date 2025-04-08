@@ -9,6 +9,8 @@
 
 ## [Use Examples (link)](examples/use_examples.md)
 
+### [Tween Priorities To Others Of Type (link)](docs/tween_priorities_to_others_of_type.md)
+
 ## Bevy Version Support
 | `bevy` | `bevy_tween` |
 |--------|--------------|

@@ -15,8 +15,8 @@
 * Additions:
   * Add `Picked` cards tag on click, remove them on the next one. Lines may have a capacity for those.
   * Add an observer that removes cards from their owner line when their `Card` component is removed
+  * Make [TweenPriorityToOthersOfType](../src/tweening/tween_priority.rs) a u32 and change the ones created in the crate to have gaps between them
   * Add `BatchAddToLine, BatchRemoveFromLine, RemoveAllCardsFromLine` request types to [`CardLineRequest`](../src/cards/card_lines/event.rs)
   * The [`ActionPerformed`](../src/utilities/action_performed.rs) wrapper can now be negated (for example `let whatever = ActionPerformed(true);` and then `!whatever`)
-
 
 [(Click me to go back to the main readme)](../README.md)

@@ -153,7 +153,7 @@ fn try_get_other_tween_priority(
     maybe_other_tween_priority: Option<&TweenPriorityToOthersOfType>,
     other_tween_parent_entity: Entity,
     tween_policies_query: &Query<&TweenPriorityToOthersOfType>,
-) -> Option<u8> {
+) -> Option<u32> {
     match maybe_other_tween_priority {
         Some(TweenPriorityToOthersOfType(other_priority_level)) => Some(*other_priority_level),
         _ => match tween_policies_query.get(other_tween_parent_entity) {
