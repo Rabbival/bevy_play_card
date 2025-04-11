@@ -50,7 +50,7 @@ fn listen_to_card_line_move_requests(
                     Duration::from_secs_f32(card_line.slide_duration),
                     EaseKind::CubicOut,
                     transform_state.translation_to(destination),
-                    String::from("{} card line slide (transation) tween"),
+                    String::from("card line slide (transation) tween"),
                 ));
         }
     }
