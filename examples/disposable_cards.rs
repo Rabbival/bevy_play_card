@@ -69,12 +69,12 @@ fn listen_to_card_addition_requests(
 fn listen_to_card_drops(
     mut trigger: Trigger<Pointer<DragDrop>>,
     card_destroyer: Query<(), With<CardDestroyer>>,
-    card: Query<Entity, With<Card>>,
+    cards: Query<Entity, With<Card>>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
     if card_destroyer.get(trigger.target).is_ok() {
-        if let Ok(card_entity) = card.get(trigger.dropped) {
+        if let Ok(card_entity) = cards.get(trigger.dropped) {
             commands.entity(card_entity).despawn();
         }
     }

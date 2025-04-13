@@ -26,7 +26,9 @@ pub fn despawn_done_time_runners(
 ) {
     for event in time_runner_ended_reader.read() {
         if event.is_completed() {
-            commands.entity(event.time_runner).try_despawn();
+            if let Ok(mut entity_commands) = commands.get_entity(event.time_runner) {
+                entity_commands.try_despawn();
+            }
         }
     }
 }

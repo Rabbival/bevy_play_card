@@ -98,7 +98,7 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
                 &all_tweens_of_type,
                 &tween_priorities_query,
             );
-        } else if let Ok(parent_priority) = tween_priorities_query.get(child_of.parent) {
+        } else if let Ok(parent_priority) = tween_priorities_query.get(child_of.parent()) {
             handle_tween_priority_to_others_of_type(
                 &mut tween_request_writer,
                 parent_priority,
@@ -128,7 +128,7 @@ fn handle_tween_priority_to_others_of_type<T: Sendable>(
         if other_tween_entity != newborn_tween_entity {
             if let Some(other_priority_level) = try_get_other_tween_priority(
                 maybe_other_priority,
-                child_of.parent,
+                child_of.parent(),
                 tween_priorities_query,
             ) {
                 if other_priority_level <= tween_priority.0 {
@@ -220,12 +220,14 @@ fn remove_target_and_destroy_if_has_none<T: Sendable>(
     match &mut tween.target {
         TargetComponent::Entity(tween_target) => {
             if targets_to_match.contains(tween_target) {
-                commands.entity(tween_entity).try_despawn();
-                if debug_logs_enabled {
-                    info!(
-                        "destroying tween: {}",
-                        maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
-                    );
+                if let Ok(mut entity_commands) = commands.get_entity(tween_entity) {
+                    entity_commands.try_despawn();
+                    if debug_logs_enabled {
+                        info!(
+                            "destroying tween: {}",
+                            maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
+                        );
+                    }
                 }
             }
         }
@@ -239,7 +241,9 @@ fn remove_target_and_destroy_if_has_none<T: Sendable>(
                 );
             }
             if tween_targets.is_empty() {
-                commands.entity(tween_entity).try_despawn();
+                if let Ok(mut entity_commands) = commands.get_entity(tween_entity) {
+                    entity_commands.try_despawn();
+                }
             }
         }
         _ => {}
