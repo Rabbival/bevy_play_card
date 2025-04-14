@@ -11,8 +11,22 @@ readme = "README.md"
 keywords = ["bevy", "card", "cards"]
 categories = ["game-development"]
 
+[dependencies.bevy]
+version = "0.16.0-rc.4"
+default-features = false
+features = [
+    "bevy_window",
+    "bevy_winit",
+    "bevy_core_pipeline",
+    "bevy_sprite",
+    "tonemapping_luts",
+    "png",
+    "bevy_picking",
+    "bevy_sprite_picking_backend",
+    "serialize"
+]
+
 [dependencies]
-bevy = "0.16.0-rc.4"
 bevy_tween = { git = "https://github.com/Multirious/bevy_tween", branch = "bevy-v0.16.0" }
 serde = { version = "1.0.219", features = ["derive"] }
 
