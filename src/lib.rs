@@ -183,7 +183,7 @@ pub mod prelude {
         custom_combinators::*, tween_destoryer::*, tween_priority::*, tween_request::*,
     };
     pub use crate::utilities::system_sets::*;
-    pub use bevy::{platform_support::collections::HashMap, prelude::*};
+    pub use bevy::{bevy_platform::collections::HashMap, prelude::*};
     pub use bevy_tween::*;
     pub use std::marker::PhantomData;
     pub use tween_event::*;

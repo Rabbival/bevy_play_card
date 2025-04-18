@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 #[derive(Resource, Debug, Default)]
 pub struct CardNamer {
-    cards_named: u32,
+    cards_named: Vec<u32>,
 }
 
 pub struct CardNamerPlugin;
@@ -30,7 +30,21 @@ fn name_newborn_card(
 
 impl CardNamer {
     pub fn make_name(&mut self) -> Name {
-        self.cards_named += 1;
-        Name::new(format!("Card {}", self.cards_named))
+        let mut number_string = String::new();
+        match self.cards_named.last_mut() {
+            None => {
+                self.cards_named.push(0);
+            }
+            Some(last_count) => {
+                *last_count += 1;
+                if *last_count == u32::MAX {
+                    self.cards_named.push(0);
+                }
+            }
+        }
+        for count in self.cards_named.iter().rev() {
+            number_string += &count.to_string();
+        }
+        Name::new(format!("Card {}", number_string))
     }
 }
