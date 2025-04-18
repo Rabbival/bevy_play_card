@@ -24,7 +24,7 @@ fn name_newborn_card(
         return;
     }
     if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target()) {
-        card_entity_commands.insert(card_namer.make_name());
+        card_entity_commands.insert_if_new(card_namer.make_name());
     }
 }
 
