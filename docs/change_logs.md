@@ -14,11 +14,17 @@
     * `AddToCardLine -> AddToLine`
     * `RemoveFromCardLine -> RemoveFromLine`
 
+
 * Additions:
   * Add `Picked` cards tag on click, remove them on the next one. Lines may have a capacity for those.
   * Add an observer that removes cards from their owner line when their `Card` component is removed
   * Add `BatchAddToLine, BatchRemoveFromLine, RemoveAllCardsFromLine` request types to [`CardLineRequest`](../src/cards/card_lines/event.rs)
   * The [`ActionPerformed`](../src/utilities/action_performed.rs) wrapper can now be negated (for example `let whatever = ActionPerformed(true);` and then `!whatever`)
   * Make card naming run possibly infinitely, and would only name unnamed cards
+
+
+* Bug Fixes:
+  * Cards snapping back to origin if not hovered when dragged
+  * Some possible crashes from using `despawn()` instead of `try_despawn()`
 
 [(Click me to go back to the main readme)](../README.md)
