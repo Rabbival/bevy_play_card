@@ -2,6 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+### `0.2 -> 0.2.1`
+* Make hovering over cards while dragging configurable, 
+  so that you can forbid hovering over cards from all lines while a card is being actively dragged
+
 ### `0.1 -> 0.2`
 * (Possibly Breaking) Changes:
   * Update from Bevy 0.15 to Bevy 0.16

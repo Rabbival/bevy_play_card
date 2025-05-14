@@ -10,4 +10,5 @@ pub struct CardConsts {
     pub on_hover_cancel_position_tween_duration: f32,
     pub go_back_to_place_tween_duration: f32,
     pub card_slide_on_origin_set_duration: f32,
+    pub allow_hover_while_dragging: bool,
 }

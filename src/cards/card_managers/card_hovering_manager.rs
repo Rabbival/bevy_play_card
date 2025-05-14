@@ -15,12 +15,21 @@ fn on_hover(
     mut trigger: Trigger<Pointer<Over>>,
     cards: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
+    card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
     if let Ok(card) = cards.get(trigger.target) {
-        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
-            return;
+        if card_consts.allow_hover_while_dragging {
+            if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
+                return;
+            }
+        } else {
+            for (_, dragged) in &dragged_cards {
+                if let Dragged::Actively = dragged {
+                    return;
+                }
+            }
         }
         commands.entity(trigger.target).insert(Hovered);
     }

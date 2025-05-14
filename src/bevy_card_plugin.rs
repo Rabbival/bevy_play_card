@@ -21,6 +21,8 @@ pub struct BevyCardPlugin {
     pub go_back_to_place_tween_duration: f32,
     /// How many seconds it takes for cards to get to their new origin once set
     pub card_slide_on_origin_set_duration: f32,
+    /// Whether cards can be hovered over while actively dragging a card
+    pub allow_hover_while_dragging: bool,
     /// Whether debug logs should be printed for TweeningPlugin
     pub enable_tweening_debug_logs: bool,
     /// Whether debug logs should be printed for CardsPlugin
@@ -48,6 +50,7 @@ impl Plugin for BevyCardPlugin {
             on_hover_cancel_position_tween_duration: self.on_hover_cancel_position_tween_duration,
             go_back_to_place_tween_duration: self.go_back_to_place_tween_duration,
             card_slide_on_origin_set_duration: self.card_slide_on_origin_set_duration,
+            allow_hover_while_dragging: self.allow_hover_while_dragging,
         });
     }
 }
@@ -63,6 +66,7 @@ impl Default for BevyCardPlugin {
             on_hover_cancel_position_tween_duration: 0.1,
             go_back_to_place_tween_duration: 0.04,
             card_slide_on_origin_set_duration: 0.2,
+            allow_hover_while_dragging: false,
             enable_tweening_debug_logs: false,
             enable_cards_debug_logs: false,
         }

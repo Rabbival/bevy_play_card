@@ -17,6 +17,7 @@ fn main() {
             DefaultPlugins,
             BevyCardPlugin {
                 card_hover_height: 40.0,
+                allow_hover_while_dragging: true,
                 ..default()
             },
         ))
