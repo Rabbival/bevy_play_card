@@ -73,7 +73,7 @@ fn listen_to_card_drops(
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyer.get(trigger.target).is_ok() {
+    if card_destroyer.contains(trigger.target) {
         if let Ok(card_entity) = cards.get(trigger.dropped) {
             commands.entity(card_entity).despawn();
         }
@@ -87,7 +87,7 @@ fn listen_to_card_destroyer_clicks(
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyer.get(trigger.target).is_ok() {
+    if card_destroyer.contains(trigger.target) {
         for card_entity in &picked_cards {
             commands.entity(card_entity).despawn();
         }

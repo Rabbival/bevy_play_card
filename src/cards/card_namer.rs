@@ -20,7 +20,7 @@ fn name_newborn_card(
     named_cards: Query<(), (With<Card>, With<Name>)>,
     mut commands: Commands,
 ) {
-    if named_cards.get(trigger.target()).is_ok() {
+    if named_cards.contains(trigger.target()) {
         return;
     }
     if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target()) {

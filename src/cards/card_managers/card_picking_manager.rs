@@ -17,11 +17,11 @@ fn on_card_click(
 ) {
     trigger.propagate(false);
     if let Ok(card) = cards.get(trigger.target) {
-        let card_is_picked = picked_cards.get(trigger.target).is_ok();
+        let card_is_picked = picked_cards.contains(trigger.target);
         if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target) {
             if card_is_picked {
                 card_entity_commands.remove::<Picked>();
-            } else if dragged_cards.get(trigger.target).is_ok() {
+            } else if dragged_cards.contains(trigger.target) {
                 return;
             } else if let Some(owner_line_entity) = card.owner_line {
                 if line_is_below_picked_cards_capacity(
