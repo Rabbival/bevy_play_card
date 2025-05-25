@@ -2,7 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-### `0.2 -> 0.2.1`
+#### `0.2.1 -> 0.2.2`
+* Add `at_capacity` function to card lines to reduce boilerplate
+
+#### `0.2 -> 0.2.1`
 * Make hovering over cards while dragging configurable, 
   so that you can forbid hovering over cards from all lines while a card is being actively dragged
 
