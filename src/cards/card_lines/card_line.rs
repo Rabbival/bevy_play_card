@@ -62,6 +62,11 @@ impl CardLine {
     pub fn cards_in_order(&self) -> &Vec<Entity> {
         &self.cards_in_order
     }
+
+    /// Whether the card line as at its maximum card capacity
+    pub fn at_capacity(&self) -> bool {
+        self.max_cards == self.cards_in_order().len()
+    }
 }
 
 //Builders
