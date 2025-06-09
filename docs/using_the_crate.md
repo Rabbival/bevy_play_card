@@ -2,8 +2,8 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-### Registering the [Plugin](src/bevy_card_plugin.rs)
-First, you should add [`BevyCardPlugin`](src/bevy_card_plugin.rs), it has a `::default()` implementation but can be reconfigured, for example:
+### Registering the [Plugin](../src/bevy_card_plugin.rs)
+First, you should add [`BevyCardPlugin`](../src/bevy_card_plugin.rs), it has a `::default()` implementation but can be reconfigured, for example:
   ```rust
   app.add_plugins(
     BevyCardPlugin {
@@ -13,9 +13,9 @@ First, you should add [`BevyCardPlugin`](src/bevy_card_plugin.rs), it has a `::d
   );
   ```
 
-### Spawning [Cards](src/cards/card.rs)
+### Spawning [Cards](../src/cards/card.rs)
 The basic functionality derived from Bevy Picking is added to Cards automatically.
-It's recommended to instantiate a card using [card bundle](src/cards/card_bundle.rs)s:
+It's recommended to instantiate a card using [card bundle](../src/cards/card_bundle.rs)s:
   ```rust
   commands.spawn((
     CardBundle::new(Transform::default()),
@@ -25,17 +25,17 @@ It's recommended to instantiate a card using [card bundle](src/cards/card_bundle
     },
   ));
   ```
-Cards are named automatically by the [card_namer](src/cards/card_namer.rs).
+Cards are named automatically by the [card_namer](../src/cards/card_namer.rs).
 When the `Card` component is removed from an entity, it's automatically removed from it's owner line if it had any.
 
-### Spawning [Card Lines](src/cards/card_lines/card_line.rs)
+### Spawning [Card Lines](../src/cards/card_lines/card_line.rs)
 Cards can live on a card line, that'll allow you to reorder them and keep them neatly organized.
 All you need to instantiate a card line is:
   ```rust
   commands
     .spawn(CardLineBundle::from_transform(Transform::default()));
 ```
-Or more specifically using [`from_card_line`](src/cards/card_lines/card_line_bundle.rs):
+Or more specifically using [`from_card_line`](../src/cards/card_lines/card_line_bundle.rs):
   ```rust
   commands
     .spawn(CardLineBundle::from_card_line(
@@ -49,10 +49,10 @@ Or more specifically using [`from_card_line`](src/cards/card_lines/card_line_bun
     ));
   ```
 
-### Using [Card Line Requests](src/cards/card_lines/event.rs)
+### Using [Card Line Requests](../src/cards/card_lines/event.rs)
 Although you could interact with the entities directly, you can spare yourself some boilerplate
 by firing events using `EventWriter<CardLineRequest>`, already listened to by the plugin.
-Each [`CardLineRequest`](src/cards/card_lines/event.rs) contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
+Each [`CardLineRequest`](../src/cards/card_lines/event.rs) contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
 The variants of `CardLineRequestType` are as follows:
 
 | Variant                  | Role                                                                      |
@@ -66,7 +66,7 @@ The variants of `CardLineRequestType` are as follows:
 | `RemoveAllCardsFromLine` | Removes all the cards in the line                                         |
 
 
-### Card [Tags](src/cards/tags.rs)
+### Card [Tags](../src/cards/tags.rs)
 Cards are being tagged for easier queries when they're hovered, picked and dragged.
 `Hovered` and `Dragged` are removed once the status is done, `Picked` is toggled by clicking.
 This way you can, for example, get all hovered card with queries like:
@@ -84,7 +84,7 @@ For use examples, see [using_card_tags.rs](../examples/using_card_tags.rs)
 
 ### Workflow Example
 Let's spawn a line and add a few cards to it,
-see [cards_on_a_line.rs](examples/cards_on_a_line.rs) for another example of that scenario.
+see [cards_on_a_line.rs](../examples/cards_on_a_line.rs) for another example of that scenario.
 
 First, let's spawn a defaultly-configured line in the middle of the screen.
   ```rust
