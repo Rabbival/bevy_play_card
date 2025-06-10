@@ -27,6 +27,9 @@ https://github.com/user-attachments/assets/24b4ff1e-69e7-4817-91b7-fe7f2751ed09
 
 https://github.com/user-attachments/assets/e9579088-672f-4444-8619-2807c6e5f648
 
+* [disposable_cards_plus.rs](disposable_cards_plus.rs) - Like the previous one but the cards fade out smoothly
+
+* [arced_cards.rs](arced_cards.rs) - Showcasing functionality override by making the card line "arced"
 
 
 [(Click me to go back to the main readme)](../README.md)

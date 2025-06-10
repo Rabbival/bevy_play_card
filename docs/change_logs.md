@@ -2,6 +2,12 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.2.2 -> 0.2.3`
+* Fix broken docs links
+* Add two examples:
+  * [disposable_cards_plus.rs](../examples/disposable_cards_plus.rs) for enhancement using [`bevy_tween`](https://github.com/Multirious/bevy_tween)
+  * [arced_cards.rs](../examples/arced_cards.rs) for both additions and functionality overrides
+
 #### `0.2.1 -> 0.2.2`
 * Add `at_capacity` function to card lines to reduce boilerplate
 
