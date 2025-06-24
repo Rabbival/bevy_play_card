@@ -37,11 +37,12 @@ fn on_drag_start(
 fn on_drag(
     mut trigger: Trigger<Pointer<Drag>>,
     mut card_transforms: Query<&mut Transform, With<Card>>,
+    card_consts: Res<CardConsts>,
 ) {
     trigger.propagate(false);
     if let Ok(mut card_transform) = card_transforms.get_mut(trigger.target) {
-        card_transform.translation.x += trigger.delta.x;
-        card_transform.translation.y -= trigger.delta.y;
+        card_transform.translation.x += trigger.delta.x * card_consts.card_drag_delta_scaler.x;
+        card_transform.translation.y -= trigger.delta.y * card_consts.card_drag_delta_scaler.y;
     }
 }
 
