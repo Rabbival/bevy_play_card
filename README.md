@@ -3,6 +3,12 @@
 
 ![bevy_card_showcase - Trim](https://github.com/user-attachments/assets/bf92b236-76ce-4beb-b929-eec4c85ce166)
 
+### Discord Channel on the Bevy Discord Server
+
+I'd prefer it if you opened an issue or a pull request here, for tracking's and for future users' sake.
+That being said, feel free to write on the discord thread as well:
+https://discord.com/channels/691052431525675048/1354856571083034866
+
 ## [Using The Crate (link)](docs/using_the_crate.md)
 
 ## [Change Logs (link)](docs/change_logs.md)
