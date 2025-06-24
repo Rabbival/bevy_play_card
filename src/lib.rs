@@ -161,7 +161,7 @@ pub mod utilities;
 pub mod prelude {
     pub use crate::bevy_card_plugin::*;
     pub use crate::cards::{
-        CardsPlugin, CardsPluginShouldPrintLogs,
+        CardsPlugin, CardsPluginLoggingFunction,
         card::*,
         card_bundle::*,
         card_lines::{
@@ -179,7 +179,7 @@ pub mod prelude {
     };
     pub use crate::trait_unions::*;
     pub use crate::tweening::{
-        TweeningPlugin, TweeningPluginShouldPrintLogs, animation_parent_destoryer::*,
+        TweeningLoggingFunction, TweeningPlugin, animation_parent_destoryer::*,
         custom_combinators::*, tween_destoryer::*, tween_priority::*, tween_request::*,
     };
     pub use crate::utilities::system_sets::*;

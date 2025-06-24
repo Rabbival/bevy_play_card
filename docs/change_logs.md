@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.2.3 -> 0.2.4`
+* Enable providing logging functions for cards and tweening for more flexible debugging
+
 #### `0.2.2 -> 0.2.3`
 * Fix broken docs links
 * Add two examples:

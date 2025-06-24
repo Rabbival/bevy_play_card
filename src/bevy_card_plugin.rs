@@ -24,9 +24,9 @@ pub struct BevyCardPlugin {
     /// Whether cards can be hovered over while actively dragging a card
     pub allow_hover_while_dragging: bool,
     /// Whether debug logs should be printed for TweeningPlugin
-    pub enable_tweening_debug_logs: bool,
+    pub tweening_debug_logging_function: Option<fn(String)>,
     /// Whether debug logs should be printed for CardsPlugin
-    pub enable_cards_debug_logs: bool,
+    pub card_debug_logging_function: Option<fn(String)>,
 }
 
 impl Plugin for BevyCardPlugin {
@@ -34,10 +34,10 @@ impl Plugin for BevyCardPlugin {
         app.add_plugins((
             GenericPlugins,
             TweeningPlugin {
-                print_debug_logs: self.enable_tweening_debug_logs,
+                logging_function: self.tweening_debug_logging_function.clone(),
             },
             CardsPlugin {
-                print_debug_logs: self.enable_cards_debug_logs,
+                logging_function: self.card_debug_logging_function.clone(),
             },
             CardsSystemSetsPlugin,
         ))
@@ -67,8 +67,8 @@ impl Default for BevyCardPlugin {
             go_back_to_place_tween_duration: 0.04,
             card_slide_on_origin_set_duration: 0.2,
             allow_hover_while_dragging: false,
-            enable_tweening_debug_logs: false,
-            enable_cards_debug_logs: false,
+            tweening_debug_logging_function: None,
+            card_debug_logging_function: None,
         }
     }
 }

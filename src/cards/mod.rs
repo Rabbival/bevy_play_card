@@ -10,15 +10,15 @@ pub mod event;
 pub mod tags;
 
 pub struct CardsPlugin {
-    pub print_debug_logs: bool,
+    pub logging_function: Option<fn(String)>,
 }
 
 #[derive(Resource)]
-pub struct CardsPluginShouldPrintLogs(pub bool);
+pub struct CardsPluginLoggingFunction(pub Option<fn(String)>);
 
 impl Plugin for CardsPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(CardsPluginShouldPrintLogs(self.print_debug_logs))
+        app.insert_resource(CardsPluginLoggingFunction(self.logging_function.clone()))
             .add_plugins((
                 CardsEventsPlugin,
                 CardManagersPlugin,

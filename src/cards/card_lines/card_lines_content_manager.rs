@@ -1,4 +1,3 @@
-use tracing::info;
 use crate::prelude::*;
 use crate::utilities::action_performed::ActionPerformed;
 use crate::utilities::calculation_helpers::projection_directed_distance;
@@ -44,7 +43,7 @@ fn listen_to_card_removal_requests(
     mut card_line_request_reader: EventReader<CardLineRequest>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name)>,
-    debug_logs_enabled: Res<CardsPluginShouldPrintLogs>,
+    logging_function: Res<CardsPluginLoggingFunction>,
     mut commands: Commands,
 ) {
     for request in card_line_request_reader.read() {
@@ -55,7 +54,7 @@ fn listen_to_card_removal_requests(
                         *card_entity,
                         &mut card_line,
                         &mut cards,
-                        debug_logs_enabled.0,
+                        &logging_function.0,
                         &mut commands,
                     );
                 }
@@ -67,7 +66,7 @@ fn listen_to_card_removal_requests(
                             *card_entity,
                             &mut card_line,
                             &mut cards,
-                            debug_logs_enabled.0,
+                            &logging_function.0,
                             &mut commands,
                         );
                     }
@@ -88,11 +87,11 @@ fn listen_to_card_removal_requests(
                             removed_cards_names.push(card_name.clone());
                         }
                     }
-                    if debug_logs_enabled.0 {
-                        info!(
+                    if let Some(logger) = logging_function.0 {
+                        logger(format!(
                             "Removed all cards from a line. Cards removed: {:?}",
                             removed_cards_names
-                        );
+                        ));
                     }
                 }
             }
@@ -105,7 +104,7 @@ fn remove_card_from_line_if_found(
     card_entity_to_remove: Entity,
     card_line: &mut CardLine,
     cards: &mut Query<(&mut Card, &Name)>,
-    should_log: bool,
+    logging_function: &Option<fn(String)>,
     commands: &mut Commands,
 ) -> ActionPerformed {
     let mut card_name_if_removed = None;
@@ -119,7 +118,7 @@ fn remove_card_from_line_if_found(
             card_name_if_removed = Some(card_name.clone());
         }
     }
-    if should_log {
+    if let Some(logger) = logging_function {
         if let Some(card_name) = card_name_if_removed {
             let mut names_in_order = vec![];
             for card_entity in card_line.cards_in_order() {
@@ -127,10 +126,10 @@ fn remove_card_from_line_if_found(
                     names_in_order.push(name);
                 }
             }
-            info!(
+            logger(format!(
                 "{} was removed from a card line, so it's now: {:?}",
                 card_name, names_in_order
-            );
+            ));
         }
     }
     card_removed
@@ -140,7 +139,7 @@ fn listen_to_card_addition_requests(
     mut card_line_request_reader: EventReader<CardLineRequest>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name)>,
-    debug_logs_enabled: Res<CardsPluginShouldPrintLogs>,
+    logging_function: Res<CardsPluginLoggingFunction>,
     mut commands: Commands,
 ) {
     for request in card_line_request_reader.read() {
@@ -152,7 +151,7 @@ fn listen_to_card_addition_requests(
                         request.line,
                         &mut card_line,
                         &mut cards,
-                        debug_logs_enabled.0,
+                        &logging_function.0,
                         &mut commands,
                     );
                     if !card_inserted {
@@ -168,7 +167,7 @@ fn listen_to_card_addition_requests(
                             request.line,
                             &mut card_line,
                             &mut cards,
-                            debug_logs_enabled.0,
+                            &logging_function.0,
                             &mut commands,
                         );
                         if !card_inserted {
@@ -187,7 +186,7 @@ fn add_card_to_line_if_in_capacity(
     card_line_entity: Entity,
     card_line: &mut CardLine,
     cards: &mut Query<(&mut Card, &Name)>,
-    should_log: bool,
+    logging_function: &Option<fn(String)>,
     commands: &mut Commands,
 ) -> ActionPerformed {
     let mut card_name_if_added = None;
@@ -198,7 +197,7 @@ fn add_card_to_line_if_in_capacity(
             card.owner_line = Some(card_line_entity);
             card_name_if_added = Some(name.clone());
         }
-        if should_log {
+        if let Some(logger) = logging_function {
             if let Some(card_name) = card_name_if_added {
                 let mut names_in_order = vec![];
                 for card_entity in card_line.cards_in_order() {
@@ -206,10 +205,10 @@ fn add_card_to_line_if_in_capacity(
                         names_in_order.push(name);
                     }
                 }
-                info!(
+                logger(format!(
                     "{} was added to a card line, so it's now: {:?}",
                     card_name, names_in_order
-                );
+                ));
             }
         }
     }
@@ -220,7 +219,7 @@ fn listen_to_dragged_card_movements(
     moved_dragged_cards: Query<(&Transform, &Card, &Dragged, Entity), Changed<Transform>>,
     mut card_lines: Query<(&mut CardLine, &Transform)>,
     cards: Query<(&Card, &Name)>,
-    debug_logs_enabled: Res<CardsPluginShouldPrintLogs>,
+    logging_function: Res<CardsPluginLoggingFunction>,
 ) {
     for (dragged_card_transform, dragged_card, card_dragged_component, dragged_card_entity) in
         &moved_dragged_cards
@@ -236,7 +235,7 @@ fn listen_to_dragged_card_movements(
                     &cards,
                     &mut card_line,
                     card_line_transform,
-                    debug_logs_enabled.0,
+                    &logging_function.0,
                 );
             }
         }
@@ -249,7 +248,7 @@ fn sort_on_dragged_card_movement(
     cards: &Query<(&Card, &Name)>,
     owner_card_line: &mut CardLine,
     card_line_transform: &Transform,
-    debug_logs_enabled: bool,
+    logging_function: &Option<fn(String)>,
 ) {
     let distance_from_origin_signed = projection_directed_distance(
         dragged_card_transform.translation.xy(),
@@ -285,17 +284,19 @@ fn sort_on_dragged_card_movement(
     {
         let swapped = owner_card_line.heavy_swap(dragged_card_index, dragged_card_new_index);
 
-        if debug_logs_enabled && swapped.0 {
-            let mut names_in_order = vec![];
-            for card_entity in owner_card_line.cards_in_order() {
-                if let Ok((_, name)) = cards.get(*card_entity) {
-                    names_in_order.push(name);
+        if swapped.0 {
+            if let Some(logger) = logging_function {
+                let mut names_in_order = vec![];
+                for card_entity in owner_card_line.cards_in_order() {
+                    if let Ok((_, name)) = cards.get(*card_entity) {
+                        names_in_order.push(name);
+                    }
                 }
+                logger(format!(
+                    "A dragged card moved from index {} to index {} making the card line: {:?}",
+                    dragged_card_index, dragged_card_new_index, names_in_order
+                ));
             }
-            info!(
-                "A dragged card moved from index {} to index {} making the card line: {:?}",
-                dragged_card_index, dragged_card_new_index, names_in_order
-            );
         }
     }
 }

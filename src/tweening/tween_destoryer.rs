@@ -1,4 +1,3 @@
-use tracing::info;
 use tween::{AnimationTarget, ComponentTween, TargetComponent};
 
 use crate::{plugin_for_implementors_of_trait, prelude::*, read_single_field_variant};
@@ -23,7 +22,7 @@ impl<T: Sendable> Plugin for TweenDestroyerPlugin<T> {
 fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
     mut trigger: Trigger<TweenRequest>,
     mut tweens_of_type: Query<(&mut ComponentTween<T>, Entity, Option<&Name>)>,
-    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
+    logging_function: Res<TweeningLoggingFunction>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
@@ -34,7 +33,7 @@ fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
                 tween_entity,
                 &mut tween,
                 maybe_tween_name,
-                debug_logs_enabled.0,
+                &logging_function.0,
                 &mut commands,
             );
         }
@@ -44,7 +43,7 @@ fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
 fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
     mut trigger: Trigger<OnRemove, AnimationTarget>,
     mut query: Query<(&mut ComponentTween<T>, Option<&Name>, Entity)>,
-    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
+    logging_function: Res<TweeningLoggingFunction>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
@@ -54,7 +53,7 @@ fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
             tween_entity,
             &mut tween,
             maybe_tween_name,
-            debug_logs_enabled.0,
+            &logging_function.0,
             &mut commands,
         );
     }
@@ -79,16 +78,16 @@ fn handle_tween_priority_on_spawn<T: Sendable>(
         ),
         Added<ComponentTween<T>>,
     >,
-    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
+    logging_function: Res<TweeningLoggingFunction>,
 ) {
     for (newborn_tween, child_of, newborn_tween_entity, maybe_tween_priority, maybe_tween_name) in
         &newborn_tweens_query
     {
-        if debug_logs_enabled.0 {
-            info!(
+        if let Some(logger) = logging_function.0 {
+            logger(format!(
                 "{} spawned, looking for tweens to destroy by priority",
                 maybe_tween_name.unwrap_or(&Name::new("A nameless tween with priority"))
-            );
+            ));
         }
         if let Some(priority) = maybe_tween_priority {
             handle_tween_priority_to_others_of_type(
@@ -195,7 +194,7 @@ fn remove_intersecting_targets_for_weaker_tween<T: Sendable>(
 fn listen_to_remove_entity_from_tween_targets_requests<T: Sendable>(
     mut tween_request_reader: EventReader<TweenRequest>,
     mut tweens_of_type: Query<(&mut ComponentTween<T>, Option<&Name>)>,
-    debug_logs_enabled: Res<TweeningPluginShouldPrintLogs>,
+    logging_function: Res<TweeningLoggingFunction>,
     mut commands: Commands,
 ) {
     for remove_request in
@@ -207,7 +206,7 @@ fn listen_to_remove_entity_from_tween_targets_requests<T: Sendable>(
                 remove_request.tween_entity,
                 &mut tween,
                 maybe_name,
-                debug_logs_enabled.0,
+                &logging_function.0,
                 &mut commands,
             );
         }
@@ -219,7 +218,7 @@ fn remove_target_and_destroy_if_has_none<T: Sendable>(
     tween_entity: Entity,
     tween: &mut ComponentTween<T>,
     maybe_tween_name: Option<&Name>,
-    debug_logs_enabled: bool,
+    logging_function: &Option<fn(String) -> ()>,
     commands: &mut Commands,
 ) {
     match &mut tween.target {
@@ -227,23 +226,23 @@ fn remove_target_and_destroy_if_has_none<T: Sendable>(
             if targets_to_match.contains(tween_target) {
                 if let Ok(mut entity_commands) = commands.get_entity(tween_entity) {
                     entity_commands.try_despawn();
-                    if debug_logs_enabled {
-                        info!(
+                    if let Some(logger) = logging_function {
+                        logger(format!(
                             "destroying tween: {}",
                             maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
-                        );
+                        ));
                     }
                 }
             }
         }
         TargetComponent::Entities(tween_targets) => {
             tween_targets.retain(|target| !targets_to_match.contains(target));
-            if debug_logs_enabled {
-                info!(
+            if let Some(logger) = logging_function {
+                logger(format!(
                     "removing targets {:?} from tween: {}",
                     targets_to_match,
                     maybe_tween_name.unwrap_or(&Name::new("(nameless)"))
-                );
+                ));
             }
             if tween_targets.is_empty() {
                 if let Ok(mut entity_commands) = commands.get_entity(tween_entity) {
