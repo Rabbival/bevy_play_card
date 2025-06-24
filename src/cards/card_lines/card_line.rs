@@ -13,11 +13,11 @@ pub struct CardLine {
     pub origin: Transform,
     /// The card-line's card capacity
     pub max_cards: usize,
-    /// How high in pixels the card line rises when asked to
+    /// How high in pixels the card line rises when asked to (relative to Vec3::ONE scale)
     pub raised_card_line_delta: f32,
     /// How long it takes the card line to rise and fall
     pub slide_duration: f32,
-    /// The gap between the cards in the line in pixels
+    /// The gap between the cards in the line in pixels (relative to Vec3::ONE scale)
     pub card_origin_gap: f32,
     /// Optional picked cards capacity
     pub picked_cards_capacity: Option<usize>,

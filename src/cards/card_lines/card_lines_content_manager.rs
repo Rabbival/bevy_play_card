@@ -250,6 +250,7 @@ fn sort_on_dragged_card_movement(
     card_line_transform: &Transform,
     logging_function: &Option<fn(String)>,
 ) {
+    let card_line_x_scale = card_line_transform.scale.x;
     let distance_from_origin_signed = projection_directed_distance(
         dragged_card_transform.translation.xy(),
         card_line_transform.right().xy(),
@@ -259,8 +260,8 @@ fn sort_on_dragged_card_movement(
     let mut maybe_dragged_card_index = None;
     for (card_index, card_entity) in owner_card_line.cards_in_order().iter().enumerate() {
         if let Ok((card, _)) = cards.get(*card_entity) {
-            if (card.origin.translation.x - distance_from_origin_signed).abs()
-                < owner_card_line.card_origin_gap * (2.0 / 5.0)
+            if (card.origin.translation.x * card_line_x_scale - distance_from_origin_signed).abs()
+                < owner_card_line.card_origin_gap * card_line_x_scale * (2.0 / 5.0)
             {
                 maybe_new_dragged_card_index = Some(card_index);
             }
