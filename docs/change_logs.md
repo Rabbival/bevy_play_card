@@ -6,7 +6,7 @@
 * Enable providing logging functions for cards and tweening for more flexible debugging
 * `CardConsts` is now a field within `BevyCardPlugin` (instead of having duplicate fields)
 * `card_drag_delta_scaler` field was added to `CardConsts` to account for camera projection changes
-* Card origin gap now accounts for changes in `CardLine` transform scales
+* When other cards make space for the dragged card, they now accounts for changes in the `CardLine` transform's scale
 
 #### `0.2.2 -> 0.2.3`
 * Fix broken docs links
