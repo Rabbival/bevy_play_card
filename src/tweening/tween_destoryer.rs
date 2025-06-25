@@ -27,6 +27,9 @@ fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
 ) {
     trigger.propagate(false);
     if let TweenRequest::RemoveTargetsFromAllTweensTargetingThem(entities) = trigger.event() {
+        if entities.is_empty() {
+            return;
+        }
         for (mut tween, tween_entity, maybe_tween_name) in &mut tweens_of_type {
             remove_target_and_destroy_if_has_none(
                 entities,
