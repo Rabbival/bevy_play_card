@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.2.4 -> 0.2.5`
+* Update crate to build docs.rs
+
 #### `0.2.3 -> 0.2.4`
 * Enable providing logging functions for cards and tweening for more flexible debugging
 * `CardConsts` is now a field within `BevyCardPlugin` (instead of having duplicate fields)
