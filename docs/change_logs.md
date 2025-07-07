@@ -2,7 +2,7 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-#### `0.2.4 -> 0.2.5`
+#### `0.2.4 -> 0.2.6`
 * Update crate to build docs.rs
 
 #### `0.2.3 -> 0.2.4`
