@@ -3,22 +3,13 @@ use crate::prelude::*;
 use bevy_tween::combinator::parallel;
 use bevy_tween::prelude::*;
 
-pub struct CardHoveringPlugin;
-
-impl Plugin for CardHoveringPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_observer(on_hover).add_observer(on_hover_cancel);
-    }
-}
-
-fn on_hover(
-    mut trigger: Trigger<Pointer<Over>>,
+pub(crate) fn on_hover(
+    trigger: Trigger<Pointer<Over>>,
     cards: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Ok(card) = cards.get(trigger.target) {
         if card_consts.allow_hover_while_dragging {
             if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
@@ -35,14 +26,13 @@ fn on_hover(
     }
 }
 
-fn on_hover_cancel(
-    mut trigger: Trigger<Pointer<Out>>,
+pub(crate) fn on_hover_cancel(
+    trigger: Trigger<Pointer<Out>>,
     cards: Query<(&Transform, Entity, &Card, &Name, Option<&Dragged>), Without<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Ok((transform, entity, card, name, maybe_dragged)) = cards.get(trigger.target) {
         commands.entity(entity).remove::<Hovered>();
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
