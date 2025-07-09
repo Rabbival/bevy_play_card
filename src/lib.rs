@@ -7,8 +7,11 @@ First, you should add `BevyCardPlugin`, it has a `::default()` implementation bu
   ```rust
   app.add_plugins(
     BevyCardPlugin {
-      card_hover_height: 40.0,
-      ..default()
+        card_consts: CardConsts {
+            card_hover_height: 40.0,
+            ..default()
+        },
+        ..default()
     },
   );
   ```
