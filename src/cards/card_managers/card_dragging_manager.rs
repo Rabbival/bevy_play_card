@@ -3,24 +3,12 @@ use crate::prelude::*;
 use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
 
-pub struct CardDraggingPlugin;
-
-impl Plugin for CardDraggingPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_observer(on_drag_start)
-            .add_observer(on_drag)
-            .add_observer(back_to_origin_when_unused)
-            .add_observer(listen_to_dragging_done_for_card);
-    }
-}
-
-fn on_drag_start(
-    mut trigger: Trigger<Pointer<DragStart>>,
+pub(crate) fn on_drag_start(
+    trigger: Trigger<Pointer<DragStart>>,
     mut card_transforms: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Ok(card) = card_transforms.get_mut(trigger.target) {
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
@@ -34,20 +22,19 @@ fn on_drag_start(
     }
 }
 
-fn on_drag(
-    mut trigger: Trigger<Pointer<Drag>>,
+pub(crate) fn on_drag(
+    trigger: Trigger<Pointer<Drag>>,
     mut card_transforms: Query<&mut Transform, With<Card>>,
     card_consts: Res<CardConsts>,
 ) {
-    trigger.propagate(false);
     if let Ok(mut card_transform) = card_transforms.get_mut(trigger.target) {
         card_transform.translation.x += trigger.delta.x * card_consts.card_drag_delta_scaler.x;
         card_transform.translation.y -= trigger.delta.y * card_consts.card_drag_delta_scaler.y;
     }
 }
 
-fn back_to_origin_when_unused(
-    mut trigger: Trigger<Pointer<DragEnd>>,
+pub(crate) fn back_to_origin_when_unused(
+    trigger: Trigger<Pointer<DragEnd>>,
     mut dragged_cards: Query<
         (&mut Transform, Entity, &Card, &mut Dragged, &Name),
         Without<CardLine>,
@@ -56,7 +43,6 @@ fn back_to_origin_when_unused(
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Ok((mut card_transform, card_entity, card, mut card_dragged_component, card_name)) =
         dragged_cards.get_mut(trigger.target)
     {
@@ -130,12 +116,11 @@ fn play_card_going_back_to_place_animation(
         )));
 }
 
-fn listen_to_dragging_done_for_card(
-    mut trigger: Trigger<TweenEvent<DeclareDraggingDoneForCard>>,
+pub(crate) fn listen_to_dragging_done_for_card(
+    trigger: Trigger<TweenEvent<DeclareDraggingDoneForCard>>,
     cards: Query<(), With<Card>>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Some(entity) = trigger.data.card_entity {
         if let Ok(_card) = cards.get(entity) {
             if let Ok(mut entity_commands) = commands.get_entity(entity) {

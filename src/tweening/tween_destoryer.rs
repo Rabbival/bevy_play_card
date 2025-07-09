@@ -20,12 +20,11 @@ impl<T: Sendable> Plugin for TweenDestroyerPlugin<T> {
 }
 
 fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
-    mut trigger: Trigger<TweenRequest>,
+    trigger: Trigger<TweenRequest>,
     mut tweens_of_type: Query<(&mut ComponentTween<T>, Entity, Option<&Name>)>,
     logging_function: Res<TweeningLoggingFunction>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let TweenRequest::RemoveTargetsFromAllTweensTargetingThem(entities) = trigger.event() {
         if entities.is_empty() {
             return;
@@ -44,12 +43,11 @@ fn remove_targets_from_all_tweens_targeting_them<T: Sendable>(
 }
 
 fn remove_entity_and_clear_tween_if_has_none<T: Sendable>(
-    mut trigger: Trigger<OnRemove, AnimationTarget>,
+    trigger: Trigger<OnRemove, AnimationTarget>,
     mut query: Query<(&mut ComponentTween<T>, Option<&Name>, Entity)>,
     logging_function: Res<TweeningLoggingFunction>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     for (mut tween, maybe_tween_name, tween_entity) in &mut query {
         remove_target_and_destroy_if_has_none(
             &vec![trigger.target()],

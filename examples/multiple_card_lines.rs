@@ -1,3 +1,4 @@
+use bevy_play_card::cards::card_consts::CardConsts;
 use bevy_play_card::prelude::*;
 use std::f32::consts::PI;
 
@@ -16,8 +17,10 @@ fn main() {
         .add_plugins((
             DefaultPlugins,
             BevyCardPlugin {
-                card_hover_height: 40.0,
-                allow_hover_while_dragging: true,
+                card_consts: CardConsts {
+                    card_hover_height: 20.0,
+                    ..default()
+                },
                 ..default()
             },
         ))

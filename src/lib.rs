@@ -7,8 +7,11 @@ First, you should add `BevyCardPlugin`, it has a `::default()` implementation bu
   ```rust
   app.add_plugins(
     BevyCardPlugin {
-      card_hover_height: 40.0,
-      ..default()
+        card_consts: CardConsts {
+            card_hover_height: 40.0,
+            ..default()
+        },
+        ..default()
     },
   );
   ```
@@ -159,9 +162,8 @@ pub mod prelude {
             card_lines_mover::*, event::*,
         },
         card_managers::{
-            CardManagersPlugin, card_dragging_manager::*, card_hovering_manager::*,
-            card_origin_set_listener::*, card_picking_manager::*, card_tag_insertion_listener::*,
-            theres_an_actively_dragged_card_from_that_line,
+            CardManagersPlugin, card_observer_attacher::*, card_origin_set_listener::*,
+            card_tag_insertion_listener::*, theres_an_actively_dragged_card_from_that_line,
         },
         card_namer::*,
         event::*,

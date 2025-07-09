@@ -1,21 +1,13 @@
 use crate::prelude::*;
-pub struct CardPickingPlugin;
 
-impl Plugin for CardPickingPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_observer(on_card_click);
-    }
-}
-
-fn on_card_click(
-    mut trigger: Trigger<Pointer<Click>>,
+pub(crate) fn on_card_click(
+    trigger: Trigger<Pointer<Click>>,
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
     card_lines: Query<&CardLine>,
     mut commands: Commands,
 ) {
-    trigger.propagate(false);
     if let Ok(card) = cards.get(trigger.target) {
         let card_is_picked = picked_cards.contains(trigger.target);
         if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target) {
