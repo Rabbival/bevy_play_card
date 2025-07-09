@@ -43,14 +43,14 @@ fn print_going_back_to_place_card_names(
 ) {
     for (card_name, dragged) in &cards {
         if let Dragged::GoingBackToPlace = dragged {
-            info!("{} is going back to place", card_name);
+            println!("{} is going back to place", card_name);
         }
     }
 }
 
 fn notify_on_hover_start(trigger: Trigger<OnAdd, Hovered>, card_names: Query<&Name, With<Card>>) {
     if let Ok(card_name) = card_names.get(trigger.target()) {
-        info!("Hovering {}", card_name);
+        println!("Hovering {}", card_name);
     }
 }
 
@@ -59,12 +59,12 @@ fn notify_on_picked_cards(
     card_names: Query<(&Name, Option<&Picked>), With<Card>>,
 ) {
     if let Ok((card_name, _)) = card_names.get(trigger.target()) {
-        info!("Picked {}", card_name);
+        println!("Picked {}", card_name);
         let picked_cards: Vec<&Name> = card_names
             .iter()
             .filter_map(|(name, picked)| picked.map(|_| name))
             .collect();
-        info!("Now the picked cards are {:?}", picked_cards);
+        println!("Now the picked cards are {:?}", picked_cards);
     }
 }
 
