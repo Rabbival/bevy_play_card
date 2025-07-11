@@ -172,7 +172,7 @@ pub mod prelude {
     pub use crate::trait_unions::*;
     pub use crate::tweening::{
         TweeningLoggingFunction, TweeningPlugin, animation_parent_destoryer::*,
-        custom_combinators::*, tween_destoryer::*, tween_priority::*, tween_request::*,
+        custom_combinators::*, tween_priority::*, tween_request::*, tween_target_remover::*,
     };
     pub use crate::utilities::system_sets::*;
     pub use bevy::{platform::collections::HashMap, prelude::*};

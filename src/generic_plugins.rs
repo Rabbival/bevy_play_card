@@ -19,7 +19,8 @@ impl Plugin for GenericPlugins {
 impl<T: Sendable> Plugin for SendableGenericPlugins<T> {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            TweenDestroyerPlugin::<T>::default(),
+            TweenTargetRemover::<T>::default(),
+            TweenPriorityHandler::<T>::default(),
             AnimationParentDestroyerGenericPlugin::<T>::default(),
         ));
     }

@@ -2,9 +2,9 @@ use crate::prelude::*;
 
 pub mod animation_parent_destoryer;
 pub mod custom_combinators;
-pub mod tween_destoryer;
 pub mod tween_priority;
 pub mod tween_request;
+pub mod tween_target_remover;
 
 pub struct TweeningPlugin {
     pub logging_function: Option<fn(String)>,
