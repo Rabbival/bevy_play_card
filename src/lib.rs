@@ -144,7 +144,6 @@ Ending up with:
 pub mod cards;
 mod generic_plugins;
 pub mod trait_unions;
-pub mod tweening;
 
 #[macro_use]
 pub mod macros;
@@ -170,13 +169,8 @@ pub mod prelude {
         tags::*,
     };
     pub use crate::trait_unions::*;
-    pub use crate::tweening::{
-        TweeningLoggingFunction, TweeningPlugin, animation_parent_destoryer::*,
-        custom_combinators::*, tween_priority::*, tween_request::*, tween_target_remover::*,
-    };
     pub use crate::utilities::system_sets::*;
     pub use bevy::{platform::collections::HashMap, prelude::*};
-    pub use bevy_tween::*;
+    pub use bevy_tween_helpers::*;
     pub use std::marker::PhantomData;
-    pub use tween_event::*;
 }

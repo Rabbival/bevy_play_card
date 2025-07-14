@@ -6,12 +6,6 @@ pub enum CardsOrderingSystemSet {
     NewOriginSetTweenFiring,
 }
 
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum TweenHelpersSystemSet {
-    PreTargetRemoval,
-    TargetRemoval,
-}
-
 pub struct CardsSystemSetsPlugin;
 
 impl Plugin for CardsSystemSetsPlugin {
@@ -21,14 +15,6 @@ impl Plugin for CardsSystemSetsPlugin {
             ((
                 CardsOrderingSystemSet::OriginSetting,
                 CardsOrderingSystemSet::NewOriginSetTweenFiring,
-            )
-                .chain(),),
-        )
-        .configure_sets(
-            Update,
-            ((
-                TweenHelpersSystemSet::PreTargetRemoval,
-                TweenHelpersSystemSet::TargetRemoval,
             )
                 .chain(),),
         );

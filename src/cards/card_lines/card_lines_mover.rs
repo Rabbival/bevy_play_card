@@ -4,6 +4,7 @@ use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::*;
 use std::collections::HashMap;
 use std::time::Duration;
+use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 pub struct CardLinesMoverPlugin;
 

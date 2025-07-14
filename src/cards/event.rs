@@ -1,3 +1,4 @@
+use bevy_tween::tween_event::TweenEventPlugin;
 use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 

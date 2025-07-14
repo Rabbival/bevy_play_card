@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### '0.2.7' -> '0.3.0'
+* Extract tween utilities logic into its own `bevy_tween_helpers` crate
+
 #### `0.2.6 -> 0.2.7`
 * Add observers per card (instead of to the entire app) to allow for pointer trigger propagations
 * Update [multiple_card_lines.rs](../examples/multiple_card_lines.rs) example to use `CardConsts` (see 0.2.4 changes)

@@ -2,6 +2,7 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween::combinator::parallel;
 use bevy_tween::prelude::*;
+use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 pub(crate) fn on_hover(
     trigger: Trigger<Pointer<Over>>,

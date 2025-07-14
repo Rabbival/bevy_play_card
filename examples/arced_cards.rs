@@ -3,6 +3,7 @@ use bevy_play_card::prelude::ops::FloatPow;
 use bevy_play_card::prelude::*;
 use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt};
 use bevy_tween::prelude::{EaseKind, IntoTarget};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use std::f32::consts::PI;
 use std::time::Duration;
 

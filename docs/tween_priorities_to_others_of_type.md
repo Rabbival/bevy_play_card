@@ -2,7 +2,7 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-See [TweenPriorityToOthersOfType](../src/tweening/tween_priority.rs)
+See [TweenPriorityToOthersOfType](https://github.com/Rabbival/bevy_tween_helpers/blob/main/src/tween_priority.rs)
 
 | Tween Name                           | Tween Use                        | Tween Type                | Priority |
 |--------------------------------------|----------------------------------|---------------------------|----------|

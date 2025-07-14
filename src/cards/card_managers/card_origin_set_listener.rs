@@ -4,6 +4,7 @@ use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, paral
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
 use std::time::Duration;
+use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 pub struct CardOriginSetListenerPlugin;
 

@@ -26,10 +26,10 @@ That being said, feel free to write on the discord thread as well.
 <br>
 
 ## Bevy Version Support
-| `bevy` | `bevy_tween` |
-|--------|--------------|
-| 0.16   | 0.2          |
-| 0.15   | 0.1          |
+| `bevy` | `bevy_play_card` |
+|--------|------------------|
+| 0.16   | 0.2 - 0.3        |
+| 0.15   | 0.1              |
 <br>
 
 ## Credits

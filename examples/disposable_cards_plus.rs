@@ -3,9 +3,11 @@ use bevy_tween::combinator::{
     AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
 };
 use bevy_tween::interpolate::sprite_color_to;
-use bevy_tween::prelude::{EaseKind, IntoTarget};
+use bevy_tween::prelude::{EaseKind, IntoTarget, TweenEvent};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
+use bevy_tween::tween_event::TweenEventPlugin;
+use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 #[derive(Component)]
 struct CardDestroyer;
