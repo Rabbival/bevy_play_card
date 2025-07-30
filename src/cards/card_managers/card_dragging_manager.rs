@@ -4,6 +4,14 @@ use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
 use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 
+pub struct CardDraggingPlugin;
+
+impl Plugin for CardDraggingPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_observer(listen_to_dragging_done_for_card);
+    }
+}
+
 pub(crate) fn on_drag_start(
     trigger: Trigger<Pointer<DragStart>>,
     mut card_transforms: Query<&Card>,
@@ -117,7 +125,7 @@ fn play_card_going_back_to_place_animation(
         )));
 }
 
-pub(crate) fn listen_to_dragging_done_for_card(
+fn listen_to_dragging_done_for_card(
     trigger: Trigger<TweenEvent<DeclareDraggingDoneForCard>>,
     cards: Query<(), With<Card>>,
     mut commands: Commands,

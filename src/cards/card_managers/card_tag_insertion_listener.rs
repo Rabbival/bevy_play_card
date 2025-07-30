@@ -23,7 +23,6 @@ fn on_dragged_insertion(
 ) {
     for picked_card_entity in &picked_cards {
         commands.entity(picked_card_entity).remove::<Picked>();
-        commands.entity(picked_card_entity).remove::<Hovered>();
     }
 }
 
