@@ -17,5 +17,7 @@
 
 * [arced_cards.rs](arced_cards.rs) - Showcasing functionality override by making the card line "arced"
 
+* [automatic_wave.rs](automatic_wave.rs) - Showcasing [`TogglePickingForCard`](../src/cards/event.rs) and [`CardPickingPolicy`](../src/cards/card_lines/card_picking_policy.rs)
+
 
 [(Click me to go back to the main readme)](../README.md)

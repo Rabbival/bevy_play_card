@@ -9,6 +9,7 @@ fn main() {
             BevyCardPlugin {
                 card_consts: CardConsts {
                     card_origin_set_ease_kind: EaseKind::BackOut,
+                    card_slide_on_origin_set_duration: 0.4,
                     ..default()
                 },
                 ..default()

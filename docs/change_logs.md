@@ -2,11 +2,16 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-#### '0.3.0' -> '0.4.0'
-* Add `CardPickingPolicy` and `CardPickingPolicyWithContent` to card lines 
+#### `0.3.0 -> 0.4.0`
+* Add [`CardPickingPolicy`](../src/cards/card_lines/card_picking_policy.rs) and `CardPickingPolicyWithContent` to card lines 
+  * You may now pick (pun intended) one of three policies as to how your line would react to too many picks
 * Fix card dragging never ends bug
+* Add [`TogglePickingForCard`](../src/cards/event.rs) to manually request card pick toggle
+  * Showcase: [automatic_wave.rs](../examples/automatic_wave.rs)
+* Add `card_origin_set_ease_kind` to `CardConsts` - you may now change the way cards slide to place
+  * I tweaked [cards_on_a_line.rs](../examples/cards_on_a_line.rs) to show that so you may look there
 
-#### '0.2.7' -> '0.3.0'
+#### `0.2.7 -> 0.3.0`
 * Extract tween utilities logic into its own `bevy_tween_helpers` crate
 
 #### `0.2.6 -> 0.2.7`
@@ -39,7 +44,7 @@
 * (Possibly Breaking) Changes:
   * Update from Bevy 0.15 to Bevy 0.16
   * Card animation-managers-and-taggers moved under [`cards_managers`](../src/cards/card_managers) folder (and plugin)
-  * Make [TweenPriorityToOthersOfType](../src/tweening/tween_priority.rs) a u32 and change the ones created in the crate to have gaps between them
+  * Make [TweenPriorityToOthersOfType] a u32 and change the ones created in the crate to have gaps between them
   * Tweens of the same type now don't destroy each other if they have a shared parent entity, which enables same-type-sequences
   * Shorten [`LineRequestType`](../src/cards/card_lines/event.rs) variants:
     * `RaiseCardLine -> RaiseLine`

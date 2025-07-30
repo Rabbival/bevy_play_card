@@ -12,6 +12,7 @@ pub struct CardManagersPlugin;
 impl Plugin for CardManagersPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
+            CardPickingPlugin,
             CardDraggingPlugin,
             CardOriginSetListenerPlugin,
             CardObserverAttacherPlugin,
