@@ -1,10 +1,7 @@
 # bevy_play_card
 ### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
-
-
-https://github.com/user-attachments/assets/fd3742f6-46d0-4cf0-8aa3-257a81357846
-
+![automatic_wave](https://github.com/user-attachments/assets/d99ac820-d92b-47ac-bcd3-a8d0449db275)
 
 <br>
 
