@@ -1,7 +1,11 @@
 # bevy_play_card
 ### A card crate for the [`Bevy`](https://bevyengine.org/) game engine
 
-![bevy_card_showcase - Trim](https://github.com/user-attachments/assets/bf92b236-76ce-4beb-b929-eec4c85ce166)
+
+
+https://github.com/user-attachments/assets/fd3742f6-46d0-4cf0-8aa3-257a81357846
+
+
 <br>
 
 ### [A link to the crate's thread on the Bevy Discord server](https://discord.com/channels/691052431525675048/1354856571083034866)
