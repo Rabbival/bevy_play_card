@@ -59,7 +59,7 @@ fn handle_picking_by_owner_line_policy(
             picked_cards_in_order,
         } => {
             if card_line_at_picked_capacity {
-                while let Some(last_picked) = picked_cards_in_order.pop_front() {
+                while let Some(last_picked) = picked_cards_in_order.remove_at_stable(0) {
                     if picked_cards.contains(last_picked) //could be that it's no longer picked despite being registered
                         && let Ok(mut card_commands) = commands.get_entity(last_picked)
                     {
