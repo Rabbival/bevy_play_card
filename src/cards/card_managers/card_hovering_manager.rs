@@ -23,7 +23,7 @@ pub(crate) fn on_hover(
                 }
             }
         }
-        commands.entity(trigger.target).insert(Hovered);
+        commands.entity(trigger.target).try_insert(Hovered);
     }
 }
 

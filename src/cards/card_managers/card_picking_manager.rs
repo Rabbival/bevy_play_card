@@ -17,7 +17,7 @@ fn listen_to_picking_toggle_requests(
     mut card_lines: Query<&mut CardLine>,
     mut commands: Commands,
 ) {
-    for TogglePickingForCard(card_entity) in request_listener.read(){
+    for TogglePickingForCard(card_entity) in request_listener.read() {
         handle_picking_request(
             *card_entity,
             &picked_cards,
@@ -77,7 +77,7 @@ fn handle_picking_request(
                     commands,
                 );
             } else {
-                card_entity_commands.insert(Picked);
+                card_entity_commands.try_insert(Picked);
             }
         }
     }
@@ -127,7 +127,7 @@ fn handle_picking_by_owner_line_policy(
             *newest_picked = Some(card_entity);
         }
     }
-    commands.entity(card_entity).insert(Picked);
+    commands.entity(card_entity).try_insert(Picked);
 }
 
 pub(crate) fn remove_hovered_on_picked_removal(
