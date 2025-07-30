@@ -16,7 +16,11 @@ fn spawn_cards(
     mut commands: Commands,
 ) {
     let line = commands
-        .spawn(CardLineBundle::from_card_line(CardLine::default()))
+        .spawn(CardLineBundle::from_card_line(
+            CardLine::default()
+                .with_picked_cards_capacity(3)
+                .with_card_picking_policy(CardPickingPolicy::RemoveLeastRecentlyPicked),
+        ))
         .id();
     let mut card_entities = vec![];
     for _ in 0..6 {

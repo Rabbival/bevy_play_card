@@ -1,8 +1,19 @@
+use bevy_play_card::cards::card_consts::CardConsts;
 use bevy_play_card::prelude::*;
+use bevy_tween::interpolation::EaseKind;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
+        .add_plugins((
+            DefaultPlugins,
+            BevyCardPlugin {
+                card_consts: CardConsts {
+                    card_origin_set_ease_kind: EaseKind::BackOut,
+                    ..default()
+                },
+                ..default()
+            },
+        ))
         .add_systems(Startup, (setup, spawn_cards_on_a_line).chain())
         .run();
 }

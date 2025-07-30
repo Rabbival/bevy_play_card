@@ -158,7 +158,7 @@ pub mod prelude {
         card_bundle::*,
         card_lines::{
             CardLinesPlugin, card_line::*, card_line_bundle::*, card_lines_content_manager::*,
-            card_lines_mover::*, event::*,
+            card_lines_mover::*, card_picking_policy::*, event::*,
         },
         card_managers::{
             CardManagersPlugin, card_observer_attacher::*, card_origin_set_listener::*,

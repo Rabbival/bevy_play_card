@@ -17,12 +17,11 @@ impl Plugin for CardLinesContentManagerPlugin {
             )
                 .chain()
                 .in_set(CardsOrderingSystemSet::OriginSetting),
-        )
-        .add_observer(remove_cards_from_line_on_card_despawn);
+        );
     }
 }
 
-fn remove_cards_from_line_on_card_despawn(
+pub(crate) fn remove_card_from_line_on_card_despawn(
     trigger: Trigger<OnRemove, Card>,
     mut line_request_writer: EventWriter<CardLineRequest>,
     cards: Query<&Card>,

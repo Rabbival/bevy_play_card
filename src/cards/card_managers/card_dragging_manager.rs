@@ -2,7 +2,7 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
-use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 
 pub(crate) fn on_drag_start(
     trigger: Trigger<Pointer<DragStart>>,

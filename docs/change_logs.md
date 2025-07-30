@@ -2,6 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### '0.3.0' -> '0.4.0'
+* Add `CardPickingPolicy` and `CardPickingPolicyWithContent` to card lines 
+* Fix card dragging never ends bug
+
 #### '0.2.7' -> '0.3.0'
 * Extract tween utilities logic into its own `bevy_tween_helpers` crate
 

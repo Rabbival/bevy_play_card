@@ -5,9 +5,18 @@ struct CardDestroyer;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
+        .add_plugins((
+            DefaultPlugins,
+            BevyCardPlugin {
+                card_debug_logging_function: Some(|stri| println!("{}", stri)),
+                ..default()
+            },
+        ))
         .add_systems(Startup, (setup, spawn_card_line, spawn_card_destroyer))
-        .add_systems(Update, listen_to_card_addition_requests)
+        .add_systems(
+            Update,
+            listen_to_card_addition_requests.before(CardsOrderingSystemSet::OriginSetting),
+        )
         .add_observer(listen_to_card_drops)
         .add_observer(listen_to_card_destroyer_clicks)
         .run();
@@ -48,6 +57,9 @@ fn listen_to_card_addition_requests(
     mut commands: Commands,
 ) {
     if let Ok((card_line, card_line_entity)) = card_lines.single() {
+        if card_line.at_capacity() {
+            return;
+        }
         if keys.just_pressed(KeyCode::KeyS) && cards.iter().count() < card_line.max_cards {
             let card_entity = commands
                 .spawn((

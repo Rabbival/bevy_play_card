@@ -1,3 +1,4 @@
+use bevy_tween::prelude::EaseKind;
 use crate::prelude::*;
 
 #[derive(Resource, Debug, Clone, Copy)]
@@ -22,6 +23,8 @@ pub struct CardConsts {
     pub card_drag_delta_scaler: Vec2,
     /// Whether cards can be hovered over while actively dragging a card
     pub allow_hover_while_dragging: bool,
+    /// Ease kind for card movement when their origin changes
+    pub card_origin_set_ease_kind: EaseKind
 }
 
 impl Default for CardConsts {
@@ -37,6 +40,7 @@ impl Default for CardConsts {
             card_slide_on_origin_set_duration: 0.2,
             card_drag_delta_scaler: Vec2::ONE,
             allow_hover_while_dragging: false,
+            card_origin_set_ease_kind: EaseKind::CubicOut
         }
     }
 }

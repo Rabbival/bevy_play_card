@@ -21,6 +21,8 @@ pub struct CardLine {
     pub card_origin_gap: f32,
     /// Optional picked cards capacity
     pub picked_cards_capacity: Option<usize>,
+    /// How a card line should act when picking cards when at picked card capacity
+    pub picked_card_policy: CardPickingPolicyWithContent,
 }
 
 impl CardLine {
@@ -100,6 +102,11 @@ impl CardLine {
         self.picked_cards_capacity = Some(capacity);
         self
     }
+
+    pub fn with_card_picking_policy(mut self, picking_policy: CardPickingPolicy) -> Self {
+        self.picked_card_policy = picking_policy.to_initial_with_content();
+        self
+    }
 }
 
 impl Default for CardLine {
@@ -112,6 +119,7 @@ impl Default for CardLine {
             slide_duration: 0.3,
             card_origin_gap: 140.0,
             picked_cards_capacity: None,
+            picked_card_policy: CardPickingPolicyWithContent::default()
         }
     }
 }
