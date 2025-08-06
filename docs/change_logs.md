@@ -2,6 +2,12 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.4.1 -> 0.4.2`
+* Fix cards still being hovered when no longer hovered if picked
+* Add `CardAnimationRequest` (for internal uses, it is exposed though if you want to use it)
+* In `CardConsts`, rename `hover_cancel` in `on_hover_cancel_position_tween_duration` and `on_hover_cancel_scale_duration` 
+to `float_back_down` as it now refers to unpicking as well
+
 #### `0.3.0 -> 0.4.0`
 * Add [`CardPickingPolicy`](../src/cards/card_lines/card_picking_policy.rs) and `CardPickingPolicyWithContent` to card lines 
   * You may now pick (pun intended) one of three policies as to how your line would react to too many picks

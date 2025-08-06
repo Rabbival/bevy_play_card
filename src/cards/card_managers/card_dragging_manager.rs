@@ -63,11 +63,11 @@ pub(crate) fn back_to_origin_when_unused(
                 commands.get_entity(owner_card_line),
             ) {
                 card_line_commands.add_child(card_entity);
-
-                let inverse = card_line_transform.compute_matrix().inverse();
-                card_transform.translation = inverse.transform_point3(card_transform.translation);
+                let inverse_transform = card_line_transform.compute_matrix().inverse();
+                card_transform.translation =
+                    inverse_transform.transform_point3(card_transform.translation);
                 card_transform.rotation =
-                    inverse.to_scale_rotation_translation().1 * card_transform.rotation;
+                    inverse_transform.to_scale_rotation_translation().1 * card_transform.rotation;
                 card_transform.scale /= card_line_transform.scale;
             }
         }

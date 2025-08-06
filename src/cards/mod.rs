@@ -8,6 +8,7 @@ pub mod card_managers;
 pub mod card_namer;
 pub mod event;
 pub mod tags;
+pub mod card_animation_request_handler;
 
 pub struct CardsPlugin {
     pub logging_function: Option<fn(String)>,
@@ -24,6 +25,7 @@ impl Plugin for CardsPlugin {
                 CardManagersPlugin,
                 CardLinesPlugin,
                 CardNamerPlugin,
+                CardAnimationRequestHandlerPlugin
             ));
     }
 }

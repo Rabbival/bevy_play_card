@@ -1,8 +1,5 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::parallel;
-use bevy_tween::prelude::*;
-use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 pub(crate) fn on_hover(
     trigger: Trigger<Pointer<Over>>,
@@ -29,40 +26,22 @@ pub(crate) fn on_hover(
 
 pub(crate) fn on_hover_cancel(
     trigger: Trigger<Pointer<Out>>,
-    cards: Query<(&Transform, Entity, &Card, &Name, Option<&Dragged>), Without<Picked>>,
+    mut animation_requester: EventWriter<CardAnimationRequest>,
+    cards: Query<(Entity, &Card, Option<&Dragged>, Option<&Picked>)>,
     dragged_cards: Query<(&Card, &Dragged)>,
-    card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((transform, entity, card, name, maybe_dragged)) = cards.get(trigger.target) {
+    if let Ok((entity, card, maybe_dragged, maybe_picked)) = cards.get(trigger.target) {
         commands.entity(entity).remove::<Hovered>();
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
         }
-        if maybe_dragged.is_some() {
+        if maybe_dragged.is_some() | maybe_picked.is_some() {
             return;
         }
-        let animation_target = entity.into_target();
-        let mut transform_state = animation_target.transform_state(*transform);
-        commands
-            .spawn((
-                Name::new(format!("On-hover-cancel animation parent for {}", name)),
-                TweenPriorityToOthersOfType(20),
-            ))
-            .animation()
-            .insert(parallel((
-                named_tween(
-                    Duration::from_secs_f32(card_consts.on_hover_cancel_scale_duration),
-                    EaseKind::Linear,
-                    transform_state.scale_to(card.origin.scale),
-                    format!("{} on-hover-cancel scale tween", name),
-                ),
-                named_tween(
-                    Duration::from_secs_f32(card_consts.on_hover_cancel_position_tween_duration),
-                    EaseKind::CubicOut,
-                    transform_state.translation_to(card.origin.translation),
-                    format!("{} on-hover-cancel translation tween", name),
-                ),
-            )));
+        animation_requester.write(CardAnimationRequest {
+            card_entity: entity,
+            request_type: CardAnimationRequestType::FloatBackDown,
+        });
     }
 }

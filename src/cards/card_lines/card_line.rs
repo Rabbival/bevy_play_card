@@ -4,7 +4,7 @@ use crate::utilities::vector_utilities::remove_by_value;
 
 /// An invisible line.
 /// Child entities that carry the Card component have their order controlled by it and move with it as a whole when not dragged.
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone)]
 #[require(Visibility)]
 pub struct CardLine {
     /// A list of card entities in the card-line
@@ -119,7 +119,7 @@ impl Default for CardLine {
             slide_duration: 0.3,
             card_origin_gap: 140.0,
             picked_cards_capacity: None,
-            picked_card_policy: CardPickingPolicyWithContent::default()
+            picked_card_policy: CardPickingPolicyWithContent::default(),
         }
     }
 }

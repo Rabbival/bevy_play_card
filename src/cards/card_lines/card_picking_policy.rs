@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// How a card line should act when picking cards when at picked card capacity
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CardPickingPolicy {
     #[default]
     /// Don't allow new cards to be picked until others are cancelled
@@ -13,7 +13,7 @@ pub enum CardPickingPolicy {
 }
 
 /// How a card line should act when picking cards when at picked card capacity
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub enum CardPickingPolicyWithContent {
     #[default]
     /// Don't allow new cards to be picked until others are cancelled
@@ -29,8 +29,8 @@ impl CardPickingPolicy {
         match self {
             Self::ForbidNewOnes => CardPickingPolicyWithContent::ForbidNewOnes,
             Self::RemoveLeastRecentlyPicked => {
-                CardPickingPolicyWithContent::RemoveLeastRecentlyPicked{
-                    picked_cards_in_order: Vec::new()
+                CardPickingPolicyWithContent::RemoveLeastRecentlyPicked {
+                    picked_cards_in_order: Vec::new(),
                 }
             }
             Self::RemoveMostRecentlyPicked => {

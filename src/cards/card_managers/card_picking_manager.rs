@@ -11,6 +11,7 @@ impl Plugin for CardPickingPlugin {
 
 fn listen_to_picking_toggle_requests(
     mut request_listener: EventReader<TogglePickingForCard>,
+    mut animation_requester: EventWriter<CardAnimationRequest>,
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
@@ -20,6 +21,7 @@ fn listen_to_picking_toggle_requests(
     for TogglePickingForCard(card_entity) in request_listener.read() {
         handle_picking_request(
             *card_entity,
+            &mut animation_requester,
             &picked_cards,
             &dragged_cards,
             &cards,
@@ -31,6 +33,7 @@ fn listen_to_picking_toggle_requests(
 
 pub(crate) fn on_card_click(
     trigger: Trigger<Pointer<Click>>,
+    mut animation_requester: EventWriter<CardAnimationRequest>,
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
@@ -39,6 +42,7 @@ pub(crate) fn on_card_click(
 ) {
     handle_picking_request(
         trigger.target(),
+        &mut animation_requester,
         &picked_cards,
         &dragged_cards,
         &cards,
@@ -49,6 +53,7 @@ pub(crate) fn on_card_click(
 
 fn handle_picking_request(
     card_entity: Entity,
+    animation_requester: &mut EventWriter<CardAnimationRequest>,
     picked_cards: &Query<&Card, With<Picked>>,
     dragged_cards: &Query<(&Card, &Dragged)>,
     cards: &Query<&Card>,
@@ -60,6 +65,10 @@ fn handle_picking_request(
         if let Ok(mut card_entity_commands) = commands.get_entity(card_entity) {
             if card_is_picked {
                 card_entity_commands.remove::<Picked>();
+                animation_requester.write(CardAnimationRequest {
+                    card_entity,
+                    request_type: CardAnimationRequestType::FloatBackDown,
+                });
             } else if dragged_cards.contains(card_entity) {
                 return;
             } else if let Some(owner_line_entity) = card.owner_line
