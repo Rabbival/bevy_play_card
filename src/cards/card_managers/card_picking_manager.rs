@@ -128,15 +128,3 @@ fn handle_picking_by_owner_line_policy(
     }
     commands.entity(card_entity).try_insert(Picked);
 }
-
-pub(crate) fn remove_hovered_on_picked_removal(
-    trigger: Trigger<OnRemove, Picked>,
-    cards: Query<(), With<Card>>,
-    mut commands: Commands,
-) {
-    if cards.contains(trigger.target())
-        && let Ok(mut card_commands) = commands.get_entity(trigger.target())
-    {
-        card_commands.remove::<Hovered>();
-    }
-}
