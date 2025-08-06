@@ -89,7 +89,6 @@ fn test_picked_cards_policy() {
             assert_eq!(picks_expected_before_policy_triggers[i], before_policy[i]);
         }
     }
-
     for (_, policy_tag) in &lines {
         let expected_after_policy = picks_expected_after_policy_triggers
             .get(&policy_tag.0)
@@ -103,9 +102,6 @@ fn test_picked_cards_policy() {
             assert_eq!(expected_after_policy[i], after_policy[i]);
         }
     }
-    
-    //DEBUG
-    println!("{:?}", picked_states_by_policy);
 }
 
 // fn log(log_me: String) {

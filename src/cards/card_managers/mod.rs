@@ -5,7 +5,7 @@ pub mod card_hovering_manager;
 pub mod card_observer_attacher;
 pub mod card_origin_set_listener;
 pub mod card_picking_manager;
-pub mod card_tag_insertion_listener;
+pub mod card_tag_change_listener;
 
 pub struct CardManagersPlugin;
 
@@ -16,7 +16,7 @@ impl Plugin for CardManagersPlugin {
             CardDraggingPlugin,
             CardOriginSetListenerPlugin,
             CardObserverAttacherPlugin,
-            CardTagInsertionListenerPlugin,
+            CardTagChangeListenerPlugin,
         ));
     }
 }

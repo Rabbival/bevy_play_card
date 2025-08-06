@@ -3,16 +3,17 @@ use crate::prelude::*;
 use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use std::time::Duration;
-use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
-pub struct CardTagInsertionListenerPlugin;
+pub struct CardTagChangeListenerPlugin;
 
-impl Plugin for CardTagInsertionListenerPlugin {
+impl Plugin for CardTagChangeListenerPlugin {
     fn build(&self, app: &mut App) {
         app.add_observer(on_dragged_insertion)
             .add_observer(on_hovered_insertion)
-            .add_observer(on_picked_insertion);
+            .add_observer(on_picked_insertion)
+            .add_observer(on_picked_removal);
     }
 }
 
@@ -94,5 +95,22 @@ fn play_card_float_up_animation(
                     format!("{} {} translation tween", name, animation_name),
                 ),
             )));
+    }
+}
+
+fn on_picked_removal(
+    trigger: Trigger<OnRemove, Picked>,
+    mut animation_requester: EventWriter<CardAnimationRequest>,
+    cards: Query<(), With<Card>>,
+    mut commands: Commands,
+) {
+    if cards.contains(trigger.target())
+        && let Ok(mut card_commands) = commands.get_entity(trigger.target())
+    {
+        card_commands.remove::<Hovered>();
+        animation_requester.write(CardAnimationRequest {
+            card_entity: trigger.target(),
+            request_type: CardAnimationRequestType::FloatBackDown,
+        });
     }
 }
