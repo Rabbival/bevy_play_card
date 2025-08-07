@@ -101,16 +101,18 @@ fn play_card_float_up_animation(
 fn on_picked_removal(
     trigger: Trigger<OnRemove, Picked>,
     mut animation_requester: EventWriter<CardAnimationRequest>,
-    cards: Query<(), With<Card>>,
+    cards: Query<Option<&Dragged>, With<Card>>,
     mut commands: Commands,
 ) {
-    if cards.contains(trigger.target())
+    if let Ok(maybe_dragged) = cards.get(trigger.target())
         && let Ok(mut card_commands) = commands.get_entity(trigger.target())
     {
         card_commands.remove::<Hovered>();
-        animation_requester.write(CardAnimationRequest {
-            card_entity: trigger.target(),
-            request_type: CardAnimationRequestType::FloatBackDown,
-        });
+        if maybe_dragged.is_none() {
+            animation_requester.write(CardAnimationRequest {
+                card_entity: trigger.target(),
+                request_type: CardAnimationRequestType::FloatBackDown,
+            });
+        }
     }
 }
