@@ -18,6 +18,7 @@ impl Plugin for CardAnimationRequestHandlerPlugin {
 fn handle_animation_requests(
     mut request_listener: EventReader<CardAnimationRequest>,
     cards: Query<(&Transform, &Card, &Name)>,
+    dragged_or_picked_cards: Query<(), (With<Card>, Or<(With<Picked>, With<Dragged>)>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
@@ -27,9 +28,12 @@ fn handle_animation_requests(
     }
     for (entity, request_type) in request_type_by_entity {
         match request_type {
-            CardAnimationRequestType::FloatBackDown => {
-                play_float_back_down_request(entity, &cards, &card_consts, &mut commands)
+            CardAnimationRequestType::FloatBackDown
+                if !dragged_or_picked_cards.contains(entity) =>
+            {
+                play_float_back_down_request(entity, &cards, &card_consts, &mut commands);
             }
+            _ => {}
         }
     }
 }

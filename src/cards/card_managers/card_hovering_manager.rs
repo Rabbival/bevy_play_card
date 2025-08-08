@@ -32,7 +32,7 @@ pub(crate) fn on_hover_cancel(
     mut commands: Commands,
 ) {
     if let Ok((entity, card, maybe_dragged, maybe_picked)) = cards.get(trigger.target) {
-        commands.entity(entity).remove::<Hovered>();
+        commands.entity(entity).try_remove::<Hovered>();
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards)
             | maybe_dragged.is_some()
             | maybe_picked.is_some()

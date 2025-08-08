@@ -3,7 +3,7 @@ use crate::prelude::*;
 use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
 use std::time::Duration;
 
 pub struct CardTagChangeListenerPlugin;
@@ -18,21 +18,37 @@ impl Plugin for CardTagChangeListenerPlugin {
 }
 
 fn on_dragged_insertion(
-    _trigger: Trigger<OnAdd, Dragged>,
+    trigger: Trigger<OnAdd, Dragged>,
+    cards: Query<&Card>,
     picked_cards: Query<Entity, (With<Card>, With<Picked>)>,
     mut commands: Commands,
 ) {
+    if let Ok(card) = cards.get(trigger.target())
+        && card.owner_line.is_some()
+        && let Ok(mut entity_commands) = commands.get_entity(trigger.target())
+    {
+        entity_commands.remove_parent_in_place();
+        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
+            trigger.target(),
+        ]));
+    }
     for picked_card_entity in &picked_cards {
-        commands.entity(picked_card_entity).remove::<Picked>();
+        if let Ok(mut entity_commands) = commands.get_entity(picked_card_entity) {
+            entity_commands.try_remove::<Picked>();
+        }
     }
 }
 
 fn on_hovered_insertion(
     trigger: Trigger<OnAdd, Hovered>,
     cards: Query<(&Transform, &Card, &Name)>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
+    if dragged_cards.contains(trigger.target()) {
+        return;
+    }
     play_card_float_up_animation(
         trigger.target(),
         10,
@@ -46,9 +62,13 @@ fn on_hovered_insertion(
 fn on_picked_insertion(
     trigger: Trigger<OnAdd, Picked>,
     cards: Query<(&Transform, &Card, &Name)>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
+    if dragged_cards.contains(trigger.target()) {
+        return;
+    }
     play_card_float_up_animation(
         trigger.target(),
         50,
@@ -102,12 +122,9 @@ fn on_picked_removal(
     trigger: Trigger<OnRemove, Picked>,
     mut animation_requester: EventWriter<CardAnimationRequest>,
     cards: Query<Option<&Dragged>, With<Card>>,
-    mut commands: Commands,
 ) {
     if let Ok(maybe_dragged) = cards.get(trigger.target())
-        && let Ok(mut card_commands) = commands.get_entity(trigger.target())
     {
-        card_commands.remove::<Hovered>();
         if maybe_dragged.is_none() {
             animation_requester.write(CardAnimationRequest {
                 card_entity: trigger.target(),

@@ -24,9 +24,6 @@ pub(crate) fn on_drag_start(
         }
         if let Ok(mut entity_commands) = commands.get_entity(trigger.target) {
             entity_commands.try_insert(Dragged::Actively);
-            if card.owner_line.is_some() {
-                entity_commands.remove_parent_in_place();
-            }
         }
     }
 }
