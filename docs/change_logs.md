@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.4.2 -> 0.4.3`
+* Fix an edge case where the card would stutter if you unhovered it on the same frame you started dragging it
+
 #### `0.4.1 -> 0.4.2`
 * Fix cards still being hovered when no longer hovered if picked
 * Add `CardAnimationRequest` (for internal uses, it is exposed though if you want to use it)
