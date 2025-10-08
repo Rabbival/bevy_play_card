@@ -40,7 +40,7 @@ pub(crate) fn on_hover_cancel(
             return;
         }
         animation_requester.write(CardAnimationRequest {
-            card_entity: entity,
+            entity,
             request_type: CardAnimationRequestType::FloatBackDown,
         });
     }

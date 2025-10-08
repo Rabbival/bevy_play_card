@@ -7,12 +7,12 @@ pub struct DeclareDraggingDoneForCard {
     pub card_entity: Option<Entity>,
 }
 
-#[derive(Debug, Clone, Copy, Message)]
+#[derive(Debug, Clone, Copy, Message, EntityEvent)]
 pub struct TogglePickingForCard(pub Entity);
 
-#[derive(Debug, Clone, Copy, Message)]
+#[derive(Debug, Clone, Copy, Message, EntityEvent)]
 pub struct CardAnimationRequest {
-    pub card_entity: Entity,
+    pub entity: Entity,
     pub request_type: CardAnimationRequestType,
 }
 

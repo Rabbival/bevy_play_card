@@ -126,7 +126,7 @@ fn on_picked_removal(
     if let Ok(maybe_dragged) = cards.get(trigger.entity) {
         if maybe_dragged.is_none() {
             animation_requester.write(CardAnimationRequest {
-                card_entity: trigger.entity,
+                entity: trigger.entity,
                 request_type: CardAnimationRequestType::FloatBackDown,
             });
         }

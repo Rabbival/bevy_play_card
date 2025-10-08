@@ -4,7 +4,9 @@
 
 #### `0.4.3 -> 0.5.0`
 * Update to Bevy 0.17
-  * `CardLineRequest` line field was renamed to `entity` to make it an `EntityEvent`
+  * Entity fields were renamed to `entity` to make it an `EntityEvent` for:
+    * `CardLineRequest`
+    * `CardAnimationRequest`
 * Add `auto_sort` flag to `CardLine`:
   * Lines can now be told not to sort cards automatically
   * You can now send `CardLineRequestType::Sort` to ask the line to put its cards in the correct places

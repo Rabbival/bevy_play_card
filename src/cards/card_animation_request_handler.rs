@@ -24,7 +24,7 @@ fn handle_animation_requests(
 ) {
     let mut request_type_by_entity: HashMap<Entity, CardAnimationRequestType> = HashMap::new();
     for request in request_listener.read() {
-        request_type_by_entity.insert(request.card_entity, request.request_type);
+        request_type_by_entity.insert(request.entity, request.request_type);
     }
     for (entity, request_type) in request_type_by_entity {
         match request_type {
