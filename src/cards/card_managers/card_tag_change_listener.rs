@@ -18,18 +18,18 @@ impl Plugin for CardTagChangeListenerPlugin {
 }
 
 fn on_dragged_insertion(
-    trigger: Trigger<OnAdd, Dragged>,
+    trigger: On<Add, Dragged>,
     cards: Query<&Card>,
     picked_cards: Query<Entity, (With<Card>, With<Picked>)>,
     mut commands: Commands,
 ) {
-    if let Ok(card) = cards.get(trigger.target())
+    if let Ok(card) = cards.get(trigger.entity)
         && card.owner_line.is_some()
-        && let Ok(mut entity_commands) = commands.get_entity(trigger.target())
+        && let Ok(mut entity_commands) = commands.get_entity(trigger.entity)
     {
         entity_commands.remove_parent_in_place();
         commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
-            trigger.target(),
+            trigger.entity,
         ]));
     }
     for picked_card_entity in &picked_cards {
@@ -40,17 +40,17 @@ fn on_dragged_insertion(
 }
 
 fn on_hovered_insertion(
-    trigger: Trigger<OnAdd, Hovered>,
+    trigger: On<Add, Hovered>,
     cards: Query<(&Transform, &Card, &Name)>,
     dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if dragged_cards.contains(trigger.target()) {
+    if dragged_cards.contains(trigger.entity) {
         return;
     }
     play_card_float_up_animation(
-        trigger.target(),
+        trigger.entity,
         10,
         "on-hover",
         &cards,
@@ -60,17 +60,17 @@ fn on_hovered_insertion(
 }
 
 fn on_picked_insertion(
-    trigger: Trigger<OnAdd, Picked>,
+    trigger: On<Add, Picked>,
     cards: Query<(&Transform, &Card, &Name)>,
     dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if dragged_cards.contains(trigger.target()) {
+    if dragged_cards.contains(trigger.entity) {
         return;
     }
     play_card_float_up_animation(
-        trigger.target(),
+        trigger.entity,
         50,
         "on-picked",
         &cards,
@@ -119,15 +119,14 @@ fn play_card_float_up_animation(
 }
 
 fn on_picked_removal(
-    trigger: Trigger<OnRemove, Picked>,
-    mut animation_requester: EventWriter<CardAnimationRequest>,
+    trigger: On<Remove, Picked>,
+    mut animation_requester: MessageWriter<CardAnimationRequest>,
     cards: Query<Option<&Dragged>, With<Card>>,
 ) {
-    if let Ok(maybe_dragged) = cards.get(trigger.target())
-    {
+    if let Ok(maybe_dragged) = cards.get(trigger.entity) {
         if maybe_dragged.is_none() {
             animation_requester.write(CardAnimationRequest {
-                card_entity: trigger.target(),
+                card_entity: trigger.entity,
                 request_type: CardAnimationRequestType::FloatBackDown,
             });
         }

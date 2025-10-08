@@ -49,7 +49,7 @@ fn spawn_card_destroyer(asset_server: Res<AssetServer>, mut commands: Commands) 
 }
 
 fn listen_to_card_addition_requests(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     card_lines: Query<(&CardLine, Entity)>,
     cards: Query<(), With<Card>>,
     keys: Res<ButtonInput<KeyCode>>,
@@ -79,13 +79,13 @@ fn listen_to_card_addition_requests(
 }
 
 fn listen_to_card_drops(
-    mut trigger: Trigger<Pointer<DragDrop>>,
+    mut trigger: On<Pointer<DragDrop>>,
     card_destroyer: Query<(), With<CardDestroyer>>,
     cards: Query<Entity, With<Card>>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyer.contains(trigger.target) {
+    if card_destroyer.contains(trigger.entity) {
         if let Ok(card_entity) = cards.get(trigger.dropped) {
             commands.entity(card_entity).despawn();
         }
@@ -93,13 +93,13 @@ fn listen_to_card_drops(
 }
 
 fn listen_to_card_destroyer_clicks(
-    mut trigger: Trigger<Pointer<Click>>,
+    mut trigger: On<Pointer<Click>>,
     card_destroyer: Query<(), With<CardDestroyer>>,
     picked_cards: Query<Entity, (With<Card>, With<Picked>)>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyer.contains(trigger.target) {
+    if card_destroyer.contains(trigger.entity) {
         for card_entity in &picked_cards {
             commands.entity(card_entity).despawn();
         }

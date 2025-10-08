@@ -22,16 +22,16 @@ impl Plugin for CardLinesContentManagerPlugin {
 }
 
 pub(crate) fn remove_card_from_line_on_card_despawn(
-    trigger: Trigger<OnRemove, Card>,
-    mut line_request_writer: EventWriter<CardLineRequest>,
+    trigger: On<Remove, Card>,
+    mut line_request_writer: MessageWriter<CardLineRequest>,
     cards: Query<&Card>,
 ) {
-    if let Ok(card) = cards.get(trigger.target()) {
+    if let Ok(card) = cards.get(trigger.entity) {
         if let Some(owner_line_entity) = card.owner_line {
             line_request_writer.write(CardLineRequest {
                 line: owner_line_entity,
                 request_type: CardLineRequestType::RemoveFromLine {
-                    card_entity: trigger.target(),
+                    card_entity: trigger.entity,
                 },
             });
         }
@@ -39,7 +39,7 @@ pub(crate) fn remove_card_from_line_on_card_despawn(
 }
 
 fn listen_to_card_removal_requests(
-    mut card_line_request_reader: EventReader<CardLineRequest>,
+    mut card_line_request_reader: MessageReader<CardLineRequest>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name)>,
     logging_function: Res<CardsPluginLoggingFunction>,
@@ -135,7 +135,7 @@ fn remove_card_from_line_if_found(
 }
 
 fn listen_to_card_addition_requests(
-    mut card_line_request_reader: EventReader<CardLineRequest>,
+    mut card_line_request_reader: MessageReader<CardLineRequest>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name)>,
     logging_function: Res<CardsPluginLoggingFunction>,

@@ -2,9 +2,9 @@ use crate::prelude::*;
 use bevy_tween::combinator::AnimationBuilderExt;
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::*;
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use std::collections::HashMap;
 use std::time::Duration;
-use bevy_tween_helpers::prelude::{named_tween, TweenPriorityToOthersOfType};
 
 pub struct CardLinesMoverPlugin;
 
@@ -15,7 +15,7 @@ impl Plugin for CardLinesMoverPlugin {
 }
 
 fn listen_to_card_line_move_requests(
-    mut card_line_request_listener: EventReader<CardLineRequest>,
+    mut card_line_request_listener: MessageReader<CardLineRequest>,
     card_lines: Query<(&CardLine, &Transform, Entity), With<CardLine>>,
     mut commands: Commands,
 ) {

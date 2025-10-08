@@ -7,10 +7,10 @@ pub struct DeclareDraggingDoneForCard {
     pub card_entity: Option<Entity>,
 }
 
-#[derive(Debug, Clone, Copy, Event)]
+#[derive(Debug, Clone, Copy, Message)]
 pub struct TogglePickingForCard(pub Entity);
 
-#[derive(Debug, Clone, Copy, Event)]
+#[derive(Debug, Clone, Copy, Message)]
 pub struct CardAnimationRequest {
     pub card_entity: Entity,
     pub request_type: CardAnimationRequestType,
@@ -26,7 +26,7 @@ pub struct CardsEventsPlugin;
 impl Plugin for CardsEventsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(TweenEventPlugin::<DeclareDraggingDoneForCard>::default())
-            .add_event::<TogglePickingForCard>()
-            .add_event::<CardAnimationRequest>();
+            .add_message::<TogglePickingForCard>()
+            .add_message::<CardAnimationRequest>();
     }
 }

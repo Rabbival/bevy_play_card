@@ -20,7 +20,7 @@ fn main() {
 }
 
 fn spawn_cards_on_a_line(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {

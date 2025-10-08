@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.4.3 -> 0.5.0`
+* Update to Bevy 0.17
+
 #### `0.4.2 -> 0.4.3`
 * Fix an edge case where the card would stutter if you unhovered it on the same frame you started dragging it
 

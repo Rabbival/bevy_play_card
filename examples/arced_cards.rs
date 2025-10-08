@@ -26,13 +26,13 @@ fn main() {
 }
 
 fn card_hover_animation_override(
-    trigger: Trigger<OnAdd, Hovered>,
+    trigger: On<Add, Hovered>,
     cards: Query<(&Transform, &Card, &Name)>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
     override_card_float_up_animation(
-        trigger.target(),
+        trigger.entity,
         10 + 1,
         "on-hover-override",
         cards,
@@ -42,13 +42,13 @@ fn card_hover_animation_override(
 }
 
 fn card_pick_animation_override(
-    trigger: Trigger<OnAdd, Picked>,
+    trigger: On<Add, Picked>,
     cards: Query<(&Transform, &Card, &Name)>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
     override_card_float_up_animation(
-        trigger.target(),
+        trigger.entity,
         50 + 1,
         "on-pick-override",
         cards,
@@ -94,7 +94,7 @@ fn spawn_card_line(mut commands: Commands) {
 }
 
 fn listen_to_card_addition_requests(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     card_lines: Query<(&CardLine, Entity)>,
     cards: Query<(), With<Card>>,
     keys: Res<ButtonInput<KeyCode>>,

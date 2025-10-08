@@ -16,7 +16,7 @@ impl Plugin for CardAnimationRequestHandlerPlugin {
 }
 
 fn handle_animation_requests(
-    mut request_listener: EventReader<CardAnimationRequest>,
+    mut request_listener: MessageReader<CardAnimationRequest>,
     cards: Query<(&Transform, &Card, &Name)>,
     dragged_or_picked_cards: Query<(), (With<Card>, Or<(With<Picked>, With<Dragged>)>)>,
     card_consts: Res<CardConsts>,

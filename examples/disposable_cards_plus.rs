@@ -28,7 +28,7 @@ fn main() {
         .add_observer(listen_to_card_drops)
         .add_observer(listen_to_card_destroyers_clicks)
         .add_observer(
-            |trigger: Trigger<TweenEvent<DespawnRequest>>, mut commands: Commands| {
+            |trigger: On<TweenEvent<DespawnRequest>>, mut commands: Commands| {
                 if let Some(entity) = trigger.data.entity_to_despawn {
                     if let Ok(mut entity_commands) = commands.get_entity(entity) {
                         entity_commands.despawn();
@@ -67,7 +67,7 @@ fn spawn_card_destroyer(asset_server: Res<AssetServer>, mut commands: Commands) 
 }
 
 fn listen_to_card_addition_requests(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     card_lines: Query<(&CardLine, Entity)>,
     cards: Query<(), With<Card>>,
     keys: Res<ButtonInput<KeyCode>>,
@@ -97,13 +97,13 @@ fn listen_to_card_addition_requests(
 }
 
 fn listen_to_card_drops(
-    mut trigger: Trigger<Pointer<DragDrop>>,
+    mut trigger: On<Pointer<DragDrop>>,
     card_destroyers: Query<&CardDestroyer>,
     cards: Query<(Entity, &GlobalTransform, &Sprite, &Name), With<Card>>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyers.contains(trigger.target) {
+    if card_destroyers.contains(trigger.entity) {
         if let Ok((card_entity, card_transform, card_sprite, card_name)) =
             cards.get(trigger.dropped)
         {
@@ -119,13 +119,13 @@ fn listen_to_card_drops(
 }
 
 fn listen_to_card_destroyers_clicks(
-    mut trigger: Trigger<Pointer<Click>>,
+    mut trigger: On<Pointer<Click>>,
     card_destroyers: Query<&CardDestroyer>,
     picked_cards: Query<(Entity, &GlobalTransform, &Sprite, &Name), (With<Card>, With<Picked>)>,
     mut commands: Commands,
 ) {
     trigger.propagate(false);
-    if card_destroyers.contains(trigger.target) {
+    if card_destroyers.contains(trigger.entity) {
         for (card_entity, card_transform, card_sprite, card_name) in &picked_cards {
             play_despawn_animation_and_despawn(
                 card_entity,

@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// A request to be handled automatically by bevy_play_card_crate
-#[derive(Debug, Event)]
+#[derive(Debug, Message)]
 pub struct CardLineRequest {
     /// The line entity to which the request should apply
     pub line: Entity,
@@ -33,6 +33,6 @@ pub struct CardLineEventsPlugin;
 
 impl Plugin for CardLineEventsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<CardLineRequest>();
+        app.add_message::<CardLineRequest>();
     }
 }

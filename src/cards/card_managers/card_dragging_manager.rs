@@ -13,34 +13,34 @@ impl Plugin for CardDraggingPlugin {
 }
 
 pub(crate) fn on_drag_start(
-    trigger: Trigger<Pointer<DragStart>>,
+    trigger: On<Pointer<DragStart>>,
     mut card_transforms: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
-    if let Ok(card) = card_transforms.get_mut(trigger.target) {
+    if let Ok(card) = card_transforms.get_mut(trigger.entity) {
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
         }
-        if let Ok(mut entity_commands) = commands.get_entity(trigger.target) {
+        if let Ok(mut entity_commands) = commands.get_entity(trigger.entity) {
             entity_commands.try_insert(Dragged::Actively);
         }
     }
 }
 
 pub(crate) fn on_drag(
-    trigger: Trigger<Pointer<Drag>>,
+    trigger: On<Pointer<Drag>>,
     mut card_transforms: Query<&mut Transform, With<Card>>,
     card_consts: Res<CardConsts>,
 ) {
-    if let Ok(mut card_transform) = card_transforms.get_mut(trigger.target) {
+    if let Ok(mut card_transform) = card_transforms.get_mut(trigger.entity) {
         card_transform.translation.x += trigger.delta.x * card_consts.card_drag_delta_scaler.x;
         card_transform.translation.y -= trigger.delta.y * card_consts.card_drag_delta_scaler.y;
     }
 }
 
 pub(crate) fn back_to_origin_when_unused(
-    trigger: Trigger<Pointer<DragEnd>>,
+    trigger: On<Pointer<DragEnd>>,
     mut dragged_cards: Query<
         (&mut Transform, Entity, &Card, &mut Dragged, &Name),
         Without<CardLine>,
@@ -50,7 +50,7 @@ pub(crate) fn back_to_origin_when_unused(
     mut commands: Commands,
 ) {
     if let Ok((mut card_transform, card_entity, card, mut card_dragged_component, card_name)) =
-        dragged_cards.get_mut(trigger.target)
+        dragged_cards.get_mut(trigger.entity)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
 
@@ -60,7 +60,7 @@ pub(crate) fn back_to_origin_when_unused(
                 commands.get_entity(owner_card_line),
             ) {
                 card_line_commands.add_child(card_entity);
-                let inverse_transform = card_line_transform.compute_matrix().inverse();
+                let inverse_transform = card_line_transform.to_matrix().inverse();
                 card_transform.translation =
                     inverse_transform.transform_point3(card_transform.translation);
                 card_transform.rotation =
@@ -123,7 +123,7 @@ fn play_card_going_back_to_place_animation(
 }
 
 fn listen_to_dragging_done_for_card(
-    trigger: Trigger<TweenEvent<DeclareDraggingDoneForCard>>,
+    trigger: On<TweenEvent<DeclareDraggingDoneForCard>>,
     cards: Query<(), With<Card>>,
     mut commands: Commands,
 ) {

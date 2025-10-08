@@ -15,15 +15,15 @@ impl Plugin for CardNamerPlugin {
 }
 
 fn name_newborn_card(
-    trigger: Trigger<OnAdd, Card>,
+    trigger: On<Add, Card>,
     mut card_namer: ResMut<CardNamer>,
     named_cards: Query<(), (With<Card>, With<Name>)>,
     mut commands: Commands,
 ) {
-    if named_cards.contains(trigger.target()) {
+    if named_cards.contains(trigger.entity) {
         return;
     }
-    if let Ok(mut card_entity_commands) = commands.get_entity(trigger.target()) {
+    if let Ok(mut card_entity_commands) = commands.get_entity(trigger.entity) {
         card_entity_commands.insert_if_new(card_namer.make_name());
     }
 }

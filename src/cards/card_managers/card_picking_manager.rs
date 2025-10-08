@@ -10,7 +10,7 @@ impl Plugin for CardPickingPlugin {
 }
 
 fn listen_to_picking_toggle_requests(
-    mut request_listener: EventReader<TogglePickingForCard>,
+    mut request_listener: MessageReader<TogglePickingForCard>,
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
@@ -30,7 +30,7 @@ fn listen_to_picking_toggle_requests(
 }
 
 pub(crate) fn on_card_click(
-    trigger: Trigger<Pointer<Click>>,
+    trigger: On<Pointer<Click>>,
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
@@ -38,7 +38,7 @@ pub(crate) fn on_card_click(
     mut commands: Commands,
 ) {
     handle_picking_request(
-        trigger.target(),
+        trigger.entity,
         &picked_cards,
         &dragged_cards,
         &cards,

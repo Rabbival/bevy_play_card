@@ -51,7 +51,7 @@ Or more specifically using [`from_card_line`](../src/cards/card_lines/card_line_
 
 ### Using [Card Line Requests](../src/cards/card_lines/event.rs)
 Although you could interact with the entities directly, you can spare yourself some boilerplate
-by firing events using `EventWriter<CardLineRequest>`, already listened to by the plugin.
+by firing events using `MessageWriter<CardLineRequest>`, already listened to by the plugin.
 Each [`CardLineRequest`](../src/cards/card_lines/event.rs) contains the entity of the line to which it'll be applied and a request type with relevant additional data if there's any.
 The variants of `CardLineRequestType` are as follows:
 

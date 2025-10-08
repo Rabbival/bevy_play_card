@@ -11,7 +11,7 @@ fn main() {
 }
 
 fn spawn_cards(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
@@ -52,17 +52,17 @@ fn print_going_back_to_place_card_names(
     }
 }
 
-fn notify_on_hover_start(trigger: Trigger<OnAdd, Hovered>, card_names: Query<&Name, With<Card>>) {
-    if let Ok(card_name) = card_names.get(trigger.target()) {
+fn notify_on_hover_start(trigger: On<Add, Hovered>, card_names: Query<&Name, With<Card>>) {
+    if let Ok(card_name) = card_names.get(trigger.entity) {
         println!("Hovering {}", card_name);
     }
 }
 
 fn notify_on_picked_cards(
-    trigger: Trigger<OnAdd, Picked>,
+    trigger: On<Add, Picked>,
     card_names: Query<(&Name, Option<&Picked>), With<Card>>,
 ) {
-    if let Ok((card_name, _)) = card_names.get(trigger.target()) {
+    if let Ok((card_name, _)) = card_names.get(trigger.entity) {
         println!("Picked {}", card_name);
         let picked_cards: Vec<&Name> = card_names
             .iter()

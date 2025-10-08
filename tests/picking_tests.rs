@@ -108,7 +108,10 @@ fn test_picked_cards_policy() {
 //     println!("{}", log_me);
 // }
 
-fn spawn_lines(mut card_line_request_writer: EventWriter<CardLineRequest>, mut commands: Commands) {
+fn spawn_lines(
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
+    mut commands: Commands,
+) {
     for policy in [
         CardPickingPolicy::ForbidNewOnes,
         CardPickingPolicy::RemoveMostRecentlyPicked,
@@ -137,7 +140,7 @@ fn spawn_lines(mut card_line_request_writer: EventWriter<CardLineRequest>, mut c
 }
 
 fn request_first_half_picks(
-    mut requester: EventWriter<TogglePickingForCard>,
+    mut requester: MessageWriter<TogglePickingForCard>,
     lines: Query<&CardLine>,
 ) {
     for line in &lines {
@@ -151,7 +154,7 @@ fn request_first_half_picks(
 }
 
 fn request_last_half_picks(
-    mut requester: EventWriter<TogglePickingForCard>,
+    mut requester: MessageWriter<TogglePickingForCard>,
     lines: Query<&CardLine>,
 ) {
     for line in &lines {

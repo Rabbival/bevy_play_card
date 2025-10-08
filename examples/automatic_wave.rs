@@ -23,14 +23,14 @@ fn main() {
 }
 
 fn pick_cards(
-    mut requester: EventWriter<TogglePickingForCard>,
+    mut requester: MessageWriter<TogglePickingForCard>,
     card_lines: Query<&CardLine>,
     mut next: ResMut<NextPickIndex>,
     mut timer: ResMut<TimerWrapper>,
     time: Res<Time>,
 ) {
     timer.0.tick(time.delta());
-    if !timer.0.finished() {
+    if !timer.0.is_finished() {
         return;
     }
     if let Ok(card_line) = card_lines.single()
@@ -42,7 +42,7 @@ fn pick_cards(
 }
 
 fn spawn_cards_on_a_line(
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {

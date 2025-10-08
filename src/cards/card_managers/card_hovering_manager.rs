@@ -2,13 +2,13 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 
 pub(crate) fn on_hover(
-    trigger: Trigger<Pointer<Over>>,
+    trigger: On<Pointer<Over>>,
     cards: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok(card) = cards.get(trigger.target) {
+    if let Ok(card) = cards.get(trigger.entity) {
         if card_consts.allow_hover_while_dragging {
             if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
                 return;
@@ -20,18 +20,18 @@ pub(crate) fn on_hover(
                 }
             }
         }
-        commands.entity(trigger.target).try_insert(Hovered);
+        commands.entity(trigger.entity).try_insert(Hovered);
     }
 }
 
 pub(crate) fn on_hover_cancel(
-    trigger: Trigger<Pointer<Out>>,
-    mut animation_requester: EventWriter<CardAnimationRequest>,
+    trigger: On<Pointer<Out>>,
+    mut animation_requester: MessageWriter<CardAnimationRequest>,
     cards: Query<(Entity, &Card, Option<&Dragged>, Option<&Picked>)>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
-    if let Ok((entity, card, maybe_dragged, maybe_picked)) = cards.get(trigger.target) {
+    if let Ok((entity, card, maybe_dragged, maybe_picked)) = cards.get(trigger.entity) {
         commands.entity(entity).try_remove::<Hovered>();
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards)
             | maybe_dragged.is_some()

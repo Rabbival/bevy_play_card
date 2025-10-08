@@ -5,7 +5,7 @@ use std::f32::consts::PI;
 #[derive(Resource, Default)]
 struct CardLineEntities(Vec<Entity>);
 
-#[derive(Event)]
+#[derive(Message)]
 struct SpawnCardPlease;
 
 const MAX_CARDS: usize = 4;
@@ -13,7 +13,7 @@ const MAX_CARDS: usize = 4;
 fn main() {
     App::new()
         .init_resource::<CardLineEntities>()
-        .add_event::<SpawnCardPlease>()
+        .add_message::<SpawnCardPlease>()
         .add_plugins((
             DefaultPlugins,
             BevyCardPlugin {
@@ -66,13 +66,13 @@ fn spawn_card_lines(mut line_entities: ResMut<CardLineEntities>, mut commands: C
     }
 }
 
-fn request_initial_card_spawn(mut spawn_request_writer: EventWriter<SpawnCardPlease>) {
+fn request_initial_card_spawn(mut spawn_request_writer: MessageWriter<SpawnCardPlease>) {
     spawn_request_writer.write(SpawnCardPlease);
 }
 
 fn listen_to_card_addition_requests(
-    mut spawn_request_reader: EventReader<SpawnCardPlease>,
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut spawn_request_reader: MessageReader<SpawnCardPlease>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     line_entities: Res<CardLineEntities>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
@@ -99,8 +99,8 @@ fn listen_to_card_addition_requests(
 }
 
 fn listen_to_keyboard_input(
-    mut spawn_request_writer: EventWriter<SpawnCardPlease>,
-    mut card_line_request_writer: EventWriter<CardLineRequest>,
+    mut spawn_request_writer: MessageWriter<SpawnCardPlease>,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
     keys: Res<ButtonInput<KeyCode>>,
     cards: Query<(), With<Card>>,
     line_entities: Res<CardLineEntities>,
