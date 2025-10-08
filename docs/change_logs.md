@@ -10,7 +10,7 @@
 * Add `auto_sort` flag to `CardLine`:
   * Lines can now be told not to sort cards automatically
   * You can now send `CardLineRequestType::Sort` to ask the line to put its cards in the correct places
-  * Add card stacking example to showcase why that might be useful
+  * Add [card stacking example](../src/cards/card_lines/card_lines_content_manager.rs) to showcase why that might be useful
 
 #### `0.4.2 -> 0.4.3`
 * Fix an edge case where the card would stutter if you unhovered it on the same frame you started dragging it

@@ -42,32 +42,47 @@ pub(crate) fn on_drag(
 pub(crate) fn back_to_origin_when_unused(
     trigger: On<Pointer<DragEnd>>,
     mut dragged_cards: Query<
-        (&mut Transform, Entity, &Card, &mut Dragged, &Name),
+        (
+            &mut Transform,
+            Entity,
+            &Card,
+            &mut Dragged,
+            &Name,
+            Has<ChildOf>,
+        ),
         Without<CardLine>,
     >,
     card_lines_query: Query<&Transform, Without<Card>>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((mut card_transform, card_entity, card, mut card_dragged_component, card_name)) =
-        dragged_cards.get_mut(trigger.entity)
+    if let Ok((
+        mut card_transform,
+        card_entity,
+        card,
+        mut card_dragged_component,
+        card_name,
+        card_has_parent,
+    )) = dragged_cards.get_mut(trigger.entity)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
 
-        if let Some(owner_card_line) = card.owner_line {
-            if let (Ok(card_line_transform), Ok(mut card_line_commands)) = (
+        if !card_has_parent
+            && let Some(owner_card_line) = card.owner_line
+            && let (Ok(card_line_transform), Ok(mut card_line_commands)) = (
                 card_lines_query.get(owner_card_line),
                 commands.get_entity(owner_card_line),
-            ) {
-                card_line_commands.add_child(card_entity);
-                let inverse_transform = card_line_transform.to_matrix().inverse();
-                card_transform.translation =
-                    inverse_transform.transform_point3(card_transform.translation);
-                card_transform.rotation =
-                    inverse_transform.to_scale_rotation_translation().1 * card_transform.rotation;
-                card_transform.scale /= card_line_transform.scale;
-            }
+            )
+        {
+            card_line_commands.add_child(card_entity);
+            let inverse_transform = card_line_transform.to_matrix().inverse();
+            card_transform.translation =
+                inverse_transform.transform_point3(card_transform.translation);
+            card_transform.rotation =
+                inverse_transform.to_scale_rotation_translation().1 * card_transform.rotation;
+            card_transform.scale /= card_line_transform.scale;
         }
+
         play_card_going_back_to_place_animation(
             card_entity,
             card,

@@ -3,9 +3,6 @@ use crate::utilities::action_performed::ActionPerformed;
 use crate::utilities::calculation_helpers::projection_directed_distance;
 use crate::utilities::system_sets::CardsOrderingSystemSet;
 
-//TODO: do not auto-sort if flag is off, listen to Sort requests
-// when done, add an example with card stacking
-
 pub struct CardLinesContentManagerPlugin;
 
 impl Plugin for CardLinesContentManagerPlugin {
@@ -45,7 +42,7 @@ pub(crate) fn remove_card_from_line_on_card_despawn(
 fn listen_to_card_removal_requests(
     mut card_line_request_reader: MessageReader<CardLineRequest>,
     mut card_lines: Query<&mut CardLine>,
-    mut cards: Query<(&mut Card, &Name)>,
+    mut cards: Query<(&mut Card, &Name, &ChildOf)>,
     logging_function: Res<CardsPluginLoggingFunction>,
     mut commands: Commands,
 ) {
@@ -85,7 +82,7 @@ fn listen_to_card_removal_requests(
                         {
                             card_entity_to_remove_commands.remove_parent_in_place();
                         }
-                        if let Ok((mut card, card_name)) = cards.get_mut(card_entity) {
+                        if let Ok((mut card, card_name, _)) = cards.get_mut(card_entity) {
                             card.owner_line = None;
                             removed_cards_names.push(card_name.clone());
                         }
@@ -106,26 +103,28 @@ fn listen_to_card_removal_requests(
 fn remove_card_from_line_if_found(
     card_entity_to_remove: Entity,
     card_line: &mut CardLine,
-    cards: &mut Query<(&mut Card, &Name)>,
+    cards: &mut Query<(&mut Card, &Name, &ChildOf)>,
     logging_function: &Option<fn(String)>,
     commands: &mut Commands,
 ) -> ActionPerformed {
     let mut card_name_if_removed = None;
     let card_removed = card_line.remove_card_if_found(card_entity_to_remove);
-    if card_removed.done() {
-        if let Ok(mut card_entity_to_remove_commands) = commands.get_entity(card_entity_to_remove) {
-            card_entity_to_remove_commands.remove_parent_in_place();
+    if card_removed.done()
+        && let Ok(mut card_entity_to_remove_commands) = commands.get_entity(card_entity_to_remove)
+        && let Ok((mut card, card_name, ChildOf(card_parent))) =
+            cards.get_mut(card_entity_to_remove)
+        && let Some(line_parent) = card.owner_line.take()
+    {
+        if *card_parent == line_parent {
+        card_entity_to_remove_commands.remove_parent_in_place();
         }
-        if let Ok((mut card, card_name)) = cards.get_mut(card_entity_to_remove) {
-            card.owner_line = None;
-            card_name_if_removed = Some(card_name.clone());
-        }
+        card_name_if_removed = Some(card_name.clone());
     }
     if let Some(logger) = logging_function {
         if let Some(card_name) = card_name_if_removed {
             let mut names_in_order = vec![];
             for card_entity in card_line.cards_in_order() {
-                if let Ok((_, name)) = cards.get(*card_entity) {
+                if let Ok((_, name, _)) = cards.get(*card_entity) {
                     names_in_order.push(name);
                 }
             }
