@@ -90,7 +90,7 @@ fn listen_to_card_addition_requests(
                 ))
                 .id();
             card_addition_requests.push(CardLineRequest {
-                line: *line_entity,
+                entity: *line_entity,
                 request_type: CardLineRequestType::AddToLine { card_entity },
             });
         }
@@ -108,7 +108,7 @@ fn listen_to_keyboard_input(
     if keys.just_pressed(KeyCode::Space) {
         for line_entity in &line_entities.0 {
             card_line_request_writer.write(CardLineRequest {
-                line: *line_entity,
+                entity: *line_entity,
                 request_type: CardLineRequestType::RaiseLine,
             });
         }
@@ -116,7 +116,7 @@ fn listen_to_keyboard_input(
     if keys.just_released(KeyCode::Space) {
         for line_entity in &line_entities.0 {
             card_line_request_writer.write(CardLineRequest {
-                line: *line_entity,
+                entity: *line_entity,
                 request_type: CardLineRequestType::LowerLine,
             });
         }

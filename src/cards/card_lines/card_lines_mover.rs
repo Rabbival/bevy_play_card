@@ -24,7 +24,7 @@ fn listen_to_card_line_move_requests(
     let mut destination_by_card_line: HashMap<Entity, Vec3> = HashMap::new();
     for move_request in card_line_request_listener.read() {
         if let Ok((card_line, card_line_transform, card_line_entity)) =
-            card_lines.get(move_request.line)
+            card_lines.get(move_request.entity)
         {
             let destination = match move_request.request_type {
                 CardLineRequestType::RaiseLine => {

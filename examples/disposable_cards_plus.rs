@@ -89,7 +89,7 @@ fn listen_to_card_addition_requests(
                 ))
                 .id();
             card_line_request_writer.write(CardLineRequest {
-                line: card_line_entity,
+                entity: card_line_entity,
                 request_type: CardLineRequestType::AddToLine { card_entity },
             });
         }

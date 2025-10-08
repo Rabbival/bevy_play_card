@@ -116,7 +116,7 @@ An example for card spawning would be:
 With the appropriate addition request:
 ```rust
   card_line_request_writer.write(CardLineRequest {
-    line: line_entity,
+    entity: line_entity,
     request_type: CardLineRequestType::AddToLine { card_entity },
   });
   ```
@@ -135,7 +135,7 @@ Ending up with:
           CardBundle::new(Transform::default()),
         )).id();
     card_line_request_writer.write(CardLineRequest {
-      line: line_entity,
+      entity: line_entity,
       request_type: CardLineRequestType::AddToLine { card_entity },
     });
   }

@@ -15,7 +15,7 @@ fn spawn_cards(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    let line = commands
+    let line_entity = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
                 .with_picked_cards_capacity(3)
@@ -37,7 +37,7 @@ fn spawn_cards(
         );
     }
     card_line_request_writer.write(CardLineRequest {
-        line,
+        entity: line_entity,
         request_type: CardLineRequestType::BatchAddToLine { card_entities },
     });
 }

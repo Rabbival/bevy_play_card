@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
 /// A request to be handled automatically by bevy_play_card_crate
-#[derive(Debug, Message)]
+#[derive(Debug, Message, EntityEvent)]
 pub struct CardLineRequest {
     /// The line entity to which the request should apply
-    pub line: Entity,
+    pub entity: Entity,
     /// The request type, including additional data if there's any
     pub request_type: CardLineRequestType,
 }
@@ -27,6 +27,8 @@ pub enum CardLineRequestType {
     BatchRemoveFromLine { card_entities: Vec<Entity> },
     /// Removes all the cards from the card-line
     RemoveAllCardsFromLine,
+    /// Puts the cards of the line in their correct places, redundant if auto-sorted
+    Sort
 }
 
 pub struct CardLineEventsPlugin;

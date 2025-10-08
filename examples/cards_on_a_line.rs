@@ -25,7 +25,7 @@ fn spawn_cards_on_a_line(
     mut commands: Commands,
 ) {
     let cards_count = 12;
-    let line = commands
+    let line_entity = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
                 .with_max_cards(cards_count)
@@ -48,7 +48,7 @@ fn spawn_cards_on_a_line(
         );
     }
     card_line_request_writer.write(CardLineRequest {
-        line,
+        entity: line_entity,
         request_type: CardLineRequestType::BatchAddToLine { card_entities },
     });
 }

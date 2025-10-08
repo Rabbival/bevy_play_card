@@ -117,7 +117,7 @@ fn spawn_lines(
         CardPickingPolicy::RemoveMostRecentlyPicked,
         CardPickingPolicy::RemoveLeastRecentlyPicked,
     ] {
-        let line = commands
+        let line_entity = commands
             .spawn((
                 CardLineBundle::from_card_line(
                     CardLine::default()
@@ -133,7 +133,7 @@ fn spawn_lines(
             card_entities.push(commands.spawn(CardBundle::new(Transform::default())).id());
         }
         card_line_request_writer.write(CardLineRequest {
-            line,
+            entity: line_entity,
             request_type: CardLineRequestType::BatchAddToLine { card_entities },
         });
     }

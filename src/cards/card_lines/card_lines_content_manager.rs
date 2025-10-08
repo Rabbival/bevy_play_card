@@ -29,7 +29,7 @@ pub(crate) fn remove_card_from_line_on_card_despawn(
     if let Ok(card) = cards.get(trigger.entity) {
         if let Some(owner_line_entity) = card.owner_line {
             line_request_writer.write(CardLineRequest {
-                line: owner_line_entity,
+                entity: owner_line_entity,
                 request_type: CardLineRequestType::RemoveFromLine {
                     card_entity: trigger.entity,
                 },
@@ -48,7 +48,7 @@ fn listen_to_card_removal_requests(
     for request in card_line_request_reader.read() {
         match &request.request_type {
             CardLineRequestType::RemoveFromLine { card_entity } => {
-                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
                     remove_card_from_line_if_found(
                         *card_entity,
                         &mut card_line,
@@ -59,7 +59,7 @@ fn listen_to_card_removal_requests(
                 }
             }
             CardLineRequestType::BatchRemoveFromLine { card_entities } => {
-                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
                     for card_entity in card_entities.iter() {
                         remove_card_from_line_if_found(
                             *card_entity,
@@ -72,7 +72,7 @@ fn listen_to_card_removal_requests(
                 }
             }
             CardLineRequestType::RemoveAllCardsFromLine => {
-                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
                     let removed_cards = card_line.remove_all_cards();
                     let mut removed_cards_names = vec![];
                     for &card_entity in removed_cards.iter() {
@@ -144,10 +144,10 @@ fn listen_to_card_addition_requests(
     for request in card_line_request_reader.read() {
         match &request.request_type {
             CardLineRequestType::AddToLine { card_entity } => {
-                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
                     let card_inserted = add_card_to_line_if_in_capacity(
                         *card_entity,
-                        request.line,
+                        request.entity,
                         &mut card_line,
                         &mut cards,
                         &logging_function.0,
@@ -159,11 +159,11 @@ fn listen_to_card_addition_requests(
                 }
             }
             CardLineRequestType::BatchAddToLine { card_entities } => {
-                if let Ok(mut card_line) = card_lines.get_mut(request.line) {
+                if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
                     for card_entity in card_entities {
                         let card_inserted = add_card_to_line_if_in_capacity(
                             *card_entity,
-                            request.line,
+                            request.entity,
                             &mut card_line,
                             &mut cards,
                             &logging_function.0,

@@ -23,6 +23,8 @@ pub struct CardLine {
     pub picked_cards_capacity: Option<usize>,
     /// How a card line should act when picking cards when at picked card capacity
     pub picked_card_policy: CardPickingPolicyWithContent,
+    /// Whether to sort cards automatically when they move or listen to manual requests
+    pub auto_sort: bool,
 }
 
 impl CardLine {
@@ -107,6 +109,11 @@ impl CardLine {
         self.picked_card_policy = picking_policy.to_initial_with_content();
         self
     }
+
+    pub fn with_auto_sort(mut self, auto_sort: bool) -> Self {
+        self.auto_sort = auto_sort;
+        self
+    }
 }
 
 impl Default for CardLine {
@@ -120,6 +127,7 @@ impl Default for CardLine {
             card_origin_gap: 140.0,
             picked_cards_capacity: None,
             picked_card_policy: CardPickingPolicyWithContent::default(),
+            auto_sort: true,
         }
     }
 }
