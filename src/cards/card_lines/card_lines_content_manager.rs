@@ -3,6 +3,9 @@ use crate::utilities::action_performed::ActionPerformed;
 use crate::utilities::calculation_helpers::projection_directed_distance;
 use crate::utilities::system_sets::CardsOrderingSystemSet;
 
+//TODO: do not auto-sort if flag is off, listen to Sort requests
+// when done, add an example with card stacking
+
 pub struct CardLinesContentManagerPlugin;
 
 impl Plugin for CardLinesContentManagerPlugin {
@@ -14,6 +17,7 @@ impl Plugin for CardLinesContentManagerPlugin {
                 listen_to_card_addition_requests,
                 listen_to_dragged_card_movements,
                 set_card_origins_on_line_change,
+                listen_to_line_sort_requests,
             )
                 .chain()
                 .in_set(CardsOrderingSystemSet::OriginSetting),
@@ -306,15 +310,37 @@ fn set_card_origins_on_line_change(
     mut cards: Query<&mut Card>,
 ) {
     for card_line in &changed_card_lines {
-        let first_card_x = -1.0 * calculate_first_card_distance_from_center(card_line);
-        for (index, card_entity) in card_line.cards_in_order().iter().enumerate() {
-            if let Ok(mut card) = cards.get_mut(*card_entity) {
-                let resulting_translation = card
-                    .origin
-                    .translation
-                    .with_x(first_card_x + index as f32 * card_line.card_origin_gap);
-                card.origin.translation = resulting_translation;
-            }
+        if !card_line.auto_sort {
+            continue;
+        }
+        set_card_origins(card_line, &mut cards);
+    }
+}
+
+fn listen_to_line_sort_requests(
+    mut line_request_listener: MessageReader<CardLineRequest>,
+    card_lines: Query<&CardLine>,
+    mut cards: Query<&mut Card>,
+) {
+    for request in line_request_listener.read() {
+        if let CardLineRequestType::Sort = request.request_type
+            && let Ok(card_line) = card_lines.get(request.entity)
+            && !card_line.auto_sort
+        {
+            set_card_origins(card_line, &mut cards);
+        }
+    }
+}
+
+fn set_card_origins(card_line: &CardLine, cards: &mut Query<&mut Card>) {
+    let first_card_x = -1.0 * calculate_first_card_distance_from_center(card_line);
+    for (index, card_entity) in card_line.cards_in_order().iter().enumerate() {
+        if let Ok(mut card) = cards.get_mut(*card_entity) {
+            let resulting_translation = card
+                .origin
+                .translation
+                .with_x(first_card_x + index as f32 * card_line.card_origin_gap);
+            card.origin.translation = resulting_translation;
         }
     }
 }
