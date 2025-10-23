@@ -55,6 +55,7 @@ fn listen_to_card_origin_changes(
                 card_name
             )),
             TweenPriorityToOthersOfType(40),
+            PlayCardTweenAnimationParent,
         ));
         let translation_tween = named_tween(
             Duration::from_secs_f32(card_consts.card_slide_on_origin_set_duration),

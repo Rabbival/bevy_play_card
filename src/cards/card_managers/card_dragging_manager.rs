@@ -111,6 +111,7 @@ fn play_card_going_back_to_place_animation(
                 card_name
             )),
             TweenPriorityToOthersOfType(30),
+            PlayCardTweenAnimationParent,
         ))
         .animation()
         .insert(sequence((

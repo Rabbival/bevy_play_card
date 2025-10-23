@@ -45,6 +45,7 @@ fn listen_to_card_line_move_requests(
                 .spawn((
                     Name::new("Card line slide animation parent"),
                     TweenPriorityToOthersOfType(20),
+                    PlayCardTweenAnimationParent,
                 ))
                 .animation()
                 .insert(named_tween(

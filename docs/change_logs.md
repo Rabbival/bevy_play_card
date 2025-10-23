@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.5.0 -> 0.5.1`
+* Tag card tween animation parents with `PlayCardTweenAnimationParent` for ease of tracking / querying
+
 #### `0.4.3 -> 0.5.0`
 * Update to Bevy 0.17
   * Entity fields were renamed to `entity` to make it an `EntityEvent` for:
@@ -18,11 +21,11 @@
 #### `0.4.1 -> 0.4.2`
 * Fix cards still being hovered when no longer hovered if picked
 * Add `CardAnimationRequest` (for internal uses, it is exposed though if you want to use it)
-* In `CardConsts`, rename `hover_cancel` in `on_hover_cancel_position_tween_duration` and `on_hover_cancel_scale_duration` 
+* In `CardConsts`, rename `hover_cancel` in `on_hover_cancel_position_tween_duration` and `on_hover_cancel_scale_duration`
 to `float_back_down` as it now refers to unpicking as well
 
 #### `0.3.0 -> 0.4.0`
-* Add [`CardPickingPolicy`](../src/cards/card_lines/card_picking_policy.rs) and `CardPickingPolicyWithContent` to card lines 
+* Add [`CardPickingPolicy`](../src/cards/card_lines/card_picking_policy.rs) and `CardPickingPolicyWithContent` to card lines
   * You may now pick (pun intended) one of three policies as to how your line would react to too many picks
 * Fix card dragging never ends bug
 * Add [`TogglePickingForCard`](../src/cards/event.rs) to manually request card pick toggle
@@ -56,7 +59,7 @@ to `float_back_down` as it now refers to unpicking as well
 * Add `at_capacity` function to card lines to reduce boilerplate
 
 #### `0.2 -> 0.2.1`
-* Make hovering over cards while dragging configurable, 
+* Make hovering over cards while dragging configurable,
   so that you can forbid hovering over cards from all lines while a card is being actively dragged
 
 ### `0.1 -> 0.2`

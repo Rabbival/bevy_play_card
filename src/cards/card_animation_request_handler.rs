@@ -51,6 +51,7 @@ fn play_float_back_down_request(
             .spawn((
                 Name::new(format!("float-back-down animation parent for {}", name)),
                 TweenPriorityToOthersOfType(20),
+                PlayCardTweenAnimationParent,
             ))
             .animation()
             .insert(parallel((

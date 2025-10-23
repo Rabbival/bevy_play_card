@@ -94,6 +94,7 @@ fn play_card_float_up_animation(
             .spawn((
                 Name::new(format!("{} animation parent for {}", animation_name, name)),
                 TweenPriorityToOthersOfType(animation_priority),
+                PlayCardTweenAnimationParent,
             ))
             .animation()
             .insert(parallel((

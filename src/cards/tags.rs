@@ -18,3 +18,7 @@ pub struct Hovered;
 /// A tag added to cards on click, removed on the next click
 #[derive(Debug, Clone, Copy, Component, Default)]
 pub struct Picked;
+
+/// A tag added to play card tween animation parents
+#[derive(Debug, Clone, Copy, Component, Default)]
+pub struct PlayCardTweenAnimationParent;
