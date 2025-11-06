@@ -89,8 +89,30 @@ fn setup(mut commands: Commands) {
     commands.spawn(Camera2d);
 }
 
-fn spawn_card_line(mut commands: Commands) {
-    commands.spawn(CardLineBundle::from_card_line(CardLine::default()));
+fn spawn_card_line(mut commands: Commands,
+     mut card_line_request_writer: MessageWriter<CardLineRequest>,
+     asset_server: Res<AssetServer>,
+) {
+    let line_entity = commands.spawn(CardLineBundle::from_card_line(CardLine::default())).id();
+    let cards_count = 5;
+    let mut card_entities = vec![];
+    for _ in 0..cards_count {
+        card_entities.push(
+            commands
+                .spawn((
+                    Sprite {
+                        image: asset_server.load("PlaceholderCard.png"),
+                        ..default()
+                    },
+                    CardBundle::new(Transform::from_scale(Vec3::splat(0.4))),
+                ))
+                .id(),
+        );
+    }
+    card_line_request_writer.write(CardLineRequest {
+        entity: line_entity,
+        request_type: CardLineRequestType::BatchAddToLine { card_entities },
+    });
 }
 
 fn listen_to_card_addition_requests(
