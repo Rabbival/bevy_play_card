@@ -1,10 +1,5 @@
-use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
-use bevy_tween::interpolation::EaseKind;
-use bevy_tween::prelude::IntoTarget;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
-use std::time::Duration;
+use bevy_tween_helpers::prelude::TweenRequest;
 
 pub struct CardTagChangeListenerPlugin;
 
@@ -41,82 +36,36 @@ fn on_dragged_insertion(
 
 fn on_hovered_insertion(
     trigger: On<Add, Hovered>,
-    cards: Query<(&Transform, &Card, &Name)>,
+    mut animation_requester: MessageWriter<CardAnimationRequest>,
     dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
-    card_consts: Res<CardConsts>,
-    mut commands: Commands,
 ) {
     if dragged_cards.contains(trigger.entity) {
         return;
     }
-    play_card_float_up_animation(
-        trigger.entity,
-        10,
-        "on-hover",
-        &cards,
-        &card_consts,
-        &mut commands,
-    );
+    animation_requester.write(CardAnimationRequest {
+        entity: trigger.entity,
+        request_type: CardAnimationRequestType::FloatUp {
+            tween_priority: 10,
+            tween_name: "on-hover",
+        },
+    });
 }
 
 fn on_picked_insertion(
     trigger: On<Add, Picked>,
-    cards: Query<(&Transform, &Card, &Name)>,
+    mut animation_requester: MessageWriter<CardAnimationRequest>,
     dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
-    card_consts: Res<CardConsts>,
-    mut commands: Commands,
 ) {
     if dragged_cards.contains(trigger.entity) {
         return;
     }
-    play_card_float_up_animation(
-        trigger.entity,
-        50,
-        "on-picked",
-        &cards,
-        &card_consts,
-        &mut commands,
-    );
-}
-
-fn play_card_float_up_animation(
-    card_to_animate: Entity,
-    animation_priority: u32,
-    animation_name: &str,
-    cards: &Query<(&Transform, &Card, &Name)>,
-    card_consts: &CardConsts,
-    commands: &mut Commands,
-) {
-    if let Ok((transform, card, name)) = cards.get(card_to_animate) {
-        let animation_target = card_to_animate.into_target();
-        let mut transform_state = animation_target.transform_state(*transform);
-        commands
-            .spawn((
-                Name::new(format!("{} animation parent for {}", animation_name, name)),
-                TweenPriorityToOthersOfType(animation_priority),
-                PlayCardTweenAnimationParent,
-            ))
-            .animation()
-            .insert(parallel((
-                named_tween(
-                    Duration::from_secs_f32(card_consts.on_hover_scale_duration),
-                    EaseKind::Linear,
-                    transform_state.scale_to(card_consts.on_hover_scale_factor * card.origin.scale),
-                    format!("{} {} scaling tween", name, animation_name),
-                ),
-                named_tween(
-                    Duration::from_secs_f32(card_consts.on_hover_position_tween_duration),
-                    EaseKind::CubicOut,
-                    transform_state.translation_to(
-                        card.origin
-                            .translation
-                            .with_y(card_consts.card_hover_height)
-                            + Vec3::Z,
-                    ),
-                    format!("{} {} translation tween", name, animation_name),
-                ),
-            )));
-    }
+    animation_requester.write(CardAnimationRequest {
+        entity: trigger.entity,
+        request_type: CardAnimationRequestType::FloatUp {
+            tween_priority: 50,
+            tween_name: "on-picked",
+        },
+    });
 }
 
 fn on_picked_removal(

@@ -27,13 +27,26 @@ fn handle_animation_requests(
         request_type_by_entity.insert(request.entity, request.request_type);
     }
     for (entity, request_type) in request_type_by_entity {
+        if dragged_or_picked_cards.contains(entity) {
+            continue;
+        }
         match request_type {
-            CardAnimationRequestType::FloatBackDown
-                if !dragged_or_picked_cards.contains(entity) =>
-            {
+            CardAnimationRequestType::FloatBackDown => {
                 play_float_back_down_request(entity, &cards, &card_consts, &mut commands);
             }
-            _ => {}
+            CardAnimationRequestType::FloatUp {
+                tween_priority,
+                tween_name,
+            } => {
+                play_card_float_up_animation(
+                    entity,
+                    tween_priority,
+                    tween_name,
+                    &cards,
+                    &card_consts,
+                    &mut commands,
+                );
+            }
         }
     }
 }
@@ -66,6 +79,46 @@ fn play_float_back_down_request(
                     EaseKind::CubicOut,
                     transform_state.translation_to(card.origin.translation),
                     format!("{} float-back-down translation tween", name),
+                ),
+            )));
+    }
+}
+
+fn play_card_float_up_animation(
+    card_to_animate: Entity,
+    animation_priority: u32,
+    animation_name: &str,
+    cards: &Query<(&Transform, &Card, &Name)>,
+    card_consts: &CardConsts,
+    commands: &mut Commands,
+) {
+    if let Ok((transform, card, name)) = cards.get(card_to_animate) {
+        let animation_target = card_to_animate.into_target();
+        let mut transform_state = animation_target.transform_state(*transform);
+        commands
+            .spawn((
+                Name::new(format!("{} animation parent for {}", animation_name, name)),
+                TweenPriorityToOthersOfType(animation_priority),
+                PlayCardTweenAnimationParent,
+            ))
+            .animation()
+            .insert(parallel((
+                named_tween(
+                    Duration::from_secs_f32(card_consts.on_hover_scale_duration),
+                    EaseKind::Linear,
+                    transform_state.scale_to(card_consts.on_hover_scale_factor * card.origin.scale),
+                    format!("{} {} scaling tween", name, animation_name),
+                ),
+                named_tween(
+                    Duration::from_secs_f32(card_consts.on_hover_position_tween_duration),
+                    EaseKind::CubicOut,
+                    transform_state.translation_to(
+                        card.origin
+                            .translation
+                            .with_y(card_consts.card_hover_height)
+                            + Vec3::Z,
+                    ),
+                    format!("{} {} translation tween", name, animation_name),
                 ),
             )));
     }

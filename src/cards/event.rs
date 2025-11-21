@@ -19,6 +19,10 @@ pub struct CardAnimationRequest {
 #[derive(Debug, Clone, Copy)]
 pub enum CardAnimationRequestType {
     FloatBackDown,
+    FloatUp {
+        tween_priority: u32,
+        tween_name: &'static str,
+    },
 }
 
 pub struct CardsEventsPlugin;
