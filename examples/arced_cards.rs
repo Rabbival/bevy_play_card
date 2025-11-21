@@ -28,6 +28,7 @@ fn main() {
 fn card_hover_animation_override(
     trigger: On<Add, Hovered>,
     cards: Query<(&Transform, &Card, &Name)>,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
@@ -36,6 +37,7 @@ fn card_hover_animation_override(
         10 + 1,
         "on-hover-override",
         cards,
+        card_lines,
         card_consts,
         commands,
     );
@@ -44,6 +46,7 @@ fn card_hover_animation_override(
 fn card_pick_animation_override(
     trigger: On<Add, Picked>,
     cards: Query<(&Transform, &Card, &Name)>,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
@@ -52,6 +55,7 @@ fn card_pick_animation_override(
         50 + 1,
         "on-pick-override",
         cards,
+        card_lines,
         card_consts,
         commands,
     );
@@ -62,12 +66,16 @@ fn override_card_float_up_animation(
     animation_priority: u32,
     animation_name: &str,
     cards: Query<(&Transform, &Card, &Name)>,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((transform, card, name)) = cards.get(card_entity) {
+    if let Ok((transform, card, name)) = cards.get(card_entity)
+        && let Some(card_line_entity) = card.owner_line
+        && let Ok(card_line) = card_lines.get(card_line_entity)
+    {
         let target_translation =
-            card.origin.translation + transform.up() * card_consts.card_hover_height + Vec3::Z;
+            card.origin.translation + transform.up() * card_line.card_hover_height + Vec3::Z;
         let animation_target = card_entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands
@@ -89,11 +97,14 @@ fn setup(mut commands: Commands) {
     commands.spawn(Camera2d);
 }
 
-fn spawn_card_line(mut commands: Commands,
-     mut card_line_request_writer: MessageWriter<CardLineRequest>,
-     asset_server: Res<AssetServer>,
+fn spawn_card_line(
+    mut commands: Commands,
+    mut card_line_request_writer: MessageWriter<CardLineRequest>,
+    asset_server: Res<AssetServer>,
 ) {
-    let line_entity = commands.spawn(CardLineBundle::from_card_line(CardLine::default())).id();
+    let line_entity = commands
+        .spawn(CardLineBundle::from_card_line(CardLine::default()))
+        .id();
     let cards_count = 5;
     let mut card_entities = vec![];
     for _ in 0..cards_count {

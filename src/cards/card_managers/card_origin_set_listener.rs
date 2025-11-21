@@ -29,6 +29,7 @@ fn listen_to_card_origin_changes(
         ),
         Changed<Card>,
     >,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
@@ -39,11 +40,11 @@ fn listen_to_card_origin_changes(
         if *card_transform == card.origin {
             continue;
         }
-        let target_translation = if maybe_picked.is_some() {
-            card.origin
-                .translation
-                .with_y(card_consts.card_hover_height)
-                + Vec3::Z
+        let target_translation = if maybe_picked.is_some()
+            && let Some(card_line_entity) = card.owner_line
+            && let Ok(line) = card_lines.get(card_line_entity)
+        {
+            card.origin.translation.with_y(line.card_hover_height) + Vec3::Z
         } else {
             card.origin.translation
         };

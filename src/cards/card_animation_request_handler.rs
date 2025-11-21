@@ -19,6 +19,7 @@ fn handle_animation_requests(
     mut request_listener: MessageReader<CardAnimationRequest>,
     cards: Query<(&Transform, &Card, &Name)>,
     dragged_or_picked_cards: Query<(), (With<Card>, Or<(With<Picked>, With<Dragged>)>)>,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
@@ -43,6 +44,7 @@ fn handle_animation_requests(
                     tween_priority,
                     tween_name,
                     &cards,
+                    &card_lines,
                     &card_consts,
                     &mut commands,
                 );
@@ -89,37 +91,40 @@ fn play_card_float_up_animation(
     animation_priority: u32,
     animation_name: &str,
     cards: &Query<(&Transform, &Card, &Name)>,
+    card_lines: &Query<&CardLine>,
     card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
     if let Ok((transform, card, name)) = cards.get(card_to_animate) {
         let animation_target = card_to_animate.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
-        commands
-            .spawn((
-                Name::new(format!("{} animation parent for {}", animation_name, name)),
-                TweenPriorityToOthersOfType(animation_priority),
-                PlayCardTweenAnimationParent,
-            ))
-            .animation()
-            .insert(parallel((
-                named_tween(
-                    Duration::from_secs_f32(card_consts.on_hover_scale_duration),
-                    EaseKind::Linear,
-                    transform_state.scale_to(card_consts.on_hover_scale_factor * card.origin.scale),
-                    format!("{} {} scaling tween", name, animation_name),
-                ),
+        let scale_tween = named_tween(
+            Duration::from_secs_f32(card_consts.on_hover_scale_duration),
+            EaseKind::Linear,
+            transform_state.scale_to(card_consts.on_hover_scale_factor * card.origin.scale),
+            format!("{} {} scaling tween", name, animation_name),
+        );
+        let mut animation_parent_commands = commands.spawn((
+            Name::new(format!("{} animation parent for {}", animation_name, name)),
+            TweenPriorityToOthersOfType(animation_priority),
+            PlayCardTweenAnimationParent,
+        ));
+        if let Some(card_line_entity) = card.owner_line
+            && let Ok(card_line) = card_lines.get(card_line_entity)
+        {
+            animation_parent_commands.animation().insert(parallel((
+                scale_tween,
                 named_tween(
                     Duration::from_secs_f32(card_consts.on_hover_position_tween_duration),
                     EaseKind::CubicOut,
                     transform_state.translation_to(
-                        card.origin
-                            .translation
-                            .with_y(card_consts.card_hover_height)
-                            + Vec3::Z,
+                        card.origin.translation.with_y(card_line.card_hover_height) + Vec3::Z,
                     ),
                     format!("{} {} translation tween", name, animation_name),
                 ),
             )));
+        } else {
+            animation_parent_commands.animation().insert(scale_tween);
+        }
     }
 }

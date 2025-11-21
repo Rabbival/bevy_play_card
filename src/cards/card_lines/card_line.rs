@@ -13,6 +13,8 @@ pub struct CardLine {
     pub origin: Transform,
     /// The card-line's card capacity
     pub max_cards: usize,
+    /// How far up cards float when hovered in pixels
+    pub card_hover_height: f32,
     /// How high in pixels the card line rises when asked to (relative to Vec3::ONE scale)
     pub raised_card_line_delta: f32,
     /// How long it takes the card line to rise and fall
@@ -85,6 +87,11 @@ impl CardLine {
         self
     }
 
+    pub fn with_card_hover_height(mut self, height: f32) -> Self {
+        self.card_hover_height = height;
+        self
+    }
+
     pub fn with_raised_card_line_delta(mut self, delta: f32) -> Self {
         self.raised_card_line_delta = delta;
         self
@@ -122,6 +129,7 @@ impl Default for CardLine {
             cards_in_order: vec![],
             origin: Transform::default(),
             max_cards: 6,
+            card_hover_height: 80.0,
             raised_card_line_delta: 100.0,
             slide_duration: 0.3,
             card_origin_gap: 140.0,

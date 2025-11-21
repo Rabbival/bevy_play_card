@@ -2,6 +2,9 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.5.1 -> 0.5.2`
+* Breaking: move `card_hover_height` from consts to be a card line field so that different lines may have different hover heights
+
 #### `0.5.0 -> 0.5.1`
 * Tag card tween animation parents with `PlayCardTweenAnimationParent` for ease of tracking / querying
 
