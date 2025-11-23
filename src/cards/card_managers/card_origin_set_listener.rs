@@ -1,6 +1,8 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
+use bevy_tween::combinator::{
+    AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
+};
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
 use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
@@ -40,6 +42,7 @@ fn listen_to_card_origin_changes(
         if *card_transform == card.origin {
             continue;
         }
+        commands.entity(card_entity).try_insert(MovingToNewOrigin);
         let target_translation = if maybe_picked.is_some()
             && let Some(card_line_entity) = card.owner_line
             && let Ok(line) = card_lines.get(card_line_entity)
@@ -70,20 +73,28 @@ fn listen_to_card_origin_changes(
             transform_state.scale_to(card.origin.scale),
             format!("{} new-origin-set scale tween", card_name),
         );
+        let movement_done_request =
+            event(RemoveComponentFromCardTweenRequest::<MovingToNewOrigin>::new(card_entity));
         match (
             card_transform.translation != card.origin.translation,
             maybe_picked.is_none() && card_transform.scale != card.origin.scale,
         ) {
             (true, true) => {
-                animation_entity
-                    .animation()
-                    .insert(parallel((translation_tween, scale_tween)));
+                animation_entity.animation().insert(sequence((
+                    parallel((translation_tween, scale_tween)),
+                    movement_done_request,
+                )));
             }
             (true, false) => {
-                animation_entity.animation().insert(translation_tween);
+                animation_entity.animation().insert(sequence((
+                    parallel(translation_tween),
+                    movement_done_request,
+                )));
             }
             (false, true) => {
-                animation_entity.animation().insert(scale_tween);
+                animation_entity
+                    .animation()
+                    .insert(sequence((parallel(scale_tween), movement_done_request)));
             }
             (false, false) => {}
         }

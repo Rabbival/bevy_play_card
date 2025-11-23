@@ -2,18 +2,11 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
-
-pub struct CardDraggingPlugin;
-
-impl Plugin for CardDraggingPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_observer(listen_to_dragging_done_for_card);
-    }
-}
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
 
 pub(crate) fn on_drag_start(
     trigger: On<Pointer<DragStart>>,
+    mut tween_request_writer: MessageWriter<TweenRequest>,
     mut card_transforms: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
@@ -23,7 +16,12 @@ pub(crate) fn on_drag_start(
             return;
         }
         if let Ok(mut entity_commands) = commands.get_entity(trigger.entity) {
-            entity_commands.try_insert(Dragged::Actively);
+            tween_request_writer.write(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(
+                vec![trigger.entity],
+            ));
+            entity_commands
+                .try_remove::<MovingToNewOrigin>()
+                .try_insert(Dragged::Actively);
         }
     }
 }
@@ -132,22 +130,8 @@ fn play_card_going_back_to_place_animation(
                     format!("{} go-back-to-origin-after-dragging scale tween", card_name),
                 ),
             )),
-            event(DeclareDraggingDoneForCard {
-                card_entity: Some(card_entity),
-            }),
+            event(RemoveComponentFromCardTweenRequest::<Dragged>::new(
+                card_entity,
+            )),
         )));
-}
-
-fn listen_to_dragging_done_for_card(
-    trigger: On<TweenEvent<DeclareDraggingDoneForCard>>,
-    cards: Query<(), With<Card>>,
-    mut commands: Commands,
-) {
-    if let Some(entity) = trigger.data.card_entity {
-        if let Ok(_card) = cards.get(entity) {
-            if let Ok(mut entity_commands) = commands.get_entity(entity) {
-                entity_commands.remove::<Dragged>();
-            }
-        }
-    }
 }

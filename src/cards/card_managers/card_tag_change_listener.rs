@@ -45,7 +45,6 @@ fn on_hovered_insertion(
     animation_requester.write(CardAnimationRequest {
         entity: trigger.entity,
         request_type: CardAnimationRequestType::FloatUp {
-            tween_priority: 10,
             tween_name: "on-hover",
         },
     });
@@ -62,7 +61,6 @@ fn on_picked_insertion(
     animation_requester.write(CardAnimationRequest {
         entity: trigger.entity,
         request_type: CardAnimationRequestType::FloatUp {
-            tween_priority: 50,
             tween_name: "on-picked",
         },
     });

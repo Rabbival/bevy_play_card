@@ -21,21 +21,44 @@ fn main() {
                 .chain(),
         )
         .add_observer(card_hover_animation_override)
+        .add_observer(card_unhover_animation_override)
         .add_observer(card_pick_animation_override)
         .run();
 }
 
 fn card_hover_animation_override(
     trigger: On<Add, Hovered>,
-    cards: Query<(&Transform, &Card, &Name)>,
+    cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
-    override_card_float_up_animation(
+    override_card_float_animation(
+        true,
         trigger.entity,
-        10 + 1,
         "on-hover-override",
+        cards,
+        card_lines,
+        card_consts,
+        commands,
+    );
+}
+
+fn card_unhover_animation_override(
+    trigger: On<Remove, Hovered>,
+    cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
+    picked_cards: Query<(), (With<Picked>, With<Card>)>,
+    card_lines: Query<&CardLine>,
+    card_consts: Res<CardConsts>,
+    commands: Commands,
+) {
+    if picked_cards.contains(trigger.entity) {
+        return;
+    }
+    override_card_float_animation(
+        false,
+        trigger.entity,
+        "back-to-place-override",
         cards,
         card_lines,
         card_consts,
@@ -45,14 +68,14 @@ fn card_hover_animation_override(
 
 fn card_pick_animation_override(
     trigger: On<Add, Picked>,
-    cards: Query<(&Transform, &Card, &Name)>,
+    cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     commands: Commands,
 ) {
-    override_card_float_up_animation(
+    override_card_float_animation(
+        true,
         trigger.entity,
-        50 + 1,
         "on-pick-override",
         cards,
         card_lines,
@@ -61,21 +84,24 @@ fn card_pick_animation_override(
     );
 }
 
-fn override_card_float_up_animation(
+fn override_card_float_animation(
+    float_up: bool,
     card_entity: Entity,
-    animation_priority: u32,
     animation_name: &str,
-    cards: Query<(&Transform, &Card, &Name)>,
+    cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
-    if let Ok((transform, card, name)) = cards.get(card_entity)
+    if let Ok((transform, card, name, moving_to_new_origin)) = cards.get(card_entity)
         && let Some(card_line_entity) = card.owner_line
         && let Ok(card_line) = card_lines.get(card_line_entity)
     {
-        let target_translation =
-            card.origin.translation + transform.up() * card_line.card_hover_height + Vec3::Z;
+        let animation_priority = if moving_to_new_origin { 50 + 1 } else { 10 + 1 };
+        let mut target_translation = card.origin.translation;
+        if float_up {
+            target_translation += transform.up() * card_line.card_hover_height + Vec3::Z;
+        }
         let animation_target = card_entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands

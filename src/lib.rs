@@ -162,11 +162,12 @@ pub mod prelude {
             card_lines_mover::*, card_picking_policy::*, event::*,
         },
         card_managers::{
-            CardManagersPlugin, card_dragging_manager::*, card_observer_attacher::*,
-            card_origin_set_listener::*, card_picking_manager::*, card_tag_change_listener::*,
+            CardManagersPlugin, card_observer_attacher::*, card_origin_set_listener::*,
+            card_picking_manager::*, card_tag_change_listener::*,
             theres_an_actively_dragged_card_from_that_line,
         },
         card_namer::*,
+        component_removal_request_listener::*,
         event::*,
         tags::*,
     };

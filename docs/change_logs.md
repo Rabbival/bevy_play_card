@@ -2,6 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.6.0 -> 0.6.1`
+* Change tween priorities to handle some edge cases
+* Add `MovingToNewOrigin` tag to mark when cards are on their way to their new origin (for tween priority)
+
 #### `0.5.1 -> 0.6.0`
 * Breaking: move `card_hover_height` from consts to be a card line field so that different lines may have different hover heights
 

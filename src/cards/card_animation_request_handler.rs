@@ -17,7 +17,7 @@ impl Plugin for CardAnimationRequestHandlerPlugin {
 
 fn handle_animation_requests(
     mut request_listener: MessageReader<CardAnimationRequest>,
-    cards: Query<(&Transform, &Card, &Name)>,
+    cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     dragged_or_picked_cards: Query<(), (With<Card>, Or<(With<Picked>, With<Dragged>)>)>,
     card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
@@ -35,13 +35,9 @@ fn handle_animation_requests(
             CardAnimationRequestType::FloatBackDown => {
                 play_float_back_down_request(entity, &cards, &card_consts, &mut commands);
             }
-            CardAnimationRequestType::FloatUp {
-                tween_priority,
-                tween_name,
-            } => {
+            CardAnimationRequestType::FloatUp { tween_name } => {
                 play_card_float_up_animation(
                     entity,
-                    tween_priority,
                     tween_name,
                     &cards,
                     &card_lines,
@@ -55,17 +51,18 @@ fn handle_animation_requests(
 
 fn play_float_back_down_request(
     entity: Entity,
-    cards: &Query<(&Transform, &Card, &Name)>,
+    cards: &Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
-    if let Ok((transform, card, name)) = cards.get(entity) {
+    if let Ok((transform, card, name, moving_to_new_origin)) = cards.get(entity) {
+        let tween_priority = if moving_to_new_origin { 50 } else { 10 };
         let animation_target = entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands
             .spawn((
                 Name::new(format!("float-back-down animation parent for {}", name)),
-                TweenPriorityToOthersOfType(20),
+                TweenPriorityToOthersOfType(tween_priority),
                 PlayCardTweenAnimationParent,
             ))
             .animation()
@@ -88,14 +85,14 @@ fn play_float_back_down_request(
 
 fn play_card_float_up_animation(
     card_to_animate: Entity,
-    animation_priority: u32,
     animation_name: &str,
-    cards: &Query<(&Transform, &Card, &Name)>,
+    cards: &Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
     card_lines: &Query<&CardLine>,
     card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
-    if let Ok((transform, card, name)) = cards.get(card_to_animate) {
+    if let Ok((transform, card, name, moving_to_new_origin)) = cards.get(card_to_animate) {
+        let tween_priority = if moving_to_new_origin { 50 } else { 10 };
         let animation_target = card_to_animate.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         let scale_tween = named_tween(
@@ -106,7 +103,7 @@ fn play_card_float_up_animation(
         );
         let mut animation_parent_commands = commands.spawn((
             Name::new(format!("{} animation parent for {}", animation_name, name)),
-            TweenPriorityToOthersOfType(animation_priority),
+            TweenPriorityToOthersOfType(tween_priority),
             PlayCardTweenAnimationParent,
         ));
         if let Some(card_line_entity) = card.owner_line
