@@ -56,7 +56,11 @@ fn play_float_back_down_request(
     commands: &mut Commands,
 ) {
     if let Ok((transform, card, name, moving_to_new_origin)) = cards.get(entity) {
-        let tween_priority = if moving_to_new_origin { 50 } else { 10 };
+        let tween_priority = if moving_to_new_origin {
+            10 + TWEEN_PRIORITY_ADDITION_ON_ORIGIN_SET
+        } else {
+            10
+        };
         let animation_target = entity.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         commands
@@ -92,7 +96,11 @@ fn play_card_float_up_animation(
     commands: &mut Commands,
 ) {
     if let Ok((transform, card, name, moving_to_new_origin)) = cards.get(card_to_animate) {
-        let tween_priority = if moving_to_new_origin { 50 } else { 10 };
+        let tween_priority = if moving_to_new_origin {
+            10 + TWEEN_PRIORITY_ADDITION_ON_ORIGIN_SET
+        } else {
+            10
+        };
         let animation_target = card_to_animate.into_target();
         let mut transform_state = animation_target.transform_state(*transform);
         let scale_tween = named_tween(

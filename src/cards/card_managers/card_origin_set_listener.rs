@@ -5,7 +5,7 @@ use bevy_tween::combinator::{
 };
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
 use std::time::Duration;
 
 pub struct CardOriginSetListenerPlugin;
@@ -42,6 +42,9 @@ fn listen_to_card_origin_changes(
         if *card_transform == card.origin {
             continue;
         }
+        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
+            card_entity,
+        ]));
         commands.entity(card_entity).try_insert(MovingToNewOrigin);
         let target_translation = if maybe_picked.is_some()
             && let Some(card_line_entity) = card.owner_line

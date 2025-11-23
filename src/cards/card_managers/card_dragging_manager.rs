@@ -6,7 +6,6 @@ use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, nam
 
 pub(crate) fn on_drag_start(
     trigger: On<Pointer<DragStart>>,
-    mut tween_request_writer: MessageWriter<TweenRequest>,
     mut card_transforms: Query<&Card>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
@@ -15,14 +14,13 @@ pub(crate) fn on_drag_start(
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
         }
-        if let Ok(mut entity_commands) = commands.get_entity(trigger.entity) {
-            tween_request_writer.write(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(
-                vec![trigger.entity],
-            ));
-            entity_commands
-                .try_remove::<MovingToNewOrigin>()
-                .try_insert(Dragged::Actively);
-        }
+        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
+            trigger.entity,
+        ]));
+        commands
+            .entity(trigger.entity)
+            .try_remove::<MovingToNewOrigin>()
+            .try_insert(Dragged::Actively);
     }
 }
 
@@ -47,6 +45,7 @@ pub(crate) fn back_to_origin_when_unused(
             &mut Dragged,
             &Name,
             Has<ChildOf>,
+            Has<MovingToNewOrigin>,
         ),
         Without<CardLine>,
     >,
@@ -61,6 +60,7 @@ pub(crate) fn back_to_origin_when_unused(
         mut card_dragged_component,
         card_name,
         card_has_parent,
+        is_moving_to_new_origin,
     )) = dragged_cards.get_mut(trigger.entity)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
@@ -83,6 +83,7 @@ pub(crate) fn back_to_origin_when_unused(
 
         play_card_going_back_to_place_animation(
             card_entity,
+            is_moving_to_new_origin,
             card,
             &card_transform,
             card_name,
@@ -94,12 +95,18 @@ pub(crate) fn back_to_origin_when_unused(
 
 fn play_card_going_back_to_place_animation(
     card_entity: Entity,
+    card_currently_going_to_new_origin: bool,
     card: &Card,
     card_transform: &Transform,
     card_name: &Name,
     card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
+    let tween_priority = if card_currently_going_to_new_origin {
+        30 + TWEEN_PRIORITY_ADDITION_ON_ORIGIN_SET
+    } else {
+        30
+    };
     let animation_target = card_entity.into_target();
     let mut transform_state = animation_target.transform_state(*card_transform);
     commands
@@ -108,7 +115,7 @@ fn play_card_going_back_to_place_animation(
                 "Go-back-to-origin-after-dragging animation parent for {}",
                 card_name
             )),
-            TweenPriorityToOthersOfType(30),
+            TweenPriorityToOthersOfType(tween_priority),
             PlayCardTweenAnimationParent,
         ))
         .animation()

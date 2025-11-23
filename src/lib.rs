@@ -148,6 +148,7 @@ pub mod trait_unions;
 #[macro_use]
 pub mod macros;
 pub mod bevy_card_plugin;
+pub mod consts;
 pub mod utilities;
 
 pub mod prelude {
@@ -171,6 +172,7 @@ pub mod prelude {
         event::*,
         tags::*,
     };
+    pub use crate::consts::*;
     pub use crate::trait_unions::*;
     pub use crate::utilities::system_sets::*;
     pub use bevy::{platform::collections::HashMap, prelude::*};

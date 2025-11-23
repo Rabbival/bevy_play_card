@@ -97,7 +97,11 @@ fn override_card_float_animation(
         && let Some(card_line_entity) = card.owner_line
         && let Ok(card_line) = card_lines.get(card_line_entity)
     {
-        let animation_priority = if moving_to_new_origin { 50 + 1 } else { 10 + 1 };
+        let animation_priority = if moving_to_new_origin {
+            10 + 1 + TWEEN_PRIORITY_ADDITION_ON_ORIGIN_SET
+        } else {
+            10 + 1
+        };
         let mut target_translation = card.origin.translation;
         if float_up {
             target_translation += transform.up() * card_line.card_hover_height + Vec3::Z;
