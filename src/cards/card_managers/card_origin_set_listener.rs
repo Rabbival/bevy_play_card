@@ -3,9 +3,12 @@ use crate::prelude::*;
 use bevy_tween::combinator::{
     AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
 };
+use bevy_tween::interpolate::{Scale, Translation};
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
+use bevy_tween_helpers::prelude::{
+    RemoveTargetsFromAllTweensOfType, TweenPriorityToOthersOfType, named_tween,
+};
 use std::time::Duration;
 
 pub struct CardOriginSetListenerPlugin;
@@ -42,7 +45,10 @@ fn listen_to_card_origin_changes(
         if *card_transform == card.origin {
             continue;
         }
-        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Translation>::new(vec![
+            card_entity,
+        ]));
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Scale>::new(vec![
             card_entity,
         ]));
         commands.entity(card_entity).try_insert(MovingToNewOrigin);

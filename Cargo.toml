@@ -1,6 +1,6 @@
 [package]
 name = "bevy_play_card"
-version = "0.6.2"
+version = "0.6.3"
 edition = "2024"
 repository = "https://github.com/Rabbival/bevy_play_card"
 homepage = "https://github.com/Rabbival/bevy_play_card"
@@ -27,7 +27,7 @@ features = [
 
 [dependencies]
 bevy_tween = "0.10.0"
-bevy_tween_helpers = "0.2.1"
+bevy_tween_helpers = "0.2.3"
 serde = { version = "1.0.219", features = ["derive"] }
 
 
