@@ -37,9 +37,9 @@ fn on_dragged_insertion(
 fn on_hovered_insertion(
     trigger: On<Add, Hovered>,
     mut animation_requester: MessageWriter<CardAnimationRequest>,
-    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
+    picked_or_dragged_cards: Query<(), (With<Card>, Or<(With<Dragged>, With<Picked>)>)>,
 ) {
-    if dragged_cards.contains(trigger.entity) {
+    if picked_or_dragged_cards.contains(trigger.entity) {
         return;
     }
     animation_requester.write(CardAnimationRequest {

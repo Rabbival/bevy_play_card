@@ -18,7 +18,7 @@ impl Plugin for CardAnimationRequestHandlerPlugin {
 fn handle_animation_requests(
     mut request_listener: MessageReader<CardAnimationRequest>,
     cards: Query<(&Transform, &Card, &Name, Has<MovingToNewOrigin>)>,
-    dragged_or_picked_cards: Query<(), (With<Card>, Or<(With<Picked>, With<Dragged>)>)>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
     card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
@@ -28,7 +28,7 @@ fn handle_animation_requests(
         request_type_by_entity.insert(request.entity, request.request_type);
     }
     for (entity, request_type) in request_type_by_entity {
-        if dragged_or_picked_cards.contains(entity) {
+        if dragged_cards.contains(entity) {
             continue;
         }
         match request_type {
