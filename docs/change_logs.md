@@ -2,6 +2,12 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.6.2 -> 0.7.0`
+
+* Update dependencies
+* Fix tween parent destruction edge cases
+* Fix `CardAnimationRequestType::FloatUp` unjust refusals
+
 #### `0.6.0 -> 0.6.2`
 * Change tween priorities to handle some edge cases
 * Add `MovingToNewOrigin` tag to mark when cards are on their way to their new origin (for tween priority)
