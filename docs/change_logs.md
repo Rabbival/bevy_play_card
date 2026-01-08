@@ -2,6 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.7.0 -> 0.8.0`
+
+* Change card `Pickable`: cards now always block things below them, unless they're dragged
+
 #### `0.6.2 -> 0.7.0`
 
 * Update dependencies

@@ -6,11 +6,11 @@ use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, nam
 
 pub(crate) fn on_drag_start(
     trigger: On<Pointer<DragStart>>,
-    mut card_transforms: Query<&Card>,
+    mut cards: Query<(&mut Pickable, &Card)>,
     dragged_cards: Query<(&Card, &Dragged)>,
     mut commands: Commands,
 ) {
-    if let Ok(card) = card_transforms.get_mut(trigger.entity) {
+    if let Ok((mut card_pickable, card)) = cards.get_mut(trigger.entity) {
         if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
             return;
         }
@@ -21,6 +21,7 @@ pub(crate) fn on_drag_start(
             .entity(trigger.entity)
             .try_remove::<MovingToNewOrigin>()
             .try_insert(Dragged::Actively);
+        card_pickable.should_block_lower = false;
     }
 }
 
@@ -43,6 +44,7 @@ pub(crate) fn back_to_origin_when_unused(
             Entity,
             &Card,
             &mut Dragged,
+            &mut Pickable,
             &Name,
             Has<ChildOf>,
             Has<MovingToNewOrigin>,
@@ -58,12 +60,14 @@ pub(crate) fn back_to_origin_when_unused(
         card_entity,
         card,
         mut card_dragged_component,
+        mut card_pickable,
         card_name,
         card_has_parent,
         is_moving_to_new_origin,
     )) = dragged_cards.get_mut(trigger.entity)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
+        card_pickable.should_block_lower = true;
 
         if !card_has_parent
             && let Some(owner_card_line) = card.owner_line
