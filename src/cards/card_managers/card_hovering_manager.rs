@@ -10,7 +10,9 @@ pub(crate) fn on_hover(
 ) {
     if let Ok(card) = cards.get(trigger.entity) {
         if card_consts.allow_hover_while_dragging {
-            if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
+            if let Some(owner_line) = card.owner_line
+                && theres_an_actively_dragged_card_from_that_line(owner_line, dragged_cards.iter())
+            {
                 return;
             }
         } else {
@@ -33,9 +35,12 @@ pub(crate) fn on_hover_cancel(
 ) {
     if let Ok((entity, card, maybe_dragged, maybe_picked)) = cards.get(trigger.entity) {
         commands.entity(entity).try_remove::<Hovered>();
-        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards)
-            | maybe_dragged.is_some()
-            | maybe_picked.is_some()
+
+        if maybe_dragged.is_some() | maybe_picked.is_some() {
+            return;
+        }
+        if let Some(card_line) = card.owner_line
+            && theres_an_actively_dragged_card_from_that_line(card_line, dragged_cards.iter())
         {
             return;
         }

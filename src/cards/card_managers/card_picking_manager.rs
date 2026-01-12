@@ -1,25 +1,52 @@
 use crate::prelude::*;
 use bevy::ecs::relationship::OrderedRelationshipSourceCollection;
 
+#[derive(Debug, Resource, Default, Deref, DerefMut)]
+pub(crate) struct CardPickingToggleQueue(pub(crate) HashSet<Entity>);
+
 pub struct CardPickingPlugin;
 
 impl Plugin for CardPickingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, listen_to_picking_toggle_requests);
+        app.init_resource::<CardPickingToggleQueue>().add_systems(
+            Update,
+            (
+                listen_to_picking_toggle_requests
+                    .in_set(CardsOrderingSystemSet::CardPickingRequestListening),
+                execute_card_picking_toggles
+                    .in_set(CardsOrderingSystemSet::CardAnimationRequesting),
+            ),
+        );
     }
 }
 
 fn listen_to_picking_toggle_requests(
     mut request_listener: MessageReader<TogglePickingForCard>,
+    mut request_queue: ResMut<CardPickingToggleQueue>,
+) {
+    for TogglePickingForCard(card_entity) in request_listener.read() {
+        request_queue.insert(*card_entity);
+    }
+}
+
+pub(crate) fn on_card_click(
+    trigger: On<Pointer<Click>>,
+    mut request_queue: ResMut<CardPickingToggleQueue>,
+) {
+    request_queue.insert(trigger.entity);
+}
+
+fn execute_card_picking_toggles(
     picked_cards: Query<&Card, With<Picked>>,
     dragged_cards: Query<(&Card, &Dragged)>,
     cards: Query<&Card>,
     mut card_lines: Query<&mut CardLine>,
+    mut request_queue: ResMut<CardPickingToggleQueue>,
     mut commands: Commands,
 ) {
-    for TogglePickingForCard(card_entity) in request_listener.read() {
+    for card_to_toggle in request_queue.drain() {
         handle_picking_request(
-            *card_entity,
+            card_to_toggle,
             &picked_cards,
             &dragged_cards,
             &cards,
@@ -27,24 +54,6 @@ fn listen_to_picking_toggle_requests(
             &mut commands,
         );
     }
-}
-
-pub(crate) fn on_card_click(
-    trigger: On<Pointer<Click>>,
-    picked_cards: Query<&Card, With<Picked>>,
-    dragged_cards: Query<(&Card, &Dragged)>,
-    cards: Query<&Card>,
-    mut card_lines: Query<&mut CardLine>,
-    mut commands: Commands,
-) {
-    handle_picking_request(
-        trigger.entity,
-        &picked_cards,
-        &dragged_cards,
-        &cards,
-        &mut card_lines,
-        &mut commands,
-    );
 }
 
 fn handle_picking_request(

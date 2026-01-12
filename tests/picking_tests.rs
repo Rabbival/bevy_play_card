@@ -17,7 +17,7 @@ fn test_picked_cards_policy() {
 
     app.init_resource::<Time>()
         .add_plugins(BevyCardPlugin {
-            // card_debug_logging_function: Some(log),
+            card_debug_logging_function: Some(log),
             ..default()
         })
         .add_systems(Startup, spawn_lines);

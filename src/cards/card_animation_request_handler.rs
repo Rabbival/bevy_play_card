@@ -11,7 +11,10 @@ pub struct CardAnimationRequestHandlerPlugin;
 
 impl Plugin for CardAnimationRequestHandlerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, handle_animation_requests);
+        app.add_systems(
+            Update,
+            handle_animation_requests.in_set(CardsOrderingSystemSet::CardAnimation),
+        );
     }
 }
 

@@ -2,6 +2,13 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### unreleased
+
+* Breaking: public function `theres_an_actively_dragged_card_from_that_line` now takes an iterator as the query argument
+* Fix race-condition edge-cases when using more than one pointer
+* Cards now implement `Clone` and `Copy`
+
+
 #### `0.7.0 -> 0.8.0`
 
 * Change card `Pickable`: cards now always block things below them, unless they're dragged
