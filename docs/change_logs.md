@@ -2,7 +2,7 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-#### unreleased
+#### `0.8.0 -> 0.9.0`
 
 * Breaking: public function `theres_an_actively_dragged_card_from_that_line` now takes an iterator as the query argument
 * Fix race-condition edge-cases when using more than one pointer
