@@ -1,3 +1,19 @@
+pub fn push_and_remove_previous_instances<T: PartialEq>(
+    item_to_push: T,
+    vec_to_push_to: &mut Vec<T>,
+) {
+    let mut indexes_to_remove = Vec::new();
+    for (index, existing_item) in vec_to_push_to.iter().enumerate() {
+        if *existing_item == item_to_push {
+            indexes_to_remove.push(index);
+        }
+    }
+    for index in indexes_to_remove {
+        vec_to_push_to.remove(index);
+    }
+    vec_to_push_to.push(item_to_push);
+}
+
 pub fn remove_by_value<T: PartialEq>(
     item_to_remove: &T,
     vec_to_remove_from: &mut Vec<T>,

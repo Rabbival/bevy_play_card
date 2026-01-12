@@ -17,7 +17,9 @@ fn test_picked_cards_policy() {
 
     app.init_resource::<Time>()
         .add_plugins(BevyCardPlugin {
-            card_debug_logging_function: Some(log),
+            // card_debug_logging_function: Some(|log_me| {
+            //     println!("{}", log_me);
+            // }),
             ..default()
         })
         .add_systems(Startup, spawn_lines);
@@ -97,16 +99,11 @@ fn test_picked_cards_policy() {
             .get_mut(&policy_tag.0)
             .unwrap()
             .after_policy_trigger;
-
         for i in 0..MAX_CARDS_IN_LINE {
             assert_eq!(expected_after_policy[i], after_policy[i]);
         }
     }
 }
-
-// fn log(log_me: String) {
-//     println!("{}", log_me);
-// }
 
 fn spawn_lines(
     mut card_line_request_writer: MessageWriter<CardLineRequest>,

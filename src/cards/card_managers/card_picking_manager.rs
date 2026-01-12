@@ -1,8 +1,9 @@
 use crate::prelude::*;
+use crate::utilities::vector_utilities::push_and_remove_previous_instances;
 use bevy::ecs::relationship::OrderedRelationshipSourceCollection;
 
 #[derive(Debug, Resource, Default, Deref, DerefMut)]
-pub(crate) struct CardPickingToggleQueue(pub(crate) HashSet<Entity>);
+pub(crate) struct CardPickingToggleQueue(pub(crate) Vec<Entity>);
 
 pub struct CardPickingPlugin;
 
@@ -25,7 +26,7 @@ fn listen_to_picking_toggle_requests(
     mut request_queue: ResMut<CardPickingToggleQueue>,
 ) {
     for TogglePickingForCard(card_entity) in request_listener.read() {
-        request_queue.insert(*card_entity);
+        push_and_remove_previous_instances(*card_entity, &mut request_queue);
     }
 }
 
@@ -33,7 +34,7 @@ pub(crate) fn on_card_click(
     trigger: On<Pointer<Click>>,
     mut request_queue: ResMut<CardPickingToggleQueue>,
 ) {
-    request_queue.insert(trigger.entity);
+    push_and_remove_previous_instances(trigger.entity, &mut request_queue);
 }
 
 fn execute_card_picking_toggles(
@@ -44,7 +45,7 @@ fn execute_card_picking_toggles(
     mut request_queue: ResMut<CardPickingToggleQueue>,
     mut commands: Commands,
 ) {
-    for card_to_toggle in request_queue.drain() {
+    for card_to_toggle in request_queue.drain(..) {
         handle_picking_request(
             card_to_toggle,
             &picked_cards,
