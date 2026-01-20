@@ -2,6 +2,10 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.9.0 -> 0.10.0`
+
+* Update `bevy_tween_helpers` to 0.4.0
+
 #### `0.8.0 -> 0.9.0`
 
 * Breaking: public function `theres_an_actively_dragged_card_from_that_line` now takes an iterator as the query argument

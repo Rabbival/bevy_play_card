@@ -14,7 +14,7 @@ That being said, feel free to write on the discord thread as well.
 
 ## Readme Parts Links
 
-### [Using The Crate](docs/using_the_crate.md) 
+### [Using The Crate](docs/using_the_crate.md)
 <br>
 
 ### [Change Logs](docs/change_logs.md)
@@ -29,7 +29,7 @@ That being said, feel free to write on the discord thread as well.
 ## Bevy Version Support
 | `bevy` | `bevy_play_card` |
 |--------|------------------|
-| 0.17   | 0.5 - 0.9        |
+| 0.17   | 0.5 - 0.10       |
 | 0.16   | 0.2 - 0.4        |
 | 0.15   | 0.1              |
 <br>
