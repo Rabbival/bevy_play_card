@@ -3,7 +3,9 @@ use crate::generic_plugins::GenericPlugins;
 use crate::prelude::*;
 use crate::utilities::system_sets::CardsSystemSetsPlugin;
 use bevy_tween::DefaultTweenPlugins;
-use bevy_tween_helpers::prelude::{BevyTweenHelpersPlugin, EventAnimationParentTaggerPlugin};
+use bevy_tween_helpers::prelude::{
+    AnimationParentDestroyerPlugin, BevyTweenHelpersPlugin, EventAnimationParentTaggerPlugin,
+};
 
 ///A plugin to add all bevy_play_card types and automations
 pub struct BevyCardPlugin {
@@ -23,6 +25,7 @@ impl Plugin for BevyCardPlugin {
             BevyTweenHelpersPlugin {
                 logging_function: self.tweening_debug_logging_function.clone(),
             },
+            AnimationParentDestroyerPlugin,
             CardsPlugin {
                 logging_function: self.card_debug_logging_function.clone(),
             },

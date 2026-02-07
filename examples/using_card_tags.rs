@@ -2,7 +2,13 @@ use bevy_play_card::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
+        .add_plugins((
+            DefaultPlugins,
+            BevyCardPlugin {
+                tweening_debug_logging_function: Some(|message| println!("{}", message)),
+                ..default()
+            },
+        ))
         .add_systems(Startup, (setup, spawn_cards).chain())
         .add_systems(Update, print_going_back_to_place_card_names)
         .add_observer(notify_on_hover_start)
