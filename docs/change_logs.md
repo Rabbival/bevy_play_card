@@ -2,6 +2,11 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `Unreleased`
+
+* Update bevy to 0.18
+* Update `bevy_tween_helpers` to 0.5.0
+
 #### `0.9.0 -> 0.10.0`
 
 * Update `bevy_tween_helpers` to 0.4.0
