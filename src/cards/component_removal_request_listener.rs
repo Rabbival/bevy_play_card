@@ -1,4 +1,4 @@
-use bevy_tween::prelude::TweenEvent;
+use bevy_tween_alt::prelude::TweenEvent;
 
 use crate::prelude::*;
 

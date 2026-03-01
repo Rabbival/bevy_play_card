@@ -1,6 +1,6 @@
 use bevy_play_card::cards::card_consts::CardConsts;
 use bevy_play_card::prelude::*;
-use bevy_tween::interpolation::EaseKind;
+use bevy_tween_alt::interpolation::EaseKind;
 
 fn main() {
     App::new()

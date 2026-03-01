@@ -1,11 +1,11 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{
+use bevy_tween_alt::combinator::{
     AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
 };
-use bevy_tween::interpolate::{Scale, Translation};
-use bevy_tween::interpolation::EaseKind;
-use bevy_tween::prelude::IntoTarget;
+use bevy_tween_alt::interpolate::{Scale, Translation};
+use bevy_tween_alt::interpolation::EaseKind;
+use bevy_tween_alt::prelude::IntoTarget;
 use bevy_tween_helpers::prelude::{
     RemoveTargetsFromAllTweensOfType, TweenPriorityToOthersOfType, named_tween,
 };

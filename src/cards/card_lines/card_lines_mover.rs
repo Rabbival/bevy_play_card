@@ -1,7 +1,7 @@
 use crate::prelude::*;
-use bevy_tween::combinator::AnimationBuilderExt;
-use bevy_tween::interpolation::EaseKind;
-use bevy_tween::prelude::*;
+use bevy_tween_alt::combinator::AnimationBuilderExt;
+use bevy_tween_alt::interpolation::EaseKind;
+use bevy_tween_alt::prelude::*;
 use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use std::collections::HashMap;
 use std::time::Duration;

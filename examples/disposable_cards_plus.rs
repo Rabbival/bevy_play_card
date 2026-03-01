@@ -1,13 +1,15 @@
 use bevy_play_card::prelude::*;
-use bevy_tween::combinator::{
+use bevy_tween_alt::combinator::{
     AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
 };
-use bevy_tween::interpolate::sprite_color_to;
-use bevy_tween::prelude::{EaseKind, IntoTarget, TweenEvent};
-use bevy_tween::tween_event::TweenEventPlugin;
+use bevy_tween_alt::interpolate::sprite_color_to;
+use bevy_tween_alt::prelude::{EaseKind, IntoTarget, TweenEvent};
+use bevy_tween_alt::tween_event::TweenEventPlugin;
 use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
+
+use bevy::ecs::schedule::ScheduleLabel;
 
 #[derive(Component)]
 struct CardDestroyer;
@@ -36,7 +38,9 @@ fn main() {
                 }
             },
         )
-        .add_plugins(TweenEventPlugin::<DespawnRequest>::default())
+        .add_plugins(TweenEventPlugin::<DespawnRequest>::in_schedule(
+            PostUpdate.intern(),
+        ))
         .run();
 }
 

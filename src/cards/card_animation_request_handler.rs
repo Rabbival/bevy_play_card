@@ -1,8 +1,8 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
-use bevy_tween::interpolation::EaseKind;
-use bevy_tween::prelude::IntoTarget;
+use bevy_tween_alt::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
+use bevy_tween_alt::interpolation::EaseKind;
+use bevy_tween_alt::prelude::IntoTarget;
 use bevy_tween_helpers::custom_combinators::named_tween;
 use bevy_tween_helpers::prelude::TweenPriorityToOthersOfType;
 use std::time::Duration;

@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use bevy_tween::tween_event::TweenEventPlugin;
+use bevy_tween_alt::tween_event::TweenEventPlugin;
 use bevy_tween_helpers::prelude::ScheduleLabel;
 use serde::{Deserialize, Serialize};
 

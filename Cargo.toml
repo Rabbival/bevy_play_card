@@ -26,7 +26,7 @@ features = [
 ]
 
 [dependencies]
-bevy_tween = { git = "https://github.com/Multirious/bevy_tween", branch = "saving_a_copy_so_i_can_keep_working" }
+bevy_tween_alt = { git = "https://github.com/Rabbival/bevy_tween_alt" }
 bevy_tween_helpers = { path = "../bevy_tween_helpers" }
 serde = { version = "1.0.219", features = ["derive"] }
 

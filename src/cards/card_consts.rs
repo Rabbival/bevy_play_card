@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use bevy_tween::prelude::EaseKind;
+use bevy_tween_alt::prelude::EaseKind;
 
 #[derive(Resource, Debug, Clone, Copy)]
 pub struct CardConsts {

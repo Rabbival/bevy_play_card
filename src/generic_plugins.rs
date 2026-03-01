@@ -1,5 +1,7 @@
-use bevy_tween::interpolate::{Rotation, Scale, Translation};
-use bevy_tween_helpers::prelude::{AnimationParentDestroyerGenericPlugin, TweenPriorityHandler, TweenTargetRemover};
+use bevy_tween_alt::interpolate::{Rotation, Scale, Translation};
+use bevy_tween_helpers::prelude::{
+    AnimationParentDestroyerGenericPlugin, TweenPriorityHandler, TweenTargetRemover,
+};
 
 use crate::{plugin_for_implementors_of_trait, prelude::*};
 

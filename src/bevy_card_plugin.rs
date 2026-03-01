@@ -2,7 +2,7 @@ use crate::cards::card_consts::CardConsts;
 use crate::generic_plugins::GenericPlugins;
 use crate::prelude::*;
 use crate::utilities::system_sets::CardsSystemSetsPlugin;
-use bevy_tween::DefaultTweenPlugins;
+use bevy_tween_alt::DefaultTweenPlugins;
 use bevy_tween_helpers::prelude::ScheduleLabel;
 use bevy_tween_helpers::prelude::{
     AnimationParentDestroyerPlugin, BevyTweenHelpersPlugin, EventAnimationParentTaggerPlugin,

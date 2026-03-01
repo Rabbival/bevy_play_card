@@ -1,7 +1,7 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{event, parallel, sequence};
-use bevy_tween::prelude::*;
+use bevy_tween_alt::combinator::{event, parallel, sequence};
+use bevy_tween_alt::prelude::*;
 use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
 
 #[derive(Debug, Clone, Copy)]
