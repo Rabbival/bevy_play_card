@@ -3,7 +3,6 @@ use crate::generic_plugins::GenericPlugins;
 use crate::prelude::*;
 use crate::utilities::system_sets::CardsSystemSetsPlugin;
 use bevy_tween_alt::DefaultTweenPlugins;
-use bevy_tween_helpers::prelude::ScheduleLabel;
 use bevy_tween_helpers::prelude::{
     AnimationParentDestroyerPlugin, BevyTweenHelpersPlugin, EventAnimationParentTaggerPlugin,
 };
@@ -22,7 +21,7 @@ impl Plugin for BevyCardPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             GenericPlugins,
-            DefaultTweenPlugins::<()>::in_schedule(PostUpdate.intern()),
+            DefaultTweenPlugins,
             BevyTweenHelpersPlugin {
                 logging_function: self.tweening_debug_logging_function.clone(),
             },

@@ -1,6 +1,5 @@
 use crate::prelude::*;
 use bevy_tween_alt::tween_event::TweenEventPlugin;
-use bevy_tween_helpers::prelude::ScheduleLabel;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Hash, PartialOrd, Default)]
@@ -39,10 +38,10 @@ impl Plugin for CardsEventsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(TweenEventPlugin::<
             RemoveComponentFromCardTweenRequest<Dragged>,
-        >::in_schedule(PostUpdate.intern()))
+        >::default())
             .add_plugins(TweenEventPlugin::<
                 RemoveComponentFromCardTweenRequest<MovingToNewOrigin>,
-            >::in_schedule(PostUpdate.intern()))
+            >::default())
             .add_message::<TogglePickingForCard>()
             .add_message::<CardAnimationRequest>();
     }
