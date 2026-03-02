@@ -9,8 +9,6 @@ use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
-use bevy::ecs::schedule::ScheduleLabel;
-
 #[derive(Component)]
 struct CardDestroyer;
 
@@ -38,9 +36,7 @@ fn main() {
                 }
             },
         )
-        .add_plugins(TweenEventPlugin::<DespawnRequest>::in_schedule(
-            PostUpdate.intern(),
-        ))
+        .add_plugins(TweenEventPlugin::<DespawnRequest>::default())
         .run();
 }
 
