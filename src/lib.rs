@@ -148,6 +148,7 @@ pub mod trait_unions;
 #[macro_use]
 pub mod macros;
 pub mod bevy_card_plugin;
+pub mod consts;
 pub mod utilities;
 
 pub mod prelude {
@@ -167,12 +168,17 @@ pub mod prelude {
             theres_an_actively_dragged_card_from_that_line,
         },
         card_namer::*,
+        component_removal_request_listener::*,
         event::*,
         tags::*,
     };
+    pub use crate::consts::*;
     pub use crate::trait_unions::*;
     pub use crate::utilities::system_sets::*;
-    pub use bevy::{platform::collections::HashMap, prelude::*};
+    pub use bevy::{
+        platform::collections::{HashMap, HashSet},
+        prelude::*,
+    };
     pub use bevy_tween_helpers::*;
     pub use std::marker::PhantomData;
 }

@@ -3,8 +3,6 @@ use bevy_tween::prelude::EaseKind;
 
 #[derive(Resource, Debug, Clone, Copy)]
 pub struct CardConsts {
-    /// How far up cards float when hovered in pixels
-    pub card_hover_height: f32,
     /// How big cards get when hovered compared to its origin scale
     pub on_hover_scale_factor: f32,
     /// How many seconds it takes for cards to grow in size when hovered
@@ -30,7 +28,6 @@ pub struct CardConsts {
 impl Default for CardConsts {
     fn default() -> Self {
         Self {
-            card_hover_height: 80.0,
             on_hover_scale_factor: 1.4,
             on_hover_scale_duration: 0.04,
             on_float_back_down_scale_duration: 0.03,

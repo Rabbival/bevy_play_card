@@ -1,9 +1,14 @@
 use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
-use bevy_tween::combinator::{AnimationBuilderExt, TransformTargetStateExt, parallel};
+use bevy_tween::combinator::{
+    AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
+};
+use bevy_tween::interpolate::{Scale, Translation};
 use bevy_tween::interpolation::EaseKind;
 use bevy_tween::prelude::IntoTarget;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
+use bevy_tween_helpers::prelude::{
+    RemoveTargetsFromAllTweensOfType, TweenPriorityToOthersOfType, named_tween,
+};
 use std::time::Duration;
 
 pub struct CardOriginSetListenerPlugin;
@@ -29,6 +34,7 @@ fn listen_to_card_origin_changes(
         ),
         Changed<Card>,
     >,
+    card_lines: Query<&CardLine>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
 ) {
@@ -39,11 +45,18 @@ fn listen_to_card_origin_changes(
         if *card_transform == card.origin {
             continue;
         }
-        let target_translation = if maybe_picked.is_some() {
-            card.origin
-                .translation
-                .with_y(card_consts.card_hover_height)
-                + Vec3::Z
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Translation>::new(vec![
+            card_entity,
+        ]));
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Scale>::new(vec![
+            card_entity,
+        ]));
+        commands.entity(card_entity).try_insert(MovingToNewOrigin);
+        let target_translation = if maybe_picked.is_some()
+            && let Some(card_line_entity) = card.owner_line
+            && let Ok(line) = card_lines.get(card_line_entity)
+        {
+            card.origin.translation.with_y(line.card_hover_height) + Vec3::Z
         } else {
             card.origin.translation
         };
@@ -69,20 +82,28 @@ fn listen_to_card_origin_changes(
             transform_state.scale_to(card.origin.scale),
             format!("{} new-origin-set scale tween", card_name),
         );
+        let movement_done_request =
+            event(RemoveComponentFromCardTweenRequest::<MovingToNewOrigin>::new(card_entity));
         match (
             card_transform.translation != card.origin.translation,
             maybe_picked.is_none() && card_transform.scale != card.origin.scale,
         ) {
             (true, true) => {
-                animation_entity
-                    .animation()
-                    .insert(parallel((translation_tween, scale_tween)));
+                animation_entity.animation().insert(sequence((
+                    parallel((translation_tween, scale_tween)),
+                    movement_done_request,
+                )));
             }
             (true, false) => {
-                animation_entity.animation().insert(translation_tween);
+                animation_entity.animation().insert(sequence((
+                    parallel(translation_tween),
+                    movement_done_request,
+                )));
             }
             (false, true) => {
-                animation_entity.animation().insert(scale_tween);
+                animation_entity
+                    .animation()
+                    .insert(sequence((parallel(scale_tween), movement_done_request)));
             }
             (false, false) => {}
         }

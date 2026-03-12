@@ -1,4 +1,3 @@
-use bevy_play_card::cards::card_consts::CardConsts;
 use bevy_play_card::prelude::*;
 use std::f32::consts::PI;
 
@@ -14,16 +13,7 @@ fn main() {
     App::new()
         .init_resource::<CardLineEntities>()
         .add_message::<SpawnCardPlease>()
-        .add_plugins((
-            DefaultPlugins,
-            BevyCardPlugin {
-                card_consts: CardConsts {
-                    card_hover_height: 20.0,
-                    ..default()
-                },
-                ..default()
-            },
-        ))
+        .add_plugins((DefaultPlugins, BevyCardPlugin::default()))
         .add_systems(
             Startup,
             (setup, spawn_card_lines, request_initial_card_spawn).chain(),
@@ -59,7 +49,8 @@ fn spawn_card_lines(mut line_entities: ResMut<CardLineEntities>, mut commands: C
                                 .with_rotation(Quat::from_rotation_z(rotation)),
                         )
                         .with_max_cards(MAX_CARDS)
-                        .with_card_origin_gap(60.0),
+                        .with_card_origin_gap(60.0)
+                        .with_card_hover_height(20.0),
                 ))
                 .id(),
         );

@@ -2,70 +2,195 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween::combinator::{event, parallel, sequence};
 use bevy_tween::prelude::*;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
+
+#[derive(Debug, Clone, Copy)]
+pub(crate) enum CardDraggingRequest {
+    StartDragging,
+    DragMove { delta: Vec2 },
+    EndDragging,
+}
+
+#[derive(Debug, Resource, Default, Deref, DerefMut)]
+pub(crate) struct AwaitingCardDraggingRequests(pub(crate) HashMap<Entity, CardDraggingRequest>);
 
 pub struct CardDraggingPlugin;
 
 impl Plugin for CardDraggingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_observer(listen_to_dragging_done_for_card);
+        app.init_resource::<AwaitingCardDraggingRequests>()
+            .add_systems(
+                Update,
+                execute_card_dragging_requests.in_set(CardsOrderingSystemSet::CardAnimation),
+            );
     }
 }
 
 pub(crate) fn on_drag_start(
     trigger: On<Pointer<DragStart>>,
-    mut card_transforms: Query<&Card>,
-    dragged_cards: Query<(&Card, &Dragged)>,
-    mut commands: Commands,
+    undragged_cards: Query<(), (With<Card>, Without<Dragged>)>,
+    mut requests: ResMut<AwaitingCardDraggingRequests>,
 ) {
-    if let Ok(card) = card_transforms.get_mut(trigger.entity) {
-        if theres_an_actively_dragged_card_from_that_line(card, &dragged_cards) {
-            return;
-        }
-        if let Ok(mut entity_commands) = commands.get_entity(trigger.entity) {
-            entity_commands.try_insert(Dragged::Actively);
-        }
+    if undragged_cards.contains(trigger.entity) {
+        requests.insert(trigger.entity, CardDraggingRequest::StartDragging);
     }
 }
 
 pub(crate) fn on_drag(
     trigger: On<Pointer<Drag>>,
-    mut card_transforms: Query<&mut Transform, With<Card>>,
-    card_consts: Res<CardConsts>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
+    mut requests: ResMut<AwaitingCardDraggingRequests>,
 ) {
-    if let Ok(mut card_transform) = card_transforms.get_mut(trigger.entity) {
-        card_transform.translation.x += trigger.delta.x * card_consts.card_drag_delta_scaler.x;
-        card_transform.translation.y -= trigger.delta.y * card_consts.card_drag_delta_scaler.y;
+    if dragged_cards.contains(trigger.entity) {
+        requests.insert(
+            trigger.entity,
+            CardDraggingRequest::DragMove {
+                delta: trigger.delta,
+            },
+        );
     }
 }
 
-pub(crate) fn back_to_origin_when_unused(
+pub(crate) fn on_drag_end(
     trigger: On<Pointer<DragEnd>>,
+    dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
+    mut requests: ResMut<AwaitingCardDraggingRequests>,
+) {
+    if dragged_cards.contains(trigger.entity) {
+        requests.insert(trigger.entity, CardDraggingRequest::EndDragging);
+    }
+}
+
+fn execute_card_dragging_requests(
+    mut undragged_cards: Query<(&mut Pickable, &Card), Without<Dragged>>,
     mut dragged_cards: Query<
         (
             &mut Transform,
             Entity,
             &Card,
             &mut Dragged,
+            &mut Pickable,
             &Name,
             Has<ChildOf>,
+            Has<MovingToNewOrigin>,
         ),
         Without<CardLine>,
     >,
     card_lines_query: Query<&Transform, Without<Card>>,
+    mut requests: ResMut<AwaitingCardDraggingRequests>,
     card_consts: Res<CardConsts>,
     mut commands: Commands,
+) {
+    let mut card_to_start_dragging_by_owner_line = HashMap::new();
+    let dragged_cards_as_lens_vec: Vec<(Card, Dragged)> = dragged_cards
+        .iter()
+        .map(|(_, _, card, dragged, _, _, _, _)| (*card, *dragged))
+        .collect();
+    for (card_entity, dragging_reqeust) in requests.drain() {
+        match dragging_reqeust {
+            CardDraggingRequest::StartDragging => {
+                if let Ok((_, card)) = undragged_cards.get(card_entity)
+                    && let Some(owner_line) = card.owner_line
+                    && !theres_an_actively_dragged_card_from_that_line(
+                        owner_line,
+                        dragged_cards_as_lens_vec
+                            .iter()
+                            .map(|(card, dragged)| (card, dragged)),
+                    )
+                {
+                    card_to_start_dragging_by_owner_line.insert(owner_line, card_entity);
+                }
+            }
+            CardDraggingRequest::DragMove { delta } => {
+                drag_card(card_entity, delta, &mut dragged_cards, &card_consts)
+            }
+            CardDraggingRequest::EndDragging => send_card_back_to_origin(
+                card_entity,
+                &mut dragged_cards,
+                &card_lines_query,
+                &card_consts,
+                &mut commands,
+            ),
+        }
+    }
+    for card_entity in card_to_start_dragging_by_owner_line.values() {
+        start_card_drag(*card_entity, &mut undragged_cards, &mut commands);
+    }
+}
+
+fn start_card_drag(
+    card_entity: Entity,
+    cards: &mut Query<(&mut Pickable, &Card), Without<Dragged>>,
+    commands: &mut Commands,
+) {
+    if let Ok((mut card_pickable, _)) = cards.get_mut(card_entity) {
+        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
+            card_entity,
+        ]));
+        commands
+            .entity(card_entity)
+            .try_remove::<MovingToNewOrigin>()
+            .try_insert(Dragged::Actively);
+        card_pickable.should_block_lower = false;
+    }
+}
+
+fn drag_card(
+    card_entity: Entity,
+    delta: Vec2,
+    dragged_cards: &mut Query<
+        (
+            &mut Transform,
+            Entity,
+            &Card,
+            &mut Dragged,
+            &mut Pickable,
+            &Name,
+            Has<ChildOf>,
+            Has<MovingToNewOrigin>,
+        ),
+        Without<CardLine>,
+    >,
+    card_consts: &CardConsts,
+) {
+    if let Ok((mut card_transform, _, _, _, _, _, _, _)) = dragged_cards.get_mut(card_entity) {
+        card_transform.translation.x += delta.x * card_consts.card_drag_delta_scaler.x;
+        card_transform.translation.y -= delta.y * card_consts.card_drag_delta_scaler.y;
+    }
+}
+
+fn send_card_back_to_origin(
+    card_entity: Entity,
+    dragged_cards: &mut Query<
+        (
+            &mut Transform,
+            Entity,
+            &Card,
+            &mut Dragged,
+            &mut Pickable,
+            &Name,
+            Has<ChildOf>,
+            Has<MovingToNewOrigin>,
+        ),
+        Without<CardLine>,
+    >,
+    card_lines_query: &Query<&Transform, Without<Card>>,
+    card_consts: &CardConsts,
+    commands: &mut Commands,
 ) {
     if let Ok((
         mut card_transform,
         card_entity,
         card,
         mut card_dragged_component,
+        mut card_pickable,
         card_name,
         card_has_parent,
-    )) = dragged_cards.get_mut(trigger.entity)
+        is_moving_to_new_origin,
+    )) = dragged_cards.get_mut(card_entity)
     {
         *card_dragged_component = Dragged::GoingBackToPlace;
+        card_pickable.should_block_lower = true;
 
         if !card_has_parent
             && let Some(owner_card_line) = card.owner_line
@@ -85,23 +210,30 @@ pub(crate) fn back_to_origin_when_unused(
 
         play_card_going_back_to_place_animation(
             card_entity,
+            is_moving_to_new_origin,
             card,
             &card_transform,
             card_name,
             &card_consts,
-            &mut commands,
+            commands,
         );
     }
 }
 
 fn play_card_going_back_to_place_animation(
     card_entity: Entity,
+    card_currently_going_to_new_origin: bool,
     card: &Card,
     card_transform: &Transform,
     card_name: &Name,
     card_consts: &CardConsts,
     commands: &mut Commands,
 ) {
+    let tween_priority = if card_currently_going_to_new_origin {
+        30 + TWEEN_PRIORITY_ADDITION_ON_ORIGIN_SET
+    } else {
+        30
+    };
     let animation_target = card_entity.into_target();
     let mut transform_state = animation_target.transform_state(*card_transform);
     commands
@@ -110,7 +242,7 @@ fn play_card_going_back_to_place_animation(
                 "Go-back-to-origin-after-dragging animation parent for {}",
                 card_name
             )),
-            TweenPriorityToOthersOfType(30),
+            TweenPriorityToOthersOfType(tween_priority),
             PlayCardTweenAnimationParent,
         ))
         .animation()
@@ -132,22 +264,8 @@ fn play_card_going_back_to_place_animation(
                     format!("{} go-back-to-origin-after-dragging scale tween", card_name),
                 ),
             )),
-            event(DeclareDraggingDoneForCard {
-                card_entity: Some(card_entity),
-            }),
+            event(RemoveComponentFromCardTweenRequest::<Dragged>::new(
+                card_entity,
+            )),
         )));
-}
-
-fn listen_to_dragging_done_for_card(
-    trigger: On<TweenEvent<DeclareDraggingDoneForCard>>,
-    cards: Query<(), With<Card>>,
-    mut commands: Commands,
-) {
-    if let Some(entity) = trigger.data.card_entity {
-        if let Ok(_card) = cards.get(entity) {
-            if let Ok(mut entity_commands) = commands.get_entity(entity) {
-                entity_commands.remove::<Dragged>();
-            }
-        }
-    }
 }

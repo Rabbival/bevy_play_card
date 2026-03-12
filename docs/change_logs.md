@@ -2,6 +2,34 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### `0.9.0 -> 0.10.0`
+
+* Update `bevy_tween_helpers` to 0.4.0
+
+#### `0.8.0 -> 0.9.0`
+
+* Breaking: public function `theres_an_actively_dragged_card_from_that_line` now takes an iterator as the query argument
+* Fix race-condition edge-cases when using more than one pointer
+* Cards now implement `Clone` and `Copy`
+
+
+#### `0.7.0 -> 0.8.0`
+
+* Change card `Pickable`: cards now always block things below them, unless they're dragged
+
+#### `0.6.2 -> 0.7.0`
+
+* Update dependencies
+* Fix tween parent destruction edge cases
+* Fix `CardAnimationRequestType::FloatUp` unjust refusals
+
+#### `0.6.0 -> 0.6.2`
+* Change tween priorities to handle some edge cases
+* Add `MovingToNewOrigin` tag to mark when cards are on their way to their new origin (for tween priority)
+
+#### `0.5.1 -> 0.6.0`
+* Breaking: move `card_hover_height` from consts to be a card line field so that different lines may have different hover heights
+
 #### `0.5.0 -> 0.5.1`
 * Tag card tween animation parents with `PlayCardTweenAnimationParent` for ease of tracking / querying
 
