@@ -139,6 +139,7 @@ fn remove_card_from_line_if_found(
 
 fn listen_to_card_addition_requests(
     mut card_line_request_reader: MessageReader<CardLineRequest>,
+    mut card_line_result_writer: MessageWriter<CardLineRequestResult>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name)>,
     logging_function: Res<CardsPluginLoggingFunction>,
@@ -156,6 +157,14 @@ fn listen_to_card_addition_requests(
                         &logging_function.0,
                         &mut commands,
                     );
+                    card_line_result_writer.write(CardLineRequestResult { 
+                        entity: request.entity, 
+                        linked_request: request.clone(),
+                        result: match card_inserted {
+                            ActionPerformed(true) => Ok(card_line.cards_in_order().len()), 
+                            _ => Err((CardLineRequestFailure::MaximumLineCapacityReached, Some(*card_entity)))
+                        }
+                    });
                     if !card_inserted {
                         return;
                     }
@@ -163,19 +172,29 @@ fn listen_to_card_addition_requests(
             }
             CardLineRequestType::BatchAddToLine { card_entities } => {
                 if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
-                    for card_entity in card_entities {
-                        let card_inserted = add_card_to_line_if_in_capacity(
-                            *card_entity,
-                            request.entity,
-                            &mut card_line,
-                            &mut cards,
-                            &logging_function.0,
-                            &mut commands,
-                        );
-                        if !card_inserted {
-                            return;
+
+                    let fail_card_entity = card_entities.iter().find_map(|card_entity|{
+                            let card_inserted = add_card_to_line_if_in_capacity(
+                                *card_entity,
+                                request.entity,
+                                &mut card_line,
+                                &mut cards,
+                                &logging_function.0,
+                                &mut commands,
+                            );
+                        match card_inserted {
+                            ActionPerformed(true) => None,
+                            ActionPerformed(false) => Some(*card_entity)
                         }
-                    }
+                    });
+                    card_line_result_writer.write(CardLineRequestResult { 
+                        entity: request.entity, 
+                        linked_request: request.clone(),
+                        result: match fail_card_entity {
+                            None => Ok(card_line.cards_in_order().len()), 
+                            Some(card_entity) => Err((CardLineRequestFailure::MaximumLineCapacityReached, Some(card_entity)))
+                        }
+                    });
                 }
             }
             _ => {}
