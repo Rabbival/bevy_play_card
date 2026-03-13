@@ -28,35 +28,32 @@ pub enum CardLineRequestType {
     /// Removes all the cards from the card-line
     RemoveAllCardsFromLine,
     /// Puts the cards of the line in their correct places, redundant if auto-sorted
-    Sort
+    Sort,
 }
 
-/// Event as a result to a request to signal success or failure of the request
-/// The result when successful is the quantity of card in the line 
-/// In case of failure it is the reason of the failure and the card that failed if possible
+/// Event as a result to a request to let user know the outcome of their requests
 #[derive(Debug, Message, EntityEvent)]
 pub struct CardLineRequestResult {
     /// The line entity which processed the request
     pub entity: Entity,
-    /// The result of the request
-    pub result: Result<usize,(CardLineRequestFailure, Option<Entity>)>,
     /// The request processed
     pub linked_request: CardLineRequest,
+    /// The result data
+    pub result_data: CardLineActionResultData,
 }
 
-
-/// Reason why an action failed
+/// Data of outcome of card line action
 #[derive(Debug)]
-pub enum CardLineRequestFailure {
-    MaximumLineCapacityReached
+pub enum CardLineActionResultData {
+    CardCountUpdatedSuccessfully { line_updated_card_count: usize },
+    FailedToInsertCardsDueToCapacity { card_entity: Vec<Entity> },
 }
-
 
 pub struct CardLineEventsPlugin;
 
 impl Plugin for CardLineEventsPlugin {
     fn build(&self, app: &mut App) {
         app.add_message::<CardLineRequest>()
-           .add_message::<CardLineRequestResult>();
+            .add_message::<CardLineRequestResult>();
     }
 }

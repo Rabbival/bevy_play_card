@@ -2,6 +2,11 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
+#### Unreleased
+
+* Breaking: `CardLine.max_cards` is now optional, so you'd now have to provide an option (or use default which is None)
+* Add `CardLineRequestResult` with `CardLineActionResultData` to notify on success or failure of `CardLine` insertion actions
+
 #### `0.9.0 -> 0.10.0`
 
 * Update `bevy_tween_helpers` to 0.4.0

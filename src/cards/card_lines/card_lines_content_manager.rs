@@ -116,7 +116,7 @@ fn remove_card_from_line_if_found(
         && let Some(line_parent) = card.owner_line.take()
     {
         if *card_parent == line_parent {
-        card_entity_to_remove_commands.remove_parent_in_place();
+            card_entity_to_remove_commands.remove_parent_in_place();
         }
         card_name_if_removed = Some(card_name.clone());
     }
@@ -156,14 +156,20 @@ fn listen_to_card_addition_requests(
                         &mut cards,
                         &logging_function.0,
                         &mut commands,
-                    );
-                    card_line_result_writer.write(CardLineRequestResult { 
-                        entity: request.entity, 
+                    )
+                    .0;
+                    card_line_result_writer.write(CardLineRequestResult {
+                        entity: request.entity,
                         linked_request: request.clone(),
-                        result: match card_inserted {
-                            ActionPerformed(true) => Ok(card_line.cards_in_order().len()), 
-                            _ => Err((CardLineRequestFailure::MaximumLineCapacityReached, Some(*card_entity)))
-                        }
+                        result_data: if card_inserted {
+                            CardLineActionResultData::CardCountUpdatedSuccessfully {
+                                line_updated_card_count: card_line.cards_in_order().len(),
+                            }
+                        } else {
+                            CardLineActionResultData::FailedToInsertCardsDueToCapacity {
+                                card_entity: vec![*card_entity],
+                            }
+                        },
                     });
                     if !card_inserted {
                         return;
@@ -172,28 +178,32 @@ fn listen_to_card_addition_requests(
             }
             CardLineRequestType::BatchAddToLine { card_entities } => {
                 if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
-
-                    let fail_card_entity = card_entities.iter().find_map(|card_entity|{
-                            let card_inserted = add_card_to_line_if_in_capacity(
-                                *card_entity,
-                                request.entity,
-                                &mut card_line,
-                                &mut cards,
-                                &logging_function.0,
-                                &mut commands,
-                            );
-                        match card_inserted {
-                            ActionPerformed(true) => None,
-                            ActionPerformed(false) => Some(*card_entity)
+                    let mut cards_failed_to_insert = Vec::new();
+                    for card_entity in card_entities {
+                        let card_inserted = add_card_to_line_if_in_capacity(
+                            *card_entity,
+                            request.entity,
+                            &mut card_line,
+                            &mut cards,
+                            &logging_function.0,
+                            &mut commands,
+                        );
+                        if !card_inserted {
+                            cards_failed_to_insert.push(*card_entity);
                         }
-                    });
-                    card_line_result_writer.write(CardLineRequestResult { 
-                        entity: request.entity, 
+                    }
+                    card_line_result_writer.write(CardLineRequestResult {
+                        entity: request.entity,
                         linked_request: request.clone(),
-                        result: match fail_card_entity {
-                            None => Ok(card_line.cards_in_order().len()), 
-                            Some(card_entity) => Err((CardLineRequestFailure::MaximumLineCapacityReached, Some(card_entity)))
-                        }
+                        result_data: if cards_failed_to_insert.is_empty() {
+                            CardLineActionResultData::CardCountUpdatedSuccessfully {
+                                line_updated_card_count: card_line.cards_in_order().len(),
+                            }
+                        } else {
+                            CardLineActionResultData::FailedToInsertCardsDueToCapacity {
+                                card_entity: cards_failed_to_insert,
+                            }
+                        },
                     });
                 }
             }

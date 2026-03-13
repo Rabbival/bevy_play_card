@@ -12,7 +12,7 @@ pub struct CardLine {
     /// The card-line's transform
     pub origin: Transform,
     /// The card-line's card capacity
-    pub max_cards: usize,
+    pub max_cards: Option<usize>,
     /// How far up cards float when hovered in pixels
     pub card_hover_height: f32,
     /// How high in pixels the card line rises when asked to (relative to Vec3::ONE scale)
@@ -32,7 +32,7 @@ pub struct CardLine {
 impl CardLine {
     /// Inserts a card to the line if its max capacity was not yet reached
     pub fn push_if_theres_space(&mut self, card_entity: Entity) -> ActionPerformed {
-        let there_was_space = self.cards_in_order.len() < self.max_cards;
+        let there_was_space = !self.at_capacity();
         if there_was_space {
             self.cards_in_order.push(card_entity);
         }
@@ -71,7 +71,13 @@ impl CardLine {
 
     /// Whether the card line as at its maximum card capacity
     pub fn at_capacity(&self) -> bool {
-        self.max_cards == self.cards_in_order().len()
+        if let Some(max_cards) = self.max_cards
+            && max_cards <= self.cards_in_order().len()
+        {
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -82,7 +88,7 @@ impl CardLine {
         self
     }
 
-    pub fn with_max_cards(mut self, max_cards: usize) -> Self {
+    pub fn with_max_cards(mut self, max_cards: Option<usize>) -> Self {
         self.max_cards = max_cards;
         self
     }
@@ -128,7 +134,7 @@ impl Default for CardLine {
         Self {
             cards_in_order: vec![],
             origin: Transform::default(),
-            max_cards: 6,
+            max_cards: None,
             card_hover_height: 80.0,
             raised_card_line_delta: 100.0,
             slide_duration: 0.3,

@@ -23,7 +23,7 @@ fn spawn_cards_on_a_line(
     let line_entity = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
-                .with_max_cards(cards_count)
+                .with_max_cards(Some(cards_count))
                 .with_auto_sort(false),
         ))
         .id();
