@@ -71,13 +71,10 @@ impl CardLine {
 
     /// Whether the card line as at its maximum card capacity
     pub fn at_capacity(&self) -> bool {
-        if let Some(max_cards) = self.max_cards
-            && max_cards <= self.cards_in_order().len()
-        {
-            true
-        } else {
-            false
-        }
+        self.max_cards.map_or(
+            false, 
+            |max_cards| max_cards <= self.cards_in_order().len()
+        )
     }
 }
 
