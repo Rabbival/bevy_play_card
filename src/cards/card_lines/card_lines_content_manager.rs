@@ -41,6 +41,7 @@ pub(crate) fn remove_card_from_line_on_card_despawn(
 
 fn listen_to_card_removal_requests(
     mut card_line_request_reader: MessageReader<CardLineRequest>,
+    mut card_line_result_writer: MessageWriter<CardLineRequestResult>,
     mut card_lines: Query<&mut CardLine>,
     mut cards: Query<(&mut Card, &Name, &ChildOf)>,
     logging_function: Res<CardsPluginLoggingFunction>,
@@ -50,26 +51,56 @@ fn listen_to_card_removal_requests(
         match &request.request_type {
             CardLineRequestType::RemoveFromLine { card_entity } => {
                 if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
-                    remove_card_from_line_if_found(
+                    let card_removed = remove_card_from_line_if_found(
                         *card_entity,
                         &mut card_line,
                         &mut cards,
                         &logging_function.0,
                         &mut commands,
-                    );
+                    ).0;
+                    card_line_result_writer.write(CardLineRequestResult {
+                        entity: request.entity,
+                        linked_request: request.clone(),
+                        result_data: if card_removed {
+                            CardLineActionResultData::CardCountUpdatedSuccessfully {
+                                line_updated_card_count: card_line.cards_in_order().len(),
+                            }
+                        } else {
+                            CardLineActionResultData::FailedToRemoveCardsWereNotFound {
+                                card_entity: vec![*card_entity],
+                            }
+                        },
+                    });
                 }
             }
             CardLineRequestType::BatchRemoveFromLine { card_entities } => {
                 if let Ok(mut card_line) = card_lines.get_mut(request.entity) {
+                    let mut cards_failed_to_remove = Vec::new();
                     for card_entity in card_entities.iter() {
-                        remove_card_from_line_if_found(
+                        let card_removed = remove_card_from_line_if_found(
                             *card_entity,
                             &mut card_line,
                             &mut cards,
                             &logging_function.0,
                             &mut commands,
                         );
+                        if !card_removed {
+                            cards_failed_to_remove.push(*card_entity);
+                        }
                     }
+                    card_line_result_writer.write(CardLineRequestResult {
+                        entity: request.entity,
+                        linked_request: request.clone(),
+                        result_data: if cards_failed_to_remove.len() == 0 {
+                            CardLineActionResultData::CardCountUpdatedSuccessfully {
+                                line_updated_card_count: card_line.cards_in_order().len(),
+                            }
+                        } else {
+                            CardLineActionResultData::FailedToRemoveCardsWereNotFound {
+                                card_entity: cards_failed_to_remove,
+                            }
+                        },
+                    });
                 }
             }
             CardLineRequestType::RemoveAllCardsFromLine => {
