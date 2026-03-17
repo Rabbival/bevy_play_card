@@ -66,7 +66,7 @@ fn listen_to_card_removal_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToRemoveCardsWereNotFound {
+                            CardLineActionResultData::FailedToUpdateCardLine {
                                 card_entity: vec![*card_entity],
                             }
                         },
@@ -96,7 +96,7 @@ fn listen_to_card_removal_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToRemoveCardsWereNotFound {
+                            CardLineActionResultData::FailedToUpdateCardLine {
                                 card_entity: cards_failed_to_remove,
                             }
                         },
@@ -197,7 +197,7 @@ fn listen_to_card_addition_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToInsertCardsDueToCapacity {
+                            CardLineActionResultData::FailedToUpdateCardLine {
                                 card_entity: vec![*card_entity],
                             }
                         },
@@ -231,7 +231,7 @@ fn listen_to_card_addition_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToInsertCardsDueToCapacity {
+                            CardLineActionResultData::FailedToUpdateCardLine {
                                 card_entity: cards_failed_to_insert,
                             }
                         },
