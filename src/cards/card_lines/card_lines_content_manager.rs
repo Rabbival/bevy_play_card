@@ -57,7 +57,8 @@ fn listen_to_card_removal_requests(
                         &mut cards,
                         &logging_function.0,
                         &mut commands,
-                    ).0;
+                    )
+                    .0;
                     card_line_result_writer.write(CardLineRequestResult {
                         entity: request.entity,
                         linked_request: request.clone(),
@@ -66,8 +67,8 @@ fn listen_to_card_removal_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToUpdateCardLine {
-                                card_entity: vec![*card_entity],
+                            CardLineActionResultData::TriedToRemoveCardsFromLineAndFailed {
+                                card_entities: vec![*card_entity],
                             }
                         },
                     });
@@ -96,8 +97,8 @@ fn listen_to_card_removal_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToUpdateCardLine {
-                                card_entity: cards_failed_to_remove,
+                            CardLineActionResultData::TriedToRemoveCardsFromLineAndFailed {
+                                card_entities: cards_failed_to_remove,
                             }
                         },
                     });
@@ -197,8 +198,8 @@ fn listen_to_card_addition_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToUpdateCardLine {
-                                card_entity: vec![*card_entity],
+                            CardLineActionResultData::TriedToInsertCardsToLineAndFailed {
+                                card_entities: vec![*card_entity],
                             }
                         },
                     });
@@ -231,8 +232,8 @@ fn listen_to_card_addition_requests(
                                 line_updated_card_count: card_line.cards_in_order().len(),
                             }
                         } else {
-                            CardLineActionResultData::FailedToUpdateCardLine {
-                                card_entity: cards_failed_to_insert,
+                            CardLineActionResultData::TriedToInsertCardsToLineAndFailed {
+                                card_entities: cards_failed_to_insert,
                             }
                         },
                     });

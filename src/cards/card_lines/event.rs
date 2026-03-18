@@ -46,7 +46,8 @@ pub struct CardLineRequestResult {
 #[derive(Debug)]
 pub enum CardLineActionResultData {
     CardCountUpdatedSuccessfully { line_updated_card_count: usize },
-    FailedToUpdateCardLine { card_entity: Vec<Entity> },
+    TriedToInsertCardsToLineAndFailed { card_entities: Vec<Entity> },
+    TriedToRemoveCardsFromLineAndFailed { card_entities: Vec<Entity> }
 }
 
 pub struct CardLineEventsPlugin;
