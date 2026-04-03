@@ -68,17 +68,13 @@ fn spawn_card_destroyer(asset_server: Res<AssetServer>, mut commands: Commands) 
 
 fn listen_to_card_addition_requests(
     mut card_line_request_writer: MessageWriter<CardLineRequest>,
-    card_lines: Query<(&CardLine, Entity)>,
-    cards: Query<(), With<Card>>,
+    card_lines: Query<Entity, With<CardLine>>,
     keys: Res<ButtonInput<KeyCode>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    if let Ok((card_line, card_line_entity)) = card_lines.single() {
-        if card_line.at_capacity() {
-            return;
-        }
-        if keys.just_pressed(KeyCode::KeyS) && cards.iter().count() < card_line.max_cards {
+    if let Ok(card_line_entity) = card_lines.single() {
+        if keys.just_pressed(KeyCode::KeyS) {
             let card_entity = commands
                 .spawn((
                     Sprite {

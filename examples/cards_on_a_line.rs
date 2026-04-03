@@ -28,7 +28,7 @@ fn spawn_cards_on_a_line(
     let line_entity = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
-                .with_max_cards(cards_count)
+                .with_max_cards(Some(cards_count))
                 .with_card_origin_gap(100.0)
                 .with_picked_cards_capacity(3),
         ))

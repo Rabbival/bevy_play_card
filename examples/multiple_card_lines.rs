@@ -48,7 +48,7 @@ fn spawn_card_lines(mut line_entities: ResMut<CardLineEntities>, mut commands: C
                             Transform::from_translation(location.into())
                                 .with_rotation(Quat::from_rotation_z(rotation)),
                         )
-                        .with_max_cards(MAX_CARDS)
+                        .with_max_cards(Some(MAX_CARDS))
                         .with_card_origin_gap(60.0)
                         .with_card_hover_height(20.0),
                 ))

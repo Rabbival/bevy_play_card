@@ -49,7 +49,7 @@ fn spawn_cards_on_a_line(
     let line_entity = commands
         .spawn(CardLineBundle::from_card_line(
             CardLine::default()
-                .with_max_cards(CARDS_COUNT)
+                .with_max_cards(Some(CARDS_COUNT))
                 .with_card_origin_gap(90.0)
                 .with_picked_cards_capacity(2)
                 .with_card_picking_policy(CardPickingPolicy::RemoveLeastRecentlyPicked),
