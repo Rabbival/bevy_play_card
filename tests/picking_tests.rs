@@ -118,7 +118,7 @@ fn spawn_lines(
             .spawn((
                 CardLineBundle::from_card_line(
                     CardLine::default()
-                        .with_max_cards(MAX_CARDS_IN_LINE)
+                        .with_max_cards(Some(MAX_CARDS_IN_LINE))
                         .with_picked_cards_capacity(MAX_PICKED_CARDS_IN_LINE)
                         .with_card_picking_policy(policy),
                 ),
