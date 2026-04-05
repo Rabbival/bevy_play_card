@@ -1,6 +1,6 @@
 [package]
 name = "bevy_play_card"
-version = "0.10.0"
+version = "0.11.0"
 edition = "2024"
 repository = "https://github.com/Rabbival/bevy_play_card"
 homepage = "https://github.com/Rabbival/bevy_play_card"
@@ -12,7 +12,7 @@ keywords = ["bevy", "card", "cards"]
 categories = ["game-development"]
 
 [dependencies.bevy]
-version = "0.17.3"
+version = "0.18.1"
 default-features = false
 features = [
     "bevy_window",
@@ -20,14 +20,14 @@ features = [
     "bevy_sprite",
     "png",
     "bevy_picking",
-    "bevy_sprite_picking_backend",
+    "sprite_picking",
     "serialize",
     "x11"
 ]
 
 [dependencies]
-bevy_tween = "0.11.0"
-bevy_tween_helpers = "0.4.0"
+bevy_tween = "0.12.0"
+bevy_tween_helpers = "0.5.0"
 serde = { version = "1.0.219", features = ["derive"] }
 
 

@@ -1,3 +1,4 @@
+use bevy::ecs::schedule::ScheduleLabel;
 use bevy_play_card::prelude::*;
 use bevy_tween::combinator::{
     AnimationBuilderExt, TransformTargetStateExt, event, parallel, sequence,
@@ -36,7 +37,9 @@ fn main() {
                 }
             },
         )
-        .add_plugins(TweenEventPlugin::<DespawnRequest>::default())
+        .add_plugins(TweenEventPlugin::<DespawnRequest>::in_schedule(
+            PostUpdate.intern(),
+        ))
         .run();
 }
 
