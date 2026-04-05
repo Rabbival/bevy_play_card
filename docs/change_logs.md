@@ -2,10 +2,11 @@
 
 [(Click me to go back to the main readme)](../README.md)
 
-#### Unreleased
+#### `0.10.0 -> 0.11.0`
 
 * Breaking: `CardLine.max_cards` is now optional, so you'd now have to provide an option (or use default which is None)
 * Add `CardLineRequestResult` with `CardLineActionResultData` to notify on success or failure of `CardLine` insertion actions
+* Update to bevy 0.18 (and the rest of the dependencies to match)
 
 #### `0.9.0 -> 0.10.0`
 
