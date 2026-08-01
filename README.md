@@ -29,6 +29,7 @@ That being said, feel free to write on the discord thread as well.
 ## Bevy Version Support
 | `bevy` | `bevy_play_card` |
 |--------|------------------|
+| 0.19   | 0.12             |
 | 0.18   | 0.11             |
 | 0.17   | 0.5 - 0.10       |
 | 0.16   | 0.2 - 0.4        |
