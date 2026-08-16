@@ -14,17 +14,20 @@ impl Plugin for CardTagChangeListenerPlugin {
 
 fn on_dragged_insertion(
     trigger: On<Add, Dragged>,
-    cards: Query<&Card>,
+    cards: Query<(&Card, Entity)>,
     picked_cards: Query<Entity, (With<Card>, With<Picked>)>,
     mut commands: Commands,
 ) {
-    if let Ok(card) = cards.get(trigger.entity)
+    if let Ok((card, card_entity)) = cards.get(trigger.entity)
         && card.owner_line.is_some()
-        && let Ok(mut entity_commands) = commands.get_entity(trigger.entity)
+        && let Ok(mut entity_commands) = commands.get_entity(card_entity)
     {
         entity_commands.remove_parent_in_place();
-        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
-            trigger.entity,
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Translation>::new(vec![
+            card_entity,
+        ]));
+        commands.trigger(RemoveTargetsFromAllTweensOfType::<Scale>::new(vec![
+            card_entity,
         ]));
     }
     for picked_card_entity in &picked_cards {

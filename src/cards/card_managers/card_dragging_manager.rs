@@ -124,9 +124,6 @@ fn start_card_drag(
     commands: &mut Commands,
 ) {
     if let Ok((mut card_pickable, _)) = cards.get_mut(card_entity) {
-        commands.trigger(TweenRequest::RemoveTargetsFromAllTweensTargetingThem(vec![
-            card_entity,
-        ]));
         commands
             .entity(card_entity)
             .try_remove::<MovingToNewOrigin>()
