@@ -1,5 +1,6 @@
 use crate::prelude::*;
-use bevy_tween_helpers::prelude::TweenRequest;
+use bevy_tween_alt::interpolate::{Scale, Translation};
+use bevy_tween_helpers::prelude::RemoveTargetsFromAllTweensOfType;
 
 pub struct CardTagChangeListenerPlugin;
 

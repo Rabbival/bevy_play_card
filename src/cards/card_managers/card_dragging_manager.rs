@@ -2,7 +2,7 @@ use crate::cards::card_consts::CardConsts;
 use crate::prelude::*;
 use bevy_tween_alt::combinator::{event, parallel, sequence};
 use bevy_tween_alt::prelude::*;
-use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, TweenRequest, named_tween};
+use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum CardDraggingRequest {
