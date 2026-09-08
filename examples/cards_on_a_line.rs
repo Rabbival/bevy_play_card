@@ -54,5 +54,5 @@ fn spawn_cards_on_a_line(
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, CardsCamera));
 }

@@ -26,7 +26,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, CardsCamera));
     commands.spawn((Text::new(
         "Press Space to raise the card lines\nPress S to spawn another card if possible.",
     ),));

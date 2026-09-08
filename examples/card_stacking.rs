@@ -108,5 +108,5 @@ fn fix_child_card_origin_and_transform(
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, CardsCamera));
 }

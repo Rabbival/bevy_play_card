@@ -7,7 +7,7 @@ use bevy_tween_helpers::prelude::{TweenPriorityToOthersOfType, named_tween};
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum CardDraggingRequest {
     StartDragging,
-    DragMove { delta: Vec2 },
+    SnapToPointerLocation(Vec2),
     EndDragging,
 }
 
@@ -39,15 +39,22 @@ pub(crate) fn on_drag_start(
 pub(crate) fn on_drag(
     trigger: On<Pointer<Drag>>,
     dragged_cards: Query<(), (With<Card>, With<Dragged>)>,
+    maybe_cards_camera: Option<Single<(&GlobalTransform, &Camera), With<CardsCamera>>>,
     mut requests: ResMut<AwaitingCardDraggingRequests>,
 ) {
-    if dragged_cards.contains(trigger.entity) {
-        requests.insert(
-            trigger.entity,
-            CardDraggingRequest::DragMove {
-                delta: trigger.delta,
-            },
-        );
+    if let Some(cards_camera) = maybe_cards_camera {
+        let (camera_transform, camera) = *cards_camera;
+        if dragged_cards.contains(trigger.entity)
+            && let Ok(camera_ray) =
+                camera.viewport_to_world(camera_transform, trigger.pointer_location.position)
+        {
+            requests.insert(
+                trigger.entity,
+                CardDraggingRequest::SnapToPointerLocation(camera_ray.origin.xy()),
+            );
+        }
+    } else {
+        eprintln!("There's no cards camera, and thus a card cannot be dragged.");
     }
 }
 
@@ -101,9 +108,12 @@ fn execute_card_dragging_requests(
                     card_to_start_dragging_by_owner_line.insert(owner_line, card_entity);
                 }
             }
-            CardDraggingRequest::DragMove { delta } => {
-                drag_card(card_entity, delta, &mut dragged_cards, &card_consts)
-            }
+            CardDraggingRequest::SnapToPointerLocation(pointer_location) => drag_card(
+                card_entity,
+                pointer_location,
+                &mut dragged_cards,
+                &card_consts,
+            ),
             CardDraggingRequest::EndDragging => send_card_back_to_origin(
                 card_entity,
                 &mut dragged_cards,
@@ -134,7 +144,7 @@ fn start_card_drag(
 
 fn drag_card(
     card_entity: Entity,
-    delta: Vec2,
+    target_position: Vec2,
     dragged_cards: &mut Query<
         (
             &mut Transform,
@@ -151,8 +161,9 @@ fn drag_card(
     card_consts: &CardConsts,
 ) {
     if let Ok((mut card_transform, _, _, _, _, _, _, _)) = dragged_cards.get_mut(card_entity) {
-        card_transform.translation.x += delta.x * card_consts.card_drag_delta_scaler.x;
-        card_transform.translation.y -= delta.y * card_consts.card_drag_delta_scaler.y;
+        let target_with_offset = card_consts.card_drag_target_offset + target_position;
+        card_transform.translation.x = target_with_offset.x;
+        card_transform.translation.y = target_with_offset.y;
     }
 }
 

@@ -124,7 +124,7 @@ fn override_card_float_animation(
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, CardsCamera));
 }
 
 fn spawn_card_line(

@@ -17,8 +17,8 @@ pub struct CardConsts {
     pub go_back_to_place_tween_duration: f32,
     /// How many seconds it takes for cards to get to their new origin once set
     pub card_slide_on_origin_set_duration: f32,
-    /// What should pointer delta be multiplied by when dragging
-    pub card_drag_delta_scaler: Vec2,
+    /// Offset from pointer to which dragged cards should snap
+    pub card_drag_target_offset: Vec2,
     /// Whether cards can be hovered over while actively dragging a card
     pub allow_hover_while_dragging: bool,
     /// Ease kind for card movement when their origin changes
@@ -35,7 +35,7 @@ impl Default for CardConsts {
             on_float_back_down_position_tween_duration: 0.1,
             go_back_to_place_tween_duration: 0.04,
             card_slide_on_origin_set_duration: 0.2,
-            card_drag_delta_scaler: Vec2::ONE,
+            card_drag_target_offset: Vec2::ZERO,
             allow_hover_while_dragging: false,
             card_origin_set_ease_kind: EaseKind::CubicOut,
         }

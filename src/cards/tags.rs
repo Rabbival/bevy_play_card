@@ -26,3 +26,7 @@ pub struct PlayCardTweenAnimationParent;
 /// A tag that marks cards that are currently actively moving to their new origin
 #[derive(Debug, Clone, Copy, Component, Default)]
 pub struct MovingToNewOrigin;
+
+/// The camera that will be used to calculate pointer location for cards
+#[derive(Component, Default)]
+pub struct CardsCamera;

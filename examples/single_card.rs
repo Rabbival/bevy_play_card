@@ -18,5 +18,5 @@ fn spawn_a_card(asset_server: Res<AssetServer>, mut commands: Commands) {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, CardsCamera));
 }
